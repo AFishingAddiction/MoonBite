@@ -1,0 +1,30 @@
+{
+  "name": "MoonBite",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+  "postCreateCommand": "npm install && npx playwright install --with-deps chromium",
+  "postStartCommand": "npm start",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-playwright.playwright",
+        "anthropic.claude-code"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.rulers": [100],
+        "js/ts.preferences.importModuleSpecifier": "relative"
+      }
+    }
+  },
+  "forwardPorts": [4202],
+  "portsAttributes": {
+    "4202": {
+      "label": "Angular Dev Server",
+      "onAutoForward": "notify"
+    }
+  }
+}
