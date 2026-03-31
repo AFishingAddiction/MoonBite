@@ -17,7 +17,11 @@ ENV CHROME_BIN=/usr/bin/chromium
 ENV FIREFOX_BIN=/usr/bin/firefox-esr
 
 USER node
+
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+COPY --chown=node:node docker/install-volt-agents.sh /tmp/install-volt-agents.sh
+RUN bash /tmp/install-volt-agents.sh && rm /tmp/install-volt-agents.sh
 
 COPY --chown=node:node package*.json ./
 
