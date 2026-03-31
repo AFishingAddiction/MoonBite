@@ -56,13 +56,9 @@ e2e/
 - [Angular 21](https://angular.dev) — Framework
 - [TypeScript 5.9](https://www.typescriptlang.org/) — Language
 - [RxJS 7](https://rxjs.dev) — Reactive programming
-
-
-
 - [Jasmine](https://jasmine.github.io/) + [Karma](https://karma-runner.github.io/) — Unit testing
 - [Playwright](https://playwright.dev) — End-to-end testing
 - [ESLint](https://eslint.org/) + [angular-eslint](https://github.com/angular-eslint/angular-eslint) — Linting
-
 - [Prettier](https://prettier.io) — Code formatting
 
 
@@ -79,6 +75,20 @@ npx ng generate component features/my-feature
 ```bash
 npx ng generate service core/my-service
 ```
+
+### Using Claude Agents
+
+This project is set up for [Claude Code](https://claude.ai/download). The Devcontainer will already have Claude installed and use the built-in agents to accelerate development. If you are developing without the Devcontainer, then you can install it yourself:
+
+```bash
+# Install Claude Code
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Launch in this project
+claude
+```
+
+Install the [VoltAgent sub-agents](https://github.com/VoltAgent/awesome-claude-code-subagents) for a curated set of specialist agents, then see [`docs/AGENTS.md`](docs/AGENTS.md) for the recommended workflows for this project.
 
 ### Running Tests with Coverage
 

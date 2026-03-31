@@ -1,0 +1,29 @@
+FROM mcr.microsoft.com/devcontainers/javascript-node:24
+
+RUN mkdir -p /app && chown node:node /app
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    chromium \
+    firefox-esr \
+    jq \
+    less \
+    most \
+    xvfb \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV CHROME_BIN=/usr/bin/chromium
+ENV FIREFOX_BIN=/usr/bin/firefox-esr
+
+USER node
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
+COPY --chown=node:node package*.json ./
+
+RUN npm install
+RUN npx playwright install --with-deps chromium
+
+EXPOSE 4202
+
+CMD ["sleep", "infinity"]

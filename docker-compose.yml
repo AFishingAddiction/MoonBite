@@ -1,0 +1,18 @@
+services:
+  angular-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: moonbite-dev
+    volumes:
+      - ./:/app/
+      - /app/node_modules
+    ports:
+      - "4202:4202"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - CHROME_BIN=/usr/bin/chromium-browser
+    command: sleep infinity
+    stdin_open: true
+    tty: true

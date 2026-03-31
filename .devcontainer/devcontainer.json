@@ -1,8 +1,14 @@
 {
   "name": "MoonBite",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
-  "postCreateCommand": "npm install && npx playwright install --with-deps chromium",
-  "postStartCommand": "npm start",
+  "build": {
+    "dockerfile": "../docker/Dockerfile.dev",
+    "context": ".."
+  },
+  "remoteUser": "node",
+  "postCreateCommand": "npm install",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/node/.local/bin"
+  },
   "customizations": {
     "vscode": {
       "extensions": [

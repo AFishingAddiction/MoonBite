@@ -2,6 +2,18 @@
 
 MoonBite combines solunar tables, moon phase, weather forecast, and barometric pressure into a single daily "fishing score" for your location.
 
+## Agent Workflows
+
+See [`docs/AGENTS.md`](docs/AGENTS.md) for the recommended agent workflow guide — which agents are relevant to this project and how to compose them for common tasks.
+
+## Feature Requirements
+
+Individual feature requirement files live in [`docs/feature-requirements/`](docs/feature-requirements/). Each file is named `feature-NN-<slug>.md` where `NN` is the feature number. The consolidated source document is [`docs/FEATURE-REQUIREMENTS.md`](docs/FEATURE-REQUIREMENTS.md).
+
+| File | Feature |
+|---|---|
+| `feature-00-example.md` | Example Feature |
+
 ## Project overview
 
 - **Framework:** Angular 21 (standalone components)
