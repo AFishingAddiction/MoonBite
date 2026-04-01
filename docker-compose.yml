@@ -1,5 +1,5 @@
 services:
-  angular-app:
+  moonbite:
     build:
       context: .
       dockerfile: docker/Dockerfile.dev

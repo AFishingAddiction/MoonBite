@@ -1,0 +1,19 @@
+{
+  "project_name": "MoonBite",
+  "project_slug": "moonbite",
+  "project_description": "MoonBite combines solunar tables, moon phase, weather forecast, and barometric pressure into a single daily \"fishing score\" for your location.",
+  "author_name": "Dan Schaefer",
+  "author_email": "danschaefer@gmail.com",
+  "angular_prefix": "app",
+  "node_version": "24",
+  "use_state_management": "signals",
+  "use_component_library": "none",
+  "use_prettier": "yes",
+  "use_husky": "no",
+  "dev_port": "4202",
+  "coverage_threshold": "85",
+  "devcontainer_start": "sleep-infinity",
+  "use_github_actions": "no",
+  "use_claude": "yes",
+  "use_volt_agents": "yes"
+}
