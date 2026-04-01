@@ -2,9 +2,42 @@
 
 ## Feature Index
 
+### Milestone 1: MVP — Daily Fishing Score
+
 | # | File | Feature | Status |
 |---|---|---|---|
-| 00 | `feature-requirements/feature-00-example.md` | Example Feature | Draft/Implepenting/Complete |
+| 01 | `feature-requirements/feature-01-geolocation.md` | Geolocation Permission & Display | Backlog |
+| 02 | `feature-requirements/feature-02-moon-phase.md` | Moon Phase Data Service | Backlog |
+| 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Backlog |
+| 04 | `feature-requirements/feature-04-weather.md` | Weather Data Service | Backlog |
+| 05 | `feature-requirements/feature-05-scoring.md` | Fishing Score Calculation Engine | Backlog |
+| 06 | `feature-requirements/feature-06-home-screen.md` | App Shell & Home Screen | Backlog |
+| 07 | `feature-requirements/feature-07-responsive-design.md` | Responsive Design & Mobile-First CSS | Backlog |
+
+### Milestone 2: Core Value — Detailed Breakdowns
+
+| # | File | Feature | Status |
+|---|---|---|---|
+| 08 | `feature-requirements/feature-08-moon-details.md` | Moon Phase Details Screen | Backlog |
+| 09 | `feature-requirements/feature-09-solunar-details.md` | Solunar Peak Times Details Screen | Backlog |
+| 10 | `feature-requirements/feature-10-weather-details.md` | Weather Details Screen | Backlog |
+| 11 | `feature-requirements/feature-11-score-breakdown.md` | Score Breakdown Explanation | Backlog |
+| 12 | `feature-requirements/feature-12-navigation.md` | Bottom Navigation / Routing | Backlog |
+| 13 | `feature-requirements/feature-13-saved-locations.md` | Location Bookmarks / Saved Locations | Backlog |
+| 14 | `feature-requirements/feature-14-preferences.md` | User Settings & Preferences | Backlog |
+| 15 | `feature-requirements/feature-15-history.md` | Daily Score History & Trends | Backlog |
+| 16 | `feature-requirements/feature-16-branding.md` | Splash Screen & App Branding | Backlog |
+
+### Milestone 3: Engagement & Persistence
+
+| # | File | Feature | Status |
+|---|---|---|---|
+| 17 | `feature-requirements/feature-17-sharing.md` | Share Score / Daily Report | Backlog |
+| 18 | `feature-requirements/feature-18-location-library.md` | Location Search & Library | Backlog |
+| 19 | `feature-requirements/feature-19-notifications.md` | Smart Notifications & Alerts | Backlog |
+| 20 | `feature-requirements/feature-20-catch-logging.md` | Catch Logging & Fishing Journal | Backlog |
+| 21 | `feature-requirements/feature-21-analytics.md` | Analytics Dashboard for Power Users | Backlog |
+| 22 | `feature-requirements/feature-22-premium.md` | Premium / Paid Features | Backlog |
 
 ---
 

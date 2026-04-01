@@ -1,0 +1,9 @@
+services:
+  moonbite:
+    command: ["sleep", "infinity"]
+    volumes:
+      - bashhistory:/commandhistory
+      - claude-config:/home/node/.claude
+
+volumes:
+  bashhistory:

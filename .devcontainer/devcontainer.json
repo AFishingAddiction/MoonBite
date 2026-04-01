@@ -1,15 +1,13 @@
 {
   "name": "MoonBite",
-  "build": {
-    "dockerfile": "../docker/Dockerfile.dev",
-    "context": ".."
-  },
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "moonbite",
+  "workspaceFolder": "/app",
   "remoteUser": "node",
   "postCreateCommand": "npm install && bash ~/install-volt-agents.sh",
-  "mounts": [
-    "source=angular-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    "source=angular-claude-config-${devcontainerId},target=/home/node/.claude,type=volume"
-  ],
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/node/.local/bin"
   },
