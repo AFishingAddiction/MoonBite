@@ -10,9 +10,9 @@ See [`docs/AGENTS.md`](docs/AGENTS.md) for the recommended agent workflow guide 
 
 Individual feature requirement files live in [`docs/feature-requirements/`](docs/feature-requirements/). Each file is named `feature-NN-<slug>.md` where `NN` is the feature number. The consolidated source document is [`docs/FEATURE-REQUIREMENTS.md`](docs/FEATURE-REQUIREMENTS.md).
 
-| File | Feature |
-|---|---|
-| `feature-00-example.md` | Example Feature |
+| File | Feature | Status |
+|---|---|---|
+| `feature-01-geolocation.md` | Geolocation Permission & Display | Complete |
 
 ## Project overview
 
@@ -71,6 +71,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 - Prefer `fixture.debugElement` queries over direct DOM access
 - Mock HTTP with `provideHttpClientTesting()`
 - Use `page.getByRole()` and `page.getByText()` in Playwright for accessible selectors
+- Always capture test output with `tee` to grep later: `npm run test:ci 2>&1 | tee /tmp/test-results.txt`
 
 ## Code style
 

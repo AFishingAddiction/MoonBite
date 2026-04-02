@@ -6,7 +6,7 @@
 
 | # | File | Feature | Status |
 |---|---|---|---|
-| 01 | `feature-requirements/feature-01-geolocation.md` | Geolocation Permission & Display | Backlog |
+| 01 | `feature-requirements/feature-01-geolocation.md` | Geolocation Permission & Display | Complete |
 | 02 | `feature-requirements/feature-02-moon-phase.md` | Moon Phase Data Service | Backlog |
 | 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Backlog |
 | 04 | `feature-requirements/feature-04-weather.md` | Weather Data Service | Backlog |

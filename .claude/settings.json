@@ -1,13 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run *)",
-      "Bash(ng *)",
-      "Bash(npx playwright *)",
-      "Bash(git status)",
+      "Bash(* --version)",
+      "Bash(cat *)",
+      "Bash(chromium:*)",
+      "Bash(echo *)",
+      "Bash(git add *)",
       "Bash(git diff *)",
       "Bash(git log *)",
-      "Bash(git add *)"
+      "Bash(git status)",
+      "Bash(ng *)",
+      "Bash(npm ci *)",
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "Bash(npx karma:*)",
+      "Bash(npx ng:*)",
+      "Bash(npx playwright *)",
+      "Bash(tee *)",
+      "Bash(wait *)",
+      "Write(*)"
     ],
     "deny": []
   }

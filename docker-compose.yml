@@ -8,11 +8,11 @@ services:
       - ./:/app/
       - /app/node_modules
     ports:
-      - "4202:4202"
+      - '4202:4202'
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
-      - CHROME_BIN=/usr/bin/chromium-browser
+      - CHROME_BIN=/usr/bin/chromium
     command: sleep infinity
     stdin_open: true
     tty: true

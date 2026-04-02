@@ -9,9 +9,9 @@ test.describe('App', () => {
     await expect(page).toHaveTitle(/MoonBite/);
   });
 
-  test('displays welcome heading', async ({ page }) => {
+  test('displays MoonBite heading', async ({ page }) => {
     const heading = page.getByRole('heading', { level: 1 });
     await expect(heading).toBeVisible();
-    await expect(heading).toContainText('Welcome to moonbite');
+    await expect(heading).toContainText('MoonBite');
   });
 });

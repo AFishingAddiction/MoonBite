@@ -1,0 +1,120 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.location-display {
+  padding: $space-lg;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  max-width: 480px;
+  margin: $space-xl auto;
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0 0 $space-md;
+  }
+
+  &__btn {
+    @include button-reset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $space-sm $space-lg;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    transition:
+      background-color $transition-fast,
+      color $transition-fast;
+    cursor: pointer;
+
+    &--primary {
+      background-color: $color-primary;
+      color: $color-surface;
+
+      &:hover {
+        background-color: $color-primary-dark;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+
+    &--secondary {
+      background-color: $color-surface-alt;
+      color: $color-primary;
+      border: 1px solid $color-border;
+
+      &:hover {
+        background-color: $color-border;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    color: $color-text-secondary;
+    font-size: $font-size-base;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid $color-border;
+    border-top-color: $color-primary;
+    border-radius: $radius-full;
+    animation: spin 700ms linear infinite;
+  }
+
+  &__coords {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    margin-bottom: $space-md;
+  }
+
+  &__coord {
+    font-size: $font-size-base;
+    color: $color-text-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  &__error {
+    background-color: $color-error-light;
+    border: 1px solid $color-error;
+    border-radius: $radius-md;
+    padding: $space-md;
+
+    &-message {
+      margin: 0 0 $space-md;
+      color: $color-error;
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__unavailable {
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

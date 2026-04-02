@@ -10,8 +10,8 @@ test.describe('AppComponent', () => {
     await expect(root).toBeVisible();
   });
 
-  test('displays project description', async ({ page }) => {
+  test('renders location display component', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('body')).toContainText('MoonBite combines solunar tables, moon phase, weather forecast, and barometric pressure into a single daily "fishing score" for your location.');
+    await expect(page.locator('app-location-display')).toBeVisible();
   });
 });

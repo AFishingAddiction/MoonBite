@@ -1,0 +1,89 @@
+<section class="location-display" aria-label="Your location">
+  <h2 class="location-display__title">
+    <span aria-hidden="true">📍</span> Your Location
+  </h2>
+
+  @switch (geo.state().status) {
+    @case ('idle') {
+      <button
+        class="location-display__btn location-display__btn--primary"
+        data-testid="request-location-btn"
+        type="button"
+        (click)="requestLocation()"
+      >
+        Use My Location
+      </button>
+    }
+
+    @case ('requesting') {
+      <div
+        class="location-display__loading"
+        data-testid="location-loading"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="location-display__spinner" aria-hidden="true"></span>
+        <span>Getting your location…</span>
+      </div>
+    }
+
+    @case ('granted') {
+      @if (geo.state().position; as pos) {
+        <div class="location-display__coords" data-testid="location-coords" aria-live="polite">
+          <span class="location-display__coord">
+            Lat: {{ formatCoord(pos.coords.latitude, 'N', 'S') }}
+          </span>
+          <span class="location-display__coord">
+            Lon: {{ formatCoord(pos.coords.longitude, 'E', 'W') }}
+          </span>
+        </div>
+        <button
+          class="location-display__btn location-display__btn--secondary"
+          data-testid="change-location-btn"
+          type="button"
+          (click)="requestLocation()"
+        >
+          Change Location
+        </button>
+      }
+    }
+
+    @case ('denied') {
+      <div class="location-display__error" data-testid="location-error" role="alert">
+        <p class="location-display__error-message">
+          Location access was denied. Please enable location services in your browser settings.
+        </p>
+        <button
+          class="location-display__btn location-display__btn--secondary"
+          data-testid="retry-btn"
+          type="button"
+          (click)="retry()"
+        >
+          Retry
+        </button>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="location-display__error" data-testid="location-error" role="alert">
+        <p class="location-display__error-message">
+          Unable to retrieve your location. Please try again.
+        </p>
+        <button
+          class="location-display__btn location-display__btn--secondary"
+          data-testid="retry-btn"
+          type="button"
+          (click)="retry()"
+        >
+          Try Again
+        </button>
+      </div>
+    }
+
+    @case ('unavailable') {
+      <div class="location-display__unavailable" data-testid="location-unavailable" role="status">
+        <p>Location services are not available in this browser.</p>
+      </div>
+    }
+  }
+</section>

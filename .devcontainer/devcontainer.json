@@ -1,15 +1,12 @@
 {
   "name": "MoonBite",
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.devcontainer.yml"
-  ],
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.devcontainer.yml"],
   "service": "moonbite",
   "workspaceFolder": "/app",
   "remoteUser": "node",
   "postCreateCommand": "npm install && bash ~/install-volt-agents.sh",
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/home/node/.local/bin"
+    "PATH": "${containerEnv:PATH}:/app/node_modules/.bin:/home/node/.local/bin"
   },
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
