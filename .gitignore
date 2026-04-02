@@ -34,6 +34,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+.husky/
 
 # System files
 .DS_Store
@@ -46,3 +47,4 @@ Thumbs.db
 
 # Claude
 .claude/settings.local.json
+
