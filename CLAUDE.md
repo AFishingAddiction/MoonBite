@@ -14,6 +14,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 |---|---|---|
 | `feature-01-geolocation.md` | Geolocation Permission & Display | Complete |
 | `feature-02-moon-phase.md` | Moon Phase Data Service | Complete |
+| `feature-03-solunar.md` | Solunar Table Data Service | Complete |
 
 ## Project overview
 

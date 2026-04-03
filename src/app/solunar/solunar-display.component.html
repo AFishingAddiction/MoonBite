@@ -1,0 +1,82 @@
+<section
+  class="solunar-card"
+  role="region"
+  [attr.aria-label]="isLocating() ? 'Solunar table, loading' : 'Solunar table'"
+  [attr.aria-busy]="isLocating() || null"
+>
+  <!-- Loading state -->
+  @if (isLocating()) {
+    <div class="solunar-card__loading" aria-hidden="true">
+      <div class="solunar-card__skeleton-line solunar-card__skeleton-line--title"></div>
+      <div class="solunar-card__skeleton-line"></div>
+      <div class="solunar-card__skeleton-line"></div>
+      <div class="solunar-card__skeleton-line solunar-card__skeleton-line--short"></div>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (hasError()) {
+    <div class="solunar-card__error">
+      <p class="solunar-card__error-message">Location unavailable</p>
+      <p class="solunar-card__error-sub">Solunar data requires your location.</p>
+    </div>
+  }
+
+  <!-- Data state -->
+  @if (solunarData(); as data) {
+    <!-- Header -->
+    <div class="solunar-card__header">
+      <div class="solunar-card__header-text">
+        <p class="solunar-card__title">Solunar Table</p>
+        <p class="solunar-card__date">{{ data.dateUtc }}</p>
+      </div>
+      <span class="solunar-card__rating" [attr.aria-label]="'Solunar rating: ' + data.rating + ' out of 4'">{{
+        ratingStars()
+      }}</span>
+    </div>
+
+    <!-- Periods list -->
+    <div class="solunar-card__periods" role="list" aria-label="Solunar periods">
+      @for (period of data.periods; track period.index) {
+        <div
+          class="solunar-card__period"
+          [class.solunar-card__period--major]="period.type === 'major'"
+          role="listitem"
+          [attr.aria-label]="periodAriaLabel(period)"
+        >
+          <div class="solunar-card__period-info" aria-hidden="true">
+            <span class="solunar-card__period-type">{{ period.type === 'major' ? 'MAJOR' : 'MINOR' }}</span>
+            <span class="solunar-card__period-desc">{{ period.description }}</span>
+          </div>
+          <span class="solunar-card__period-time" aria-hidden="true">
+            {{ formatTime(period.startUtc) }}&#8202;–&#8202;{{ formatTime(period.endUtc) }}
+          </span>
+        </div>
+      }
+      @if (isPolar()) {
+        <p class="solunar-card__polar-note">Minor periods unavailable at this latitude</p>
+      }
+    </div>
+
+    <!-- Fishing score bar -->
+    <div class="solunar-card__score-section">
+      <span class="solunar-card__score-label" aria-hidden="true">Fishing Contribution</span>
+      <div
+        class="solunar-card__score-bar-track"
+        role="meter"
+        aria-label="Solunar fishing score contribution"
+        [attr.aria-valuenow]="data.fishingScoreContribution"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          class="solunar-card__score-bar-fill"
+          [class.solunar-card__score-bar-fill--ready]="scoreReady()"
+          [style.--score-target-width]="scorePercent()"
+        >
+          <span class="solunar-card__score-badge" aria-hidden="true">{{ data.fishingScoreContribution }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</section>

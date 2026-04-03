@@ -1,0 +1,260 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Component-scoped constants (not global tokens)
+$solunar-card-max-width: 400px;
+$score-bar-height: 12px;
+$score-fill-duration: 350ms;
+$score-badge-offset: -18px;
+$score-badge-padding: 2px 6px;
+$score-badge-min-width: 28px;
+
+.solunar-card {
+  background-color: $color-surface-dark;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-dark;
+  max-width: $solunar-card-max-width;
+  margin: $space-xl auto;
+  overflow: hidden;
+  transition:
+    box-shadow $transition-base,
+    transform $transition-base;
+
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: $shadow-dark-hover;
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  // ── Loading skeleton ────────────────────────────────────────────────────
+
+  &__loading {
+    padding: $space-xl $space-lg $space-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__skeleton-line {
+    height: 16px;
+    border-radius: $radius-sm;
+    background: $color-surface-dark-alt;
+    animation: skeleton-pulse 1.4s ease-in-out infinite;
+    width: 100%;
+
+    &--title {
+      height: 20px;
+      width: 60%;
+    }
+
+    &--short {
+      width: 40%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes skeleton-pulse {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.85;
+    }
+  }
+
+  // ── Error state ─────────────────────────────────────────────────────────
+
+  &__error {
+    padding: $space-xl $space-lg;
+    text-align: center;
+  }
+
+  &__error-message {
+    margin: 0 0 $space-xs;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $color-text-on-dark;
+  }
+
+  &__error-sub {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: $color-text-on-dark-secondary;
+  }
+
+  // ── Header ──────────────────────────────────────────────────────────────
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-lg $space-lg $space-md;
+    border-bottom: 1px solid $color-border-dark;
+  }
+
+  &__header-text {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-accent;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+  }
+
+  &__date {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: $color-text-on-dark-secondary;
+    letter-spacing: $letter-spacing-caps;
+  }
+
+  &__rating {
+    font-size: $font-size-lg;
+    color: $color-accent;
+    letter-spacing: 2px;
+  }
+
+  // ── Periods list ─────────────────────────────────────────────────────────
+
+  &__periods {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid $color-border-dark;
+  }
+
+  &__period {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-sm $space-lg;
+    border-bottom: 1px solid $color-border-dark;
+    gap: $space-sm;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--major {
+      background-color: $color-surface-dark-alt;
+    }
+  }
+
+  &__period-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__period-type {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+    color: $color-accent;
+  }
+
+  &__period-desc {
+    font-size: $font-size-sm;
+    color: $color-text-on-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__period-time {
+    font-size: $font-size-xs;
+    color: $color-text-on-dark-secondary;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__polar-note {
+    margin: 0;
+    padding: $space-sm $space-lg;
+    font-size: $font-size-xs;
+    color: $color-text-on-dark-secondary;
+    font-style: italic;
+    text-align: center;
+  }
+
+  // ── Score section ────────────────────────────────────────────────────────
+
+  &__score-section {
+    padding: $space-md $space-lg $space-lg;
+  }
+
+  &__score-label {
+    display: block;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-normal;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+    color: $color-text-on-dark-secondary;
+    margin-bottom: $space-sm;
+  }
+
+  &__score-bar-track {
+    position: relative;
+    height: $score-bar-height;
+    background-color: $color-score-track;
+    border-radius: $radius-md;
+    overflow: visible;
+  }
+
+  &__score-bar-fill {
+    position: relative;
+    height: 100%;
+    background-color: $color-score-fill;
+    border-radius: $radius-md;
+    width: 0;
+    transition: width $score-fill-duration ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    &--ready {
+      width: var(--score-target-width);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &__score-badge {
+    position: absolute;
+    right: $score-badge-offset;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: $color-accent;
+    color: $color-surface-dark;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    padding: $score-badge-padding;
+    border-radius: $radius-full;
+    white-space: nowrap;
+    min-width: $score-badge-min-width;
+    text-align: center;
+  }
+}

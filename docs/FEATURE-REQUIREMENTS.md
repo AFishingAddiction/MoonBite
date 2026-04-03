@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 01 | `feature-requirements/feature-01-geolocation.md` | Geolocation Permission & Display | Complete |
 | 02 | `feature-requirements/feature-02-moon-phase.md` | Moon Phase Data Service | Complete |
-| 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Backlog |
+| 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Complete |
 | 04 | `feature-requirements/feature-04-weather.md` | Weather Data Service | Backlog |
 | 05 | `feature-requirements/feature-05-scoring.md` | Fishing Score Calculation Engine | Backlog |
 | 06 | `feature-requirements/feature-06-home-screen.md` | App Shell & Home Screen | Backlog |
@@ -58,3 +58,9 @@ Each feature has its own file in `feature-requirements/`. Add new features by:
 **File:** `feature-requirements/feature-02-moon-phase.md`
 
 Pure TypeScript calculation service providing moon phase data (phase name, illumination, moon age, fishing score contribution) for any date. No external dependencies or HTTP calls. Consumed by Feature 05 (Fishing Score Engine) and Feature 08 (Moon Details Screen). Includes optional dev-only display component.
+
+### Feature 03 — Solunar Table Data Service
+
+**File:** `feature-requirements/feature-03-solunar.md`
+
+Pure TypeScript calculation service providing four daily solunar periods (major transits + minor rise/set windows) for any location and date based on moon position and John Alden Knight's theory. Returns period times, ratings, and fishing score contribution (0–100). Location-dependent; requires latitude/longitude. Handles polar edge cases gracefully. No external dependencies. Consumed by Feature 05 (Fishing Score Engine) and Feature 09 (Solunar Details Screen). Includes optional dev-only display component.
