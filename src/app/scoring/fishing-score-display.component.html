@@ -1,0 +1,68 @@
+<section class="score-card" aria-label="Fishing Score">
+  <h2 class="score-card__title">🎣 Fishing Score</h2>
+
+  @if (score() === undefined) {
+    <div class="score-card__loading" aria-live="polite">
+      <span class="score-card__spinner" aria-hidden="true"></span>
+      Calculating score…
+    </div>
+  } @else if (score() === null) {
+    <div class="score-card__error" role="alert">
+      Score unavailable — data could not be loaded.
+    </div>
+  } @else {
+    <div class="score-card__composite">
+      <span class="score-card__number">{{ score()!.score }}</span>
+      <span class="score-card__denom">/ 100</span>
+    </div>
+
+    <table class="score-card__breakdown" aria-label="Score breakdown by factor">
+      <thead>
+        <tr>
+          <th scope="col">Factor</th>
+          <th scope="col">Score</th>
+          <th scope="col">Weight</th>
+          <th scope="col">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Moon Phase</td>
+          <td>{{ score()!.breakdown.moonPhaseScore }}</td>
+          <td>{{ score()!.weights.moonPhase * 100 | number: '1.0-0' }}%</td>
+          <td>{{ score()!.breakdown.moonPhaseWeighted }}</td>
+        </tr>
+        <tr>
+          <td>Solunar</td>
+          <td>{{ score()!.breakdown.solunarScore }}</td>
+          <td>{{ score()!.weights.solunar * 100 | number: '1.0-0' }}%</td>
+          <td>{{ score()!.breakdown.solunarWeighted }}</td>
+        </tr>
+        <tr>
+          <td>Weather</td>
+          <td>
+            @if (score()!.breakdown.weatherAvailable) {
+              {{ score()!.breakdown.weatherScore }}
+            } @else {
+              —
+            }
+          </td>
+          <td>{{ score()!.weights.weather * 100 | number: '1.0-0' }}%</td>
+          <td>
+            @if (score()!.breakdown.weatherAvailable) {
+              {{ score()!.breakdown.weatherWeighted }}
+            } @else {
+              0
+            }
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    @if (!score()!.breakdown.weatherAvailable) {
+      <p class="score-card__warning" role="status">
+        Weather data unavailable — weather weight redistributed to other factors.
+      </p>
+    }
+  }
+</section>

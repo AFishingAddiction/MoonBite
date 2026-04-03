@@ -1,0 +1,113 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.score-card {
+  background: $color-surface-dark;
+  border-radius: $radius-lg;
+  padding: $space-lg;
+  color: $color-text-on-dark;
+  box-shadow: $shadow-dark;
+  margin: $space-md 0;
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    margin: 0 0 $space-md;
+    color: $color-text-on-dark;
+  }
+
+  // ── Loading ────────────────────────────────────────────────────────────────
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    color: $color-text-on-dark-secondary;
+    font-size: $font-size-sm;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid $color-border-dark;
+    border-top-color: $color-primary-light;
+    border-radius: $radius-full;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  // ── Error ──────────────────────────────────────────────────────────────────
+
+  &__error {
+    color: $color-error;
+    font-size: $font-size-sm;
+    padding: $space-sm;
+    background: $color-surface-dark-alt;
+    border-radius: $radius-md;
+  }
+
+  // ── Composite score ────────────────────────────────────────────────────────
+
+  &__composite {
+    display: flex;
+    align-items: baseline;
+    gap: $space-xs;
+    margin-bottom: $space-lg;
+  }
+
+  &__number {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-score-fill;
+    line-height: 1;
+  }
+
+  &__denom {
+    font-size: $font-size-base;
+    color: $color-text-on-dark-secondary;
+  }
+
+  // ── Breakdown table ────────────────────────────────────────────────────────
+
+  &__breakdown {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+
+    th {
+      text-align: left;
+      font-weight: $font-weight-medium;
+      letter-spacing: $letter-spacing-caps;
+      text-transform: uppercase;
+      color: $color-text-on-dark-secondary;
+      font-size: $font-size-xs;
+      padding-bottom: $space-sm;
+      border-bottom: 1px solid $color-border-dark;
+    }
+
+    td {
+      padding: $space-xs $space-xs $space-xs 0;
+      color: $color-text-on-dark;
+      border-bottom: 1px solid $color-border-dark;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  // ── Warning ────────────────────────────────────────────────────────────────
+
+  &__warning {
+    margin: $space-sm 0 0;
+    font-size: $font-size-xs;
+    color: $color-accent;
+    font-style: italic;
+  }
+}

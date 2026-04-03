@@ -303,6 +303,10 @@ describe('WeatherDisplayComponent', () => {
   // ── Pressure trend icon ───────────────────────────────────────────────────
 
   describe('pressure trend display', () => {
+    beforeEach(async () => {
+      await createComponent({ status: 'granted', position: MOCK_POSITION, error: null });
+    });
+
     it('renders a pressure trend indicator', () => {
       expect(
         fixture.debugElement.query(By.css('.weather-card__pressure-trend')),

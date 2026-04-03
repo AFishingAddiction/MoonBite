@@ -10,7 +10,7 @@
 | 02 | `feature-requirements/feature-02-moon-phase.md` | Moon Phase Data Service | Complete |
 | 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Complete |
 | 04 | `feature-requirements/feature-04-weather.md` | Weather Data Service | Complete |
-| 05 | `feature-requirements/feature-05-scoring.md` | Fishing Score Calculation Engine | Backlog |
+| 05 | `feature-requirements/feature-05-scoring.md` | Fishing Score Calculation Engine | Complete |
 | 06 | `feature-requirements/feature-06-home-screen.md` | App Shell & Home Screen | Backlog |
 | 07 | `feature-requirements/feature-07-responsive-design.md` | Responsive Design & Mobile-First CSS | Backlog |
 

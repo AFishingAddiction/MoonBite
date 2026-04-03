@@ -1,0 +1,124 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of, NEVER } from 'rxjs';
+import { signal } from '@angular/core';
+import { FishingScore, FishingScoreService } from './fishing-score.service';
+import { FishingScoreDisplayComponent } from './fishing-score-display.component';
+import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function makeScore(score: number, weatherAvailable = true): FishingScore {
+  return {
+    score,
+    breakdown: {
+      moonPhaseScore: 80,
+      solunarScore: 90,
+      weatherScore: weatherAvailable ? 70 : 0,
+      moonPhaseWeighted: 24,
+      solunarWeighted: 32,
+      weatherWeighted: weatherAvailable ? 25 : 0,
+      weatherAvailable,
+    },
+    weights: { moonPhase: 0.3, solunar: 0.35, weather: 0.35 },
+    dateUtc: '2024-06-01',
+    latitude: 40.7128,
+    longitude: -74.006,
+  };
+}
+
+function makeGrantedState(): GeolocationState {
+  return {
+    status: 'granted',
+    position: {
+      coords: { latitude: 40.7128, longitude: -74.006 } as GeolocationCoordinates,
+      timestamp: 0,
+    } as GeolocationPosition,
+    error: null,
+  };
+}
+
+// ─── Tests ────────────────────────────────────────────────────────────────────
+
+describe('FishingScoreDisplayComponent', () => {
+  let component: FishingScoreDisplayComponent;
+  let fixture: ComponentFixture<FishingScoreDisplayComponent>;
+  let fishingScoreService: jasmine.SpyObj<FishingScoreService>;
+  let geolocationService: Pick<GeolocationService, 'state'>;
+
+  beforeEach(async () => {
+    fishingScoreService = jasmine.createSpyObj<FishingScoreService>('FishingScoreService', [
+      'getScore',
+    ]);
+    fishingScoreService.getScore.and.returnValue(of(makeScore(78)));
+
+    const geoState = signal<GeolocationState>(makeGrantedState());
+    geolocationService = { state: geoState.asReadonly() };
+
+    await TestBed.configureTestingModule({
+      imports: [FishingScoreDisplayComponent],
+      providers: [
+        { provide: FishingScoreService, useValue: fishingScoreService },
+        { provide: GeolocationService, useValue: geolocationService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(FishingScoreDisplayComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('creates the component', () => {
+    fixture.detectChanges();
+    expect(component).toBeTruthy();
+  });
+
+  it('displays the composite score', () => {
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('78');
+  });
+
+  it('displays the section heading', () => {
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/fishing score/i);
+  });
+
+  it('shows moon phase factor label', () => {
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/moon phase/i);
+  });
+
+  it('shows solunar factor label', () => {
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/solunar/i);
+  });
+
+  it('shows weather factor label', () => {
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/weather/i);
+  });
+
+  it('shows weather unavailable note when weatherAvailable is false', () => {
+    fishingScoreService.getScore.and.returnValue(of(makeScore(71, false)));
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/weather.*unavailable/i);
+  });
+
+  it('shows loading indicator before data arrives', () => {
+    fishingScoreService.getScore.and.returnValue(NEVER);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/calculating|loading/i);
+  });
+
+  it('shows error message when score is null', () => {
+    fishingScoreService.getScore.and.returnValue(of(null));
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toMatch(/unavailable|error/i);
+  });
+});

@@ -4,6 +4,7 @@ import { LocationDisplayComponent } from './location-display/location-display.co
 import { MoonPhaseDisplayComponent } from './moon-phase/moon-phase-display.component';
 import { SolunarDisplayComponent } from './solunar/solunar-display.component';
 import { WeatherDisplayComponent } from './weather/weather-display.component';
+import { FishingScoreDisplayComponent } from './scoring/fishing-score-display.component';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ import { WeatherDisplayComponent } from './weather/weather-display.component';
     MoonPhaseDisplayComponent,
     SolunarDisplayComponent,
     WeatherDisplayComponent,
+    FishingScoreDisplayComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
