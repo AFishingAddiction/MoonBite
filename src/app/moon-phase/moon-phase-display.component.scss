@@ -1,0 +1,156 @@
+@use 'variables' as *;
+
+// Component-scoped size constants (not global tokens — component-level only)
+$moon-emoji-size: 4.5rem;
+$score-bar-height: 12px;
+$score-fill-duration: 350ms; // slower than $transition-base for satisfying weight
+$moon-card-max-width: 400px;
+$score-badge-offset: -18px; // horizontal overhang of badge past the fill edge
+$score-badge-padding: 2px 6px;
+$score-badge-min-width: 28px;
+
+.moon-phase-card {
+  background-color: $color-surface-dark;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-dark;
+  max-width: $moon-card-max-width;
+  margin: $space-xl auto;
+  overflow: hidden;
+  transition:
+    box-shadow $transition-base,
+    transform $transition-base;
+
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: $shadow-dark-hover;
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  // ── Hero ────────────────────────────────────────────────────────────────
+
+  &__hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $space-xl $space-lg $space-md;
+    border-bottom: 1px solid $color-border-dark;
+  }
+
+  &__emoji {
+    font-size: $moon-emoji-size;
+    line-height: 1;
+    display: block;
+    margin-bottom: $space-sm;
+  }
+
+  &__phase-name {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-medium;
+    color: $color-accent;
+    text-align: center;
+  }
+
+  // ── Stats row ────────────────────────────────────────────────────────────
+
+  &__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid $color-border-dark;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $space-md;
+
+    &:first-child {
+      border-right: 1px solid $color-border-dark;
+    }
+  }
+
+  &__stat-label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-normal;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+    color: $color-text-on-dark-secondary;
+    margin-bottom: $space-xs;
+  }
+
+  &__stat-value {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-on-dark;
+  }
+
+  // ── Score section ────────────────────────────────────────────────────────
+
+  &__score-section {
+    padding: $space-md $space-lg $space-lg;
+  }
+
+  &__score-label {
+    display: block;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-normal;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+    color: $color-text-on-dark-secondary;
+    margin-bottom: $space-sm;
+  }
+
+  &__score-bar-track {
+    position: relative;
+    height: $score-bar-height;
+    background-color: $color-score-track;
+    border-radius: $radius-md;
+    overflow: visible;
+  }
+
+  &__score-bar-fill {
+    position: relative;
+    height: 100%;
+    background-color: $color-score-fill;
+    border-radius: $radius-md;
+    width: 0;
+    transition: width $score-fill-duration ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    &--ready {
+      width: var(--score-target-width);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &__score-badge {
+    position: absolute;
+    right: $score-badge-offset;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: $color-accent;
+    color: $color-surface-dark;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    padding: $score-badge-padding;
+    border-radius: $radius-full;
+    white-space: nowrap;
+    min-width: $score-badge-min-width;
+    text-align: center;
+  }
+}

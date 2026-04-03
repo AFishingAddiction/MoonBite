@@ -13,6 +13,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | File | Feature | Status |
 |---|---|---|
 | `feature-01-geolocation.md` | Geolocation Permission & Display | Complete |
+| `feature-02-moon-phase.md` | Moon Phase Data Service | Complete |
 
 ## Project overview
 

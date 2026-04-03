@@ -7,7 +7,7 @@
 | # | File | Feature | Status |
 |---|---|---|---|
 | 01 | `feature-requirements/feature-01-geolocation.md` | Geolocation Permission & Display | Complete |
-| 02 | `feature-requirements/feature-02-moon-phase.md` | Moon Phase Data Service | Backlog |
+| 02 | `feature-requirements/feature-02-moon-phase.md` | Moon Phase Data Service | Complete |
 | 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Backlog |
 | 04 | `feature-requirements/feature-04-weather.md` | Weather Data Service | Backlog |
 | 05 | `feature-requirements/feature-05-scoring.md` | Fishing Score Calculation Engine | Backlog |
@@ -48,3 +48,13 @@ Each feature has its own file in `feature-requirements/`. Add new features by:
 1. Creating `feature-requirements/feature-NN-<slug>.md`
 2. Adding a row to the index table above
 3. Updating `CLAUDE.md` with a link to the new file
+
+---
+
+## Feature Briefs & Status
+
+### Feature 02 — Moon Phase Data Service
+
+**File:** `feature-requirements/feature-02-moon-phase.md`
+
+Pure TypeScript calculation service providing moon phase data (phase name, illumination, moon age, fishing score contribution) for any date. No external dependencies or HTTP calls. Consumed by Feature 05 (Fishing Score Engine) and Feature 08 (Moon Details Screen). Includes optional dev-only display component.
