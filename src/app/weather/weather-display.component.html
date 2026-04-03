@@ -1,0 +1,120 @@
+<section
+  class="weather-card"
+  role="region"
+  [attr.aria-label]="sectionAriaLabel()"
+>
+  <!-- Header -->
+  <header class="weather-card__header">
+    <h2 class="weather-card__title">Weather Conditions</h2>
+  </header>
+
+  <!-- Loading state -->
+  @if (isLocating()) {
+    <div class="weather-card__loading" aria-busy="true">
+      <div class="weather-card__skeleton weather-card__skeleton--line"></div>
+      <div class="weather-card__skeleton weather-card__skeleton--line weather-card__skeleton--short"></div>
+      <div class="weather-card__skeleton weather-card__skeleton--bar"></div>
+    </div>
+  }
+
+  <!-- Error / permission denied state -->
+  @if (hasError() && !isLocating()) {
+    <div class="weather-card__error" role="alert">
+      @if (isDenied()) {
+        <p class="weather-card__error-message">
+          Location access required to fetch weather data.
+        </p>
+      } @else {
+        <p class="weather-card__error-message">
+          Weather data temporarily unavailable. Please try again.
+        </p>
+      }
+    </div>
+  }
+
+  <!-- Data loaded state -->
+  @if (hasData() && !isLocating()) {
+    @let w = weather()!;
+    <div class="weather-card__conditions">
+      <!-- Condition summary -->
+      <div class="weather-card__summary">
+        <span class="weather-card__emoji" aria-hidden="true">{{ weatherEmoji() }}</span>
+        <span class="weather-card__condition-label">{{ weatherDescription() }}</span>
+      </div>
+
+      <!-- Temperature -->
+      <div class="weather-card__temp-row">
+        <span class="weather-card__temp">{{ w.temperatureCelsius }}°C</span>
+        <span class="weather-card__feels-like">feels {{ w.apparentTemperatureCelsius }}°C</span>
+      </div>
+
+      <!-- Stats grid -->
+      <dl class="weather-card__stats">
+        <!-- Wind -->
+        <div class="weather-card__stat">
+          <dt class="weather-card__stat-label">Wind</dt>
+          <dd class="weather-card__stat-value">
+            {{ w.windSpeedKmh }} km/h
+            @if (w.windGustKmh > 30) {
+              <span class="weather-card__gust-warning" role="img" aria-label="High gust warning">
+                ↓{{ w.windGustKmh }} gust
+              </span>
+            }
+          </dd>
+        </div>
+
+        <!-- Pressure -->
+        <div class="weather-card__stat">
+          <dt class="weather-card__stat-label">Pressure</dt>
+          <dd class="weather-card__stat-value">
+            {{ w.barometricPressureHpa.toFixed(0) }} hPa
+            <span class="weather-card__pressure-trend" [attr.aria-label]="w.pressureTrend">
+              {{ pressureTrendIcon() }}
+            </span>
+          </dd>
+        </div>
+
+        <!-- Cloud cover -->
+        <div class="weather-card__stat">
+          <dt class="weather-card__stat-label">Clouds</dt>
+          <dd class="weather-card__stat-value">{{ w.cloudCoverPercent }}%</dd>
+        </div>
+
+        <!-- Precipitation -->
+        <div class="weather-card__stat">
+          <dt class="weather-card__stat-label">Rain</dt>
+          <dd class="weather-card__stat-value">
+            {{ w.precipitationMm }} mm
+            @if (w.precipitationMm > 0) {
+              <span class="weather-card__precip-warning" role="img" aria-label="Precipitation warning">
+                ☔
+              </span>
+            }
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Fishing score section -->
+    <div class="weather-card__score-section">
+      <div class="weather-card__score-label-row">
+        <span class="weather-card__score-label">Fishing Score</span>
+        <span class="weather-card__score-value">{{ w.fishingScoreContribution }} / 100</span>
+      </div>
+      <div
+        class="weather-card__score-bar-track"
+        role="progressbar"
+        [attr.aria-valuenow]="w.fishingScoreContribution"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="'Fishing score: ' + w.fishingScoreContribution + ' out of 100'"
+      >
+        <div
+          class="weather-card__score-fill"
+          [class]="scoreColorClass()"
+          [style.width]="scoreBarWidth()"
+        ></div>
+      </div>
+    </div>
+  }
+</section>

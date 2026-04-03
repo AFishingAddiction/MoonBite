@@ -1,0 +1,243 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Weather Card — dark theme matching MoonPhaseDisplayComponent
+// ─────────────────────────────────────────────────────────────────────────────
+
+.weather-card {
+  background-color: $color-surface-dark;
+  border: 1px solid $color-border-dark;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-dark;
+  color: $color-text-on-dark;
+  font-family: $font-family-base;
+  max-width: 400px;
+  padding: $space-lg;
+  width: 100%;
+
+  &:hover {
+    box-shadow: $shadow-dark-hover;
+  }
+
+  // ── Header ────────────────────────────────────────────────────────────────
+
+  &__header {
+    margin-bottom: $space-md;
+  }
+
+  &__title {
+    color: $color-text-on-dark;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    letter-spacing: $letter-spacing-caps;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  // ── Loading skeleton ──────────────────────────────────────────────────────
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+    padding: $space-sm 0;
+  }
+
+  &__skeleton {
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(
+      90deg,
+      $color-surface-dark-alt 25%,
+      $color-border-dark 50%,
+      $color-surface-dark-alt 75%
+    );
+    background-size: 200% 100%;
+    border-radius: $radius-sm;
+
+    &--line {
+      height: 16px;
+      width: 100%;
+    }
+
+    &--short {
+      width: 60%;
+    }
+
+    &--bar {
+      height: 10px;
+      margin-top: $space-sm;
+      width: 100%;
+    }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  // ── Error state ───────────────────────────────────────────────────────────
+
+  &__error {
+    padding: $space-sm 0;
+  }
+
+  &__error-message {
+    color: $color-text-on-dark-secondary;
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+
+  // ── Conditions ────────────────────────────────────────────────────────────
+
+  &__conditions {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__summary {
+    align-items: center;
+    display: flex;
+    gap: $space-sm;
+  }
+
+  &__emoji {
+    font-size: $font-size-xl;
+    line-height: 1;
+  }
+
+  &__condition-label {
+    color: $color-text-on-dark;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+  }
+
+  &__temp-row {
+    align-items: baseline;
+    display: flex;
+    gap: $space-sm;
+  }
+
+  &__temp {
+    color: $color-text-on-dark;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+  }
+
+  &__feels-like {
+    color: $color-text-on-dark-secondary;
+    font-size: $font-size-sm;
+  }
+
+  // ── Stats grid ────────────────────────────────────────────────────────────
+
+  &__stats {
+    border-top: 1px solid $color-border-dark;
+    display: grid;
+    gap: $space-sm;
+    grid-template-columns: 1fr 1fr;
+    margin: 0;
+    padding-top: $space-md;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__stat-label {
+    color: $color-text-on-dark-secondary;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+  }
+
+  &__stat-value {
+    align-items: center;
+    color: $color-text-on-dark;
+    display: flex;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    gap: $space-xs;
+  }
+
+  // ── Warnings ──────────────────────────────────────────────────────────────
+
+  &__gust-warning {
+    color: $color-accent;
+    font-size: $font-size-xs;
+  }
+
+  &__precip-warning {
+    font-size: $font-size-xs;
+  }
+
+  &__pressure-trend {
+    color: $color-accent;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+
+  // ── Score section ─────────────────────────────────────────────────────────
+
+  &__score-section {
+    border-top: 1px solid $color-border-dark;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+    padding-top: $space-md;
+  }
+
+  &__score-label-row {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__score-label {
+    color: $color-text-on-dark-secondary;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+  }
+
+  &__score-value {
+    color: $color-text-on-dark;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+  }
+
+  &__score-bar-track {
+    background-color: $color-score-track;
+    border-radius: $radius-full;
+    height: 10px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  &__score-fill {
+    border-radius: $radius-full;
+    height: 100%;
+    transition: width $transition-base;
+
+    &--poor {
+      background-color: #e74c3c;
+    }
+
+    &--fair {
+      background-color: #f39c12;
+    }
+
+    &--good {
+      background-color: #2ecc71;
+    }
+
+    &--excellent {
+      background-color: $color-score-fill;
+    }
+  }
+}
