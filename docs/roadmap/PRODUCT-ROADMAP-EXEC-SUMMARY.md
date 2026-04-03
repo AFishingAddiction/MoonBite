@@ -389,7 +389,7 @@ Track these weekly:
 | 21 | Analytics | M3 | L |
 | 22 | Premium / Paywall | M3 | M |
 
-See **[docs/ROADMAP.md](docs/ROADMAP.md)** for detailed descriptions.
+See **[docs/roadmap/ROADMAP.md](ROADMAP.md)** for detailed descriptions.
 
 ---
 

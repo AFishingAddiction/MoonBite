@@ -340,7 +340,7 @@ User can view details, save location, share score
 
 ## Related Documents
 
-- **Roadmap:** `docs/ROADMAP.md` — Detailed feature descriptions, dependencies, and complexity estimates
+- **Roadmap:** `docs/roadmap/ROADMAP.md` — Detailed feature descriptions, dependencies, and complexity estimates
 - **Feature Requirements:** `docs/FEATURE-REQUIREMENTS.md` — Index of all 22 features and their status
 - **Architecture Guide:** `docs/AGENTS.md` — How to decompose tasks across agent workflows
 - **Project Setup:** `CLAUDE.md` — Technical stack, conventions, and testing strategy

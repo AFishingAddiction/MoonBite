@@ -24,12 +24,12 @@ A simple, mobile-first web app that tells anglers how good fishing is today (0�
    - User stories and success metrics
    - Competitive landscape and go-to-market
 
-2. **Skim second:** [`docs/ROADMAP-SUMMARY.md`](ROADMAP-SUMMARY.md) (3 min)
+2. **Skim second:** [`docs/roadmap/ROADMAP-SUMMARY.md`](roadmap/ROADMAP-SUMMARY.md) (3 min)
    - High-level timeline (3 milestones over 8 weeks)
    - Features by milestone
    - Quick reference tables
 
-3. **Deep dive:** [`docs/ROADMAP.md`](ROADMAP.md) (20 min)
+3. **Deep dive:** [`docs/roadmap/ROADMAP.md`](roadmap/ROADMAP.md) (20 min)
    - All 22 features with detailed descriptions
    - Data sources and API recommendations
    - Technical decisions and risk mitigation
@@ -45,7 +45,7 @@ A simple, mobile-first web app that tells anglers how good fishing is today (0�
    - External APIs needed (free tier details)
    - Persistence strategy
 
-3. **Reference:** [`docs/ROADMAP.md`](ROADMAP.md) Feature sections for:
+3. **Reference:** [`docs/roadmap/ROADMAP.md`](roadmap/ROADMAP.md) Feature sections for:
    - Data sources and API endpoints
    - Component structure recommendations
    - Complexity estimates and dependencies
@@ -60,7 +60,7 @@ A simple, mobile-first web app that tells anglers how good fishing is today (0�
    - Styling approach (SCSS, semantic naming)
    - Design system guidelines (if needed)
 
-3. **Reference:** [`docs/ROADMAP.md`](ROADMAP.md) for:
+3. **Reference:** [`docs/roadmap/ROADMAP.md`](roadmap/ROADMAP.md) for:
    - Component breakdown for each feature
    - UI descriptions (e.g., "large card with score and summary")
 
@@ -69,7 +69,7 @@ A simple, mobile-first web app that tells anglers how good fishing is today (0�
    - Unit tests: 85% coverage threshold, Jasmine/Karma
    - E2E tests: Playwright, page object models, accessible selectors
 
-2. **Reference:** Each feature in [`docs/ROADMAP.md`](ROADMAP.md) for:
+2. **Reference:** Each feature in [`docs/roadmap/ROADMAP.md`](roadmap/ROADMAP.md) for:
    - Acceptance criteria (to become feature requirement docs)
    - Dependencies (test order)
    - Data sources (mock data strategy)
@@ -81,8 +81,8 @@ A simple, mobile-first web app that tells anglers how good fishing is today (0�
 ```
 docs/
 ├── PRODUCT-BRIEF.md           ← Strategic overview, value prop, success metrics
-├── ROADMAP.md                  ← Detailed 22-feature roadmap with APIs & complexity
-├── ROADMAP-SUMMARY.md          ← Quick reference (timeline, metrics, decisions)
+├── roadmap/ROADMAP.md          ← Detailed 22-feature roadmap with APIs & complexity
+├── roadmap/ROADMAP-SUMMARY.md  ← Quick reference (timeline, metrics, decisions)
 ├── FEATURE-REQUIREMENTS.md     ← Index of all features + status
 ├── feature-requirements/       ← Individual feature docs (to be created)
 │   ├── feature-01-geolocation.md
@@ -149,7 +149,7 @@ For MVP and M2, everything is client-side.
 
 ### Workflow
 
-1. **Read the feature description** in `docs/ROADMAP.md`
+1. **Read the feature description** in `docs/roadmap/ROADMAP.md`
 2. **Create a feature requirement doc** in `docs/feature-requirements/feature-NN-<slug>.md` (use the example as a template)
 3. **Write failing Jasmine unit tests** (test-first; red phase)
 4. **Write failing Playwright E2E tests** (red phase)
@@ -259,7 +259,7 @@ npm run build
 
 ## Tips for Success
 
-1. **Read the full ROADMAP.md once.** It's long but comprehensive. You'll make better decisions if you understand the full product vision.
+1. **Read the full roadmap/ROADMAP.md once.** It's long but comprehensive. You'll make better decisions if you understand the full product vision.
 
 2. **Write tests first.** Feature 01 (geolocation) is a good one to start with — straightforward and no external API complexity.
 

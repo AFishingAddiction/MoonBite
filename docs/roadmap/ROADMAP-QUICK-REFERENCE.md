@@ -427,7 +427,7 @@ docs/
 ├── FEATURE-REQUIREMENTS.md
 │   └── Index of all 22 features
 │
-├── FEATURE-DEPENDENCIES.md
+├── roadmap/FEATURE-DEPENDENCIES.md
 │   └── Dependency graph details
 │
 ├── feature-requirements/
@@ -467,4 +467,4 @@ docs/
 
 **Quick Reference Version:** 1.0  
 **Last Updated:** April 1, 2026  
-**For full details, see:** `docs/PRODUCT-ROADMAP.md`
+**For full details, see:** `docs/roadmap/PRODUCT-ROADMAP.md`

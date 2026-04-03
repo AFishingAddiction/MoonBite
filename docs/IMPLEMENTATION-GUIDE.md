@@ -935,8 +935,8 @@ npm run test:coverage
 
 ### Team Resources
 
-- Product Roadmap: `docs/PRODUCT-ROADMAP.md`
-- Quick Reference: `docs/ROADMAP-QUICK-REFERENCE.md`
+- Product Roadmap: `docs/roadmap/PRODUCT-ROADMAP.md`
+- Quick Reference: `docs/roadmap/ROADMAP-QUICK-REFERENCE.md`
 - Architecture: `docs/AGENTS.md`
 - Project Setup: `CLAUDE.md`
 

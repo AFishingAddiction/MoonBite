@@ -10,7 +10,7 @@
 This section summarizes all product planning documents created for MoonBite.
 
 ### 1. Executive Summary
-**File:** `/workspaces/moonbite/PRODUCT-ROADMAP-EXEC-SUMMARY.md`
+**File:** `docs/roadmap/PRODUCT-ROADMAP-EXEC-SUMMARY.md`
 
 - **Audience:** Leadership (C-suite, investors, board)
 - **Length:** 6 pages
@@ -27,7 +27,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 2. Product Brief
-**File:** `/workspaces/moonbite/docs/PRODUCT-BRIEF.md`
+**File:** `docs/PRODUCT-BRIEF.md`
 
 - **Audience:** Product, Engineering, Design, Marketing leadership
 - **Length:** 12 pages
@@ -46,7 +46,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 3. Detailed Roadmap
-**File:** `/workspaces/moonbite/docs/ROADMAP.md`
+**File:** `docs/roadmap/ROADMAP.md`
 
 - **Audience:** Everyone (most comprehensive)
 - **Length:** 25+ pages
@@ -72,7 +72,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 4. Roadmap Summary (Quick Reference)
-**File:** `/workspaces/moonbite/docs/ROADMAP-SUMMARY.md`
+**File:** `docs/roadmap/ROADMAP-SUMMARY.md`
 
 - **Audience:** Everyone (quick lookup)
 - **Length:** 5 pages
@@ -92,7 +92,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 5. Feature Dependencies & Build Order
-**File:** `/workspaces/moonbite/docs/FEATURE-DEPENDENCIES.md`
+**File:** `docs/roadmap/FEATURE-DEPENDENCIES.md`
 
 - **Audience:** Tech lead, engineering manager, developers
 - **Length:** 20+ pages
@@ -113,7 +113,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 6. Getting Started Guide
-**File:** `/workspaces/moonbite/docs/GETTING-STARTED-PRODUCT.md`
+**File:** `docs/GETTING-STARTED-PRODUCT.md`
 
 - **Audience:** New team members, developers, designers, QA
 - **Length:** 10 pages
@@ -134,7 +134,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 7. Feature Requirements Index
-**File:** `/workspaces/moonbite/docs/FEATURE-REQUIREMENTS.md`
+**File:** `docs/FEATURE-REQUIREMENTS.md`
 
 - **Audience:** Everyone (index and tracking)
 - **Length:** 2 pages
@@ -150,7 +150,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 8. Documentation Hub
-**File:** `/workspaces/moonbite/docs/README.md`
+**File:** `docs/README.md`
 
 - **Audience:** Everyone (navigation)
 - **Length:** 5 pages
@@ -170,7 +170,7 @@ This section summarizes all product planning documents created for MoonBite.
 ---
 
 ### 9. Agent Workflows (Pre-existing)
-**File:** `/workspaces/moonbite/docs/AGENTS.md`
+**File:** `docs/AGENTS.md`
 
 - **Note:** This document was already in the codebase; included for reference
 - **Purpose:** How to use Claude Code agents for planning and development
@@ -186,24 +186,24 @@ This section summarizes all product planning documents created for MoonBite.
 ## How These Documents Work Together
 
 ```
-PRODUCT-ROADMAP-EXEC-SUMMARY.md
+docs/roadmap/PRODUCT-ROADMAP-EXEC-SUMMARY.md
     ↓ (Leadership approval)
     ↓
-docs/PRODUCT-BRIEF.md ←──────── Strategy & stakeholder alignment
+docs/PRODUCT-BRIEF.md ←──────────── Strategy & stakeholder alignment
     ↓
-docs/ROADMAP.md ←─────────────── Deep technical dive (features 01–22)
+docs/roadmap/ROADMAP.md ←─────────── Deep technical dive (features 01–22)
     ↓
-docs/FEATURE-DEPENDENCIES.md ←─── Build order & sprint planning
+docs/roadmap/FEATURE-DEPENDENCIES.md ←── Build order & sprint planning
     ↓
-docs/FEATURE-REQUIREMENTS.md ←─── Progress tracking template
+docs/FEATURE-REQUIREMENTS.md ←────── Progress tracking template
     ↓
 (For each feature 01–22, create docs/feature-requirements/feature-NN-<slug>.md)
     ↓
-docs/README.md ←──────────────── Hub to navigate all docs
+docs/README.md ←──────────────────── Hub to navigate all docs
     ↓
-docs/GETTING-STARTED-PRODUCT.md ← Onboarding guide
+docs/GETTING-STARTED-PRODUCT.md ←─── Onboarding guide
     ↓
-docs/ROADMAP-SUMMARY.md ←──────── Quick reference for daily work
+docs/roadmap/ROADMAP-SUMMARY.md ←─── Quick reference for daily work
 ```
 
 ---
@@ -211,33 +211,33 @@ docs/ROADMAP-SUMMARY.md ←──────── Quick reference for daily wo
 ## Navigation by Role
 
 ### Product Manager
-**Start here:** `PRODUCT-ROADMAP-EXEC-SUMMARY.md`  
+**Start here:** `docs/roadmap/PRODUCT-ROADMAP-EXEC-SUMMARY.md`  
 **Then read:** `docs/PRODUCT-BRIEF.md`  
-**Reference:** `docs/ROADMAP.md`, `docs/ROADMAP-SUMMARY.md`  
+**Reference:** `docs/roadmap/ROADMAP.md`, `docs/roadmap/ROADMAP-SUMMARY.md`  
 **Use for:** Roadmap approval, stakeholder updates, feature prioritization
 
 ### Engineering Lead / Tech Lead
 **Start here:** `docs/GETTING-STARTED-PRODUCT.md`  
-**Then read:** `docs/FEATURE-DEPENDENCIES.md`  
-**Reference:** `docs/ROADMAP.md`, `CLAUDE.md`  
+**Then read:** `docs/roadmap/FEATURE-DEPENDENCIES.md`  
+**Reference:** `docs/roadmap/ROADMAP.md`, `CLAUDE.md`  
 **Use for:** Sprint planning, task assignment, architectural decisions
 
 ### Developer
 **Start here:** `docs/GETTING-STARTED-PRODUCT.md`  
-**Then read:** Your assigned feature section in `docs/ROADMAP.md`  
-**Reference:** `docs/FEATURE-DEPENDENCIES.md`, `CLAUDE.md`  
+**Then read:** Your assigned feature section in `docs/roadmap/ROADMAP.md`  
+**Reference:** `docs/roadmap/FEATURE-DEPENDENCIES.md`, `CLAUDE.md`  
 **Use for:** Implementation, testing strategy, TDD workflow
 
 ### Designer
 **Start here:** `docs/PRODUCT-BRIEF.md` (User Stories section)  
-**Then read:** `docs/ROADMAP-SUMMARY.md`  
-**Reference:** Feature UI descriptions in `docs/ROADMAP.md`  
+**Then read:** `docs/roadmap/ROADMAP-SUMMARY.md`  
+**Reference:** Feature UI descriptions in `docs/roadmap/ROADMAP.md`  
 **Use for:** Wireframing, component layout, interaction patterns
 
 ### QA / Test Engineer
 **Start here:** `CLAUDE.md` (Testing conventions)  
-**Then read:** `docs/FEATURE-DEPENDENCIES.md` (Testing strategy)  
-**Reference:** Feature acceptance criteria in `docs/ROADMAP.md`  
+**Then read:** `docs/roadmap/FEATURE-DEPENDENCIES.md` (Testing strategy)  
+**Reference:** Feature acceptance criteria in `docs/roadmap/ROADMAP.md`  
 **Use for:** Test planning, acceptance criteria, coverage goals
 
 ---
@@ -393,10 +393,10 @@ These documents should be reviewed and updated:
 
 ### For Questions About
 - **Product strategy:** See `docs/PRODUCT-BRIEF.md`
-- **Feature details:** See `docs/ROADMAP.md`
-- **Build order:** See `docs/FEATURE-DEPENDENCIES.md`
+- **Feature details:** See `docs/roadmap/ROADMAP.md`
+- **Build order:** See `docs/roadmap/FEATURE-DEPENDENCIES.md`
 - **Getting started:** See `docs/GETTING-STARTED-PRODUCT.md`
-- **Quick lookup:** See `docs/ROADMAP-SUMMARY.md`
+- **Quick lookup:** See `docs/roadmap/ROADMAP-SUMMARY.md`
 - **Navigation:** See `docs/README.md`
 
 ### Contact

@@ -280,8 +280,8 @@ Total:            8 weeks      → 22 features (with 2 engineers + 1 week buffer
 
 | Document | Purpose | Audience |
 |----------|---------|----------|
-| **PRODUCT-ROADMAP.md** | Full feature details, dependencies, acceptance criteria | Eng, Product |
-| **ROADMAP-QUICK-REFERENCE.md** | Charts, matrices, quick decisions | Exec, Product |
+| **roadmap/PRODUCT-ROADMAP.md** | Full feature details, dependencies, acceptance criteria | Eng, Product |
+| **roadmap/ROADMAP-QUICK-REFERENCE.md** | Charts, matrices, quick decisions | Exec, Product |
 | **IMPLEMENTATION-GUIDE.md** | Development workflow, testing, deployment | Eng |
 | **PRODUCT-BRIEF.md** | Strategy, problem statement, competitive analysis | Exec, Product |
 | **feature-requirements/FNN-*.md** | Individual feature specs (to be created) | Eng |
@@ -306,8 +306,8 @@ Total:            8 weeks      → 22 features (with 2 engineers + 1 week buffer
 **To understand the roadmap:**
 
 1. Read **EXECUTIVE-SUMMARY.md** (this file) — 10 min
-2. Review **ROADMAP-QUICK-REFERENCE.md** — 15 min (charts, dependencies)
-3. Deep dive **PRODUCT-ROADMAP.md** — 30 min (full feature details)
+2. Review **roadmap/ROADMAP-QUICK-REFERENCE.md** — 15 min (charts, dependencies)
+3. Deep dive **roadmap/PRODUCT-ROADMAP.md** — 30 min (full feature details)
 
 **To start development:**
 
@@ -317,7 +317,7 @@ Total:            8 weeks      → 22 features (with 2 engineers + 1 week buffer
 
 **To track progress:**
 
-1. Check **ROADMAP-QUICK-REFERENCE.md** matrix
+1. Check **roadmap/ROADMAP-QUICK-REFERENCE.md** matrix
 2. Update feature status (Backlog → In Progress → Done)
 3. Weekly demo to stakeholders
 
@@ -400,4 +400,4 @@ Total:            8 weeks      → 22 features (with 2 engineers + 1 week buffer
 
 ---
 
-**Thank you for reviewing MoonBite's product roadmap. For questions, see PRODUCT-ROADMAP.md or contact the Product Manager.**
+**Thank you for reviewing MoonBite's product roadmap. For questions, see roadmap/PRODUCT-ROADMAP.md or contact the Product Manager.**

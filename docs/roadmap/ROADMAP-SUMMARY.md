@@ -1,6 +1,6 @@
 # MoonBite Roadmap — Quick Reference
 
-**See the full roadmap in [`docs/ROADMAP.md`](ROADMAP.md) and product brief in [`docs/PRODUCT-BRIEF.md`](PRODUCT-BRIEF.md).**
+**See the full roadmap in [`docs/roadmap/ROADMAP.md`](ROADMAP.md) and product brief in [`docs/PRODUCT-BRIEF.md`](../PRODUCT-BRIEF.md).**
 
 ---
 
@@ -212,7 +212,7 @@ Premium (22) → Wraps features 13, 15, 20, 21
 
 ## Document References
 
-- **Full Roadmap:** `docs/ROADMAP.md` — 22 features with detailed descriptions, APIs, and complexity
+- **Full Roadmap:** `docs/roadmap/ROADMAP.md` — 22 features with detailed descriptions, APIs, and complexity
 - **Product Brief:** `docs/PRODUCT-BRIEF.md` — Strategic vision, value prop, go-to-market
 - **Feature Requirements:** `docs/FEATURE-REQUIREMENTS.md` — Feature index and status
 - **Agent Workflows:** `docs/AGENTS.md` — How to decompose tasks and coordinate teams

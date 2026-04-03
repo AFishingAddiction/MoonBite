@@ -161,7 +161,7 @@
 
 ---
 
-### 8. FEATURE-DEPENDENCIES.md
+### 8. roadmap/FEATURE-DEPENDENCIES.md
 **What:** Detailed dependency graph and critical path analysis  
 **Contains:**
 - Dependency tree (visual)
@@ -268,7 +268,7 @@
 | PRODUCT-BRIEF.md | Quarterly | PM | Strategic pivots, market changes |
 | feature-requirements/*.md | Per feature | Engineers | Feature development progress |
 | FEATURE-REQUIREMENTS.md | Weekly | PM | Feature status changes |
-| FEATURE-DEPENDENCIES.md | Per sprint | Tech Lead | New dependencies discovered |
+| roadmap/FEATURE-DEPENDENCIES.md | Per sprint | Tech Lead | New dependencies discovered |
 | AGENTS.md | As needed | Tech Lead | New agent workflows |
 | CLAUDE.md | As needed | Tech Lead | Stack or convention changes |
 
@@ -310,7 +310,7 @@
 **A:** Read IMPLEMENTATION-GUIDE.md (Phase 1: Preparation section).
 
 ### Q: What's the critical path?
-**A:** See FEATURE-DEPENDENCIES.md or the dependency tree in ROADMAP-QUICK-REFERENCE.md.
+**A:** See roadmap/FEATURE-DEPENDENCIES.md or the dependency tree in ROADMAP-QUICK-REFERENCE.md.
 
 ### Q: When should we stop adding features?
 **A:** Stick to 22 features across M1–M3. Defer M4+ features to post-Week 8.
@@ -340,7 +340,7 @@ PRODUCT-ROADMAP.md
 │  │
 │  └─ References →
 │     ├─ feature-requirements/*.md (individual specs)
-│     ├─ FEATURE-DEPENDENCIES.md (dependency details)
+│     ├─ roadmap/FEATURE-DEPENDENCIES.md (dependency details)
 │     └─ IMPLEMENTATION-GUIDE.md (how to ship)
 │
 PRODUCT-BRIEF.md
