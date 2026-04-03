@@ -66,7 +66,7 @@ describe('LocationDisplayComponent', () => {
 
   it('should show denied error message and retry button', () => {
     stateSignal.set(
-      createState({ status: 'denied', error: { code: 1 } as GeolocationPositionError }),
+      createState({ status: 'denied', error: { code: 1 } as GeolocationPositionError })
     );
     fixture.detectChanges();
     const error = fixture.debugElement.query(By.css('[data-testid="location-error"]'));
@@ -77,7 +77,7 @@ describe('LocationDisplayComponent', () => {
 
   it('should call requestLocation when retry button is clicked', () => {
     stateSignal.set(
-      createState({ status: 'denied', error: { code: 1 } as GeolocationPositionError }),
+      createState({ status: 'denied', error: { code: 1 } as GeolocationPositionError })
     );
     fixture.detectChanges();
     const retry = fixture.debugElement.query(By.css('[data-testid="retry-btn"]'));

@@ -1,7 +1,5 @@
 <section class="location-display" aria-label="Your location">
-  <h2 class="location-display__title">
-    <span aria-hidden="true">📍</span> Your Location
-  </h2>
+  <h2 class="location-display__title"><span aria-hidden="true">📍</span> Your Location</h2>
 
   @switch (geo.state().status) {
     @case ('idle') {
@@ -16,12 +14,7 @@
     }
 
     @case ('requesting') {
-      <div
-        class="location-display__loading"
-        data-testid="location-loading"
-        role="status"
-        aria-live="polite"
-      >
+      <div class="location-display__loading" data-testid="location-loading" role="status" aria-live="polite">
         <span class="location-display__spinner" aria-hidden="true"></span>
         <span>Getting your location…</span>
       </div>
@@ -30,12 +23,8 @@
     @case ('granted') {
       @if (geo.state().position; as pos) {
         <div class="location-display__coords" data-testid="location-coords" aria-live="polite">
-          <span class="location-display__coord">
-            Lat: {{ formatCoord(pos.coords.latitude, 'N', 'S') }}
-          </span>
-          <span class="location-display__coord">
-            Lon: {{ formatCoord(pos.coords.longitude, 'E', 'W') }}
-          </span>
+          <span class="location-display__coord"> Lat: {{ formatCoord(pos.coords.latitude, 'N', 'S') }} </span>
+          <span class="location-display__coord"> Lon: {{ formatCoord(pos.coords.longitude, 'E', 'W') }} </span>
         </div>
         <button
           class="location-display__btn location-display__btn--secondary"
@@ -66,9 +55,7 @@
 
     @case ('error') {
       <div class="location-display__error" data-testid="location-error" role="alert">
-        <p class="location-display__error-message">
-          Unable to retrieve your location. Please try again.
-        </p>
+        <p class="location-display__error-message">Unable to retrieve your location. Please try again.</p>
         <button
           class="location-display__btn location-display__btn--secondary"
           data-testid="retry-btn"

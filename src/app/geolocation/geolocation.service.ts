@@ -25,14 +25,14 @@ export class GeolocationService {
     this._state.set({ status: 'requesting', position: null, error: null });
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         this._state.set({ status: 'granted', position, error: null });
       },
-      (error) => {
+      error => {
         const status = error.code === 1 ? 'denied' : 'error';
         this._state.set({ status, position: null, error });
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
   }
 

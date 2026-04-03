@@ -14,7 +14,9 @@ describe('GeolocationService', () => {
     });
 
     service = TestBed.inject(GeolocationService);
-    geolocationSpy = spyOnProperty(navigator, 'geolocation', 'get').and.returnValue(mockGeolocation);
+    geolocationSpy = spyOnProperty(navigator, 'geolocation', 'get').and.returnValue(
+      mockGeolocation
+    );
   });
 
   it('should be created', () => {
@@ -36,7 +38,7 @@ describe('GeolocationService', () => {
     expect(service.state().status).toBe('requesting');
   });
 
-  it('should transition to granted state on successful position', (done) => {
+  it('should transition to granted state on successful position', done => {
     const mockPosition = {
       coords: { latitude: 40.7128, longitude: -74.006, accuracy: 10 },
       timestamp: Date.now(),
@@ -55,13 +57,13 @@ describe('GeolocationService', () => {
     }, 0);
   });
 
-  it('should transition to denied state when permission is denied', (done) => {
+  it('should transition to denied state when permission is denied', done => {
     const mockError = { code: 1, message: 'User denied Geolocation' } as GeolocationPositionError;
 
     mockGeolocation.getCurrentPosition.and.callFake(
       (_success: PositionCallback, error: PositionErrorCallback) => {
         error(mockError);
-      },
+      }
     );
 
     service.requestLocation();
@@ -73,7 +75,7 @@ describe('GeolocationService', () => {
     }, 0);
   });
 
-  it('should transition to error state for non-permission errors', (done) => {
+  it('should transition to error state for non-permission errors', done => {
     const mockError = {
       code: 2,
       message: 'Position unavailable',
@@ -82,7 +84,7 @@ describe('GeolocationService', () => {
     mockGeolocation.getCurrentPosition.and.callFake(
       (_success: PositionCallback, error: PositionErrorCallback) => {
         error(mockError);
-      },
+      }
     );
 
     service.requestLocation();
