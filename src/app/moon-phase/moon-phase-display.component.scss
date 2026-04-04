@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'mixins' as *;
 
 // Component-scoped size constants (not global tokens — component-level only)
 $moon-emoji-size: 4.5rem;
@@ -13,8 +14,7 @@ $score-badge-min-width: 28px;
   background-color: $color-surface-dark;
   border-radius: $radius-lg;
   box-shadow: $shadow-dark;
-  max-width: $moon-card-max-width;
-  margin: $space-xl auto;
+  width: 100%;
   overflow: hidden;
   transition:
     box-shadow $transition-base,

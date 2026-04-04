@@ -7,8 +7,7 @@
   border: 1px solid $color-border;
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
-  max-width: 480px;
-  margin: $space-xl auto;
+  width: 100%;
 
   &__title {
     font-size: $font-size-lg;
@@ -22,6 +21,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
     padding: $space-sm $space-lg;
     border-radius: $radius-md;
     font-size: $font-size-base;

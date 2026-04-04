@@ -19,6 +19,12 @@
   }
 }
 
+@mixin respond-below($bp) {
+  @media (max-width: ($bp - 1px)) {
+    @content;
+  }
+}
+
 @mixin visually-hidden {
   position: absolute;
   width: 1px;

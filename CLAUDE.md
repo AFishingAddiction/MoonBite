@@ -18,6 +18,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-04-weather.md` | Weather Data Service | Complete |
 | `feature-05-scoring.md` | Fishing Score Calculation Engine | Complete |
 | `feature-06-home-screen.md` | App Shell & Home Screen | Complete |
+| `feature-07-responsive-design.md` | Responsive Design & Mobile-First CSS | Complete |
 
 ## Project overview
 

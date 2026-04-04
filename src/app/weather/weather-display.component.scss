@@ -12,7 +12,6 @@
   box-shadow: $shadow-dark;
   color: $color-text-on-dark;
   font-family: $font-family-base;
-  max-width: 400px;
   padding: $space-lg;
   width: 100%;
 
@@ -229,15 +228,15 @@
     transition: width $transition-base;
 
     &--poor {
-      background-color: #e74c3c;
+      background-color: $color-score-poor;
     }
 
     &--fair {
-      background-color: #f39c12;
+      background-color: $color-score-fair;
     }
 
     &--good {
-      background-color: #2ecc71;
+      background-color: $color-score-good;
     }
 
     &--excellent {

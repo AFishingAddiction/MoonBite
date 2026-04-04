@@ -13,8 +13,7 @@ $score-badge-min-width: 28px;
   background-color: $color-surface-dark;
   border-radius: $radius-lg;
   box-shadow: $shadow-dark;
-  max-width: $solunar-card-max-width;
-  margin: $space-xl auto;
+  width: 100%;
   overflow: hidden;
   transition:
     box-shadow $transition-base,
