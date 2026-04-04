@@ -4,6 +4,8 @@ services:
     volumes:
       - bashhistory:/commandhistory
       - claude-config:/home/node/.claude
+      - ~/.gitconfig:/home/node/.gitconfig:ro
+      - ~/.ssh:/home/node/.ssh:ro
 
 volumes:
   bashhistory:
