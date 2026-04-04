@@ -142,9 +142,7 @@ describe('SolunarDisplayComponent', () => {
       expect(fixture.componentInstance).toBeTruthy();
     });
 
-    it('calls GeolocationService.requestLocation() on initialization', () => {
-      expect(mockGeoService.requestLocation).toHaveBeenCalledTimes(1);
-    });
+
   });
 
   // ── Card landmark ─────────────────────────────────────────────────────────

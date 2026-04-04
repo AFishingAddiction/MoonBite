@@ -94,6 +94,5 @@ export class WeatherDisplayComponent {
     afterNextRender(() => {
       this.scoreReady.set(true);
     });
-    this.geoService.requestLocation();
   }
 }

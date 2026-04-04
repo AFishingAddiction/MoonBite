@@ -1,1 +1,69 @@
-// Component styles for AppComponent
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ── App shell wrapper ────────────────────────────────────────────────────────
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $color-surface-alt;
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.app-shell__header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-sm $space-md;
+  background-color: $color-primary;
+  box-shadow: $shadow-dark;
+  color: $color-text-on-dark;
+
+  @include respond-above($bp-md) {
+    padding: $space-sm $space-xl;
+  }
+}
+
+// ── Brand block (icon + name + tagline) ─────────────────────────────────────
+.app-shell__brand {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.app-shell__logo-icon {
+  font-size: $font-size-xl;
+  line-height: 1;
+}
+
+.app-shell__brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell__logo-text {
+  margin: 0;
+  padding: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-on-dark;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.app-shell__tagline {
+  font-size: $font-size-xs;
+  color: $color-text-on-dark-secondary;
+  line-height: 1.2;
+}
+
+// ── Date display ─────────────────────────────────────────────────────────────
+.app-shell__date {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-on-dark-secondary;
+  white-space: nowrap;
+}

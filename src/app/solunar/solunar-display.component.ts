@@ -58,7 +58,6 @@ export class SolunarDisplayComponent {
     afterNextRender(() => {
       this.scoreReady.set(true);
     });
-    this.geoService.requestLocation();
   }
 
   protected formatTime(isoString: string): string {

@@ -17,6 +17,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-03-solunar.md` | Solunar Table Data Service | Complete |
 | `feature-04-weather.md` | Weather Data Service | Complete |
 | `feature-05-scoring.md` | Fishing Score Calculation Engine | Complete |
+| `feature-06-home-screen.md` | App Shell & Home Screen | Complete |
 
 ## Project overview
 

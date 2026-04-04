@@ -1,0 +1,55 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: $space-md;
+  box-sizing: border-box;
+
+  @include respond-above($bp-md) {
+    padding: $space-lg;
+    gap: $space-lg;
+  }
+}
+
+// ── Score hero ───────────────────────────────────────────────────────────────
+.home__score-hero {
+  width: 100%;
+}
+
+// ── Location bar ─────────────────────────────────────────────────────────────
+.home__location {
+  width: 100%;
+}
+
+// ── Data grid (moon + solunar) ───────────────────────────────────────────────
+.home__data-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-md;
+
+  @include respond-above($bp-md) {
+    grid-template-columns: 1fr 1fr;
+    gap: $space-lg;
+  }
+}
+
+.home__data-grid-cell {
+  display: flex;
+  flex-direction: column;
+
+  // Ensure child components fill cell height
+  > * {
+    flex: 1;
+  }
+}
+
+// ── Weather (full-width) ─────────────────────────────────────────────────────
+.home__weather {
+  width: 100%;
+}

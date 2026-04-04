@@ -11,7 +11,7 @@
 | 03 | `feature-requirements/feature-03-solunar.md` | Solunar Table Data Service | Complete |
 | 04 | `feature-requirements/feature-04-weather.md` | Weather Data Service | Complete |
 | 05 | `feature-requirements/feature-05-scoring.md` | Fishing Score Calculation Engine | Complete |
-| 06 | `feature-requirements/feature-06-home-screen.md` | App Shell & Home Screen | Backlog |
+| 06 | `feature-requirements/feature-06-home-screen.md` | App Shell & Home Screen | Complete |
 | 07 | `feature-requirements/feature-07-responsive-design.md` | Responsive Design & Mobile-First CSS | Backlog |
 
 ### Milestone 2: Core Value — Detailed Breakdowns

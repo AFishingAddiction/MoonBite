@@ -1,9 +1,14 @@
-<main>
-  <h1>MoonBite</h1>
-  <app-location-display />
-  <app-moon-phase-display />
-  <app-solunar-display />
-  <app-weather-display />
-  <app-fishing-score-display />
-</main>
-<router-outlet />
+<div class="app-shell">
+  <header class="app-shell__header" role="banner">
+    <div class="app-shell__brand">
+      <span class="app-shell__logo-icon" aria-hidden="true">🎣</span>
+      <div class="app-shell__brand-text">
+        <h1 class="app-shell__logo-text">MoonBite</h1>
+        <span class="app-shell__tagline">Your daily fishing intelligence</span>
+      </div>
+    </div>
+    <time class="app-shell__date" [attr.datetime]="todayLabel()">{{ todayLabel() }}</time>
+  </header>
+
+  <router-outlet />
+</div>
