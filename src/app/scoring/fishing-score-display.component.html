@@ -1,7 +1,12 @@
 <section class="score-card" aria-label="Fishing Score">
   <h2 class="score-card__title">🎣 Fishing Score</h2>
 
-  @if (score() === undefined) {
+  @if (geoStatus() === 'idle') {
+    <div class="score-card__location-prompt">
+      <span class="score-card__location-prompt-icon" aria-hidden="true">📍</span>
+      <span>Share your location to see your fishing score</span>
+    </div>
+  } @else if (score() === undefined || geoStatus() === 'requesting') {
     <div class="score-card__loading" aria-live="polite">
       <span class="score-card__spinner" aria-hidden="true"></span>
       Calculating score…

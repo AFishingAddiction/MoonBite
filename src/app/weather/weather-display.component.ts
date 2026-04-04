@@ -24,6 +24,8 @@ export class WeatherDisplayComponent {
 
   protected readonly geoState = this.geoService.state;
 
+  protected readonly isIdle = computed(() => this.geoState().status === 'idle');
+
   protected readonly isLocating = computed(() => {
     const s = this.geoState().status;
     return s === 'idle' || s === 'requesting';

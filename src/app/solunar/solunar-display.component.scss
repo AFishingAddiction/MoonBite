@@ -114,6 +114,7 @@ $score-badge-min-width: 28px;
 
   &__title {
     margin: 0;
+    padding: $space-lg $space-lg 0;
     font-size: $font-size-base;
     font-weight: $font-weight-bold;
     color: $color-accent;
@@ -257,4 +258,18 @@ $score-badge-min-width: 28px;
     min-width: $score-badge-min-width;
     text-align: center;
   }
+}
+
+.solunar-card__location-prompt {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-lg 0;
+  color: $color-text-on-dark-secondary;
+  font-size: $font-size-sm;
+}
+
+.solunar-card__location-prompt-icon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
 }

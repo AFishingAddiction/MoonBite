@@ -8,8 +8,16 @@
     <h2 class="weather-card__title">Weather Conditions</h2>
   </header>
 
-  <!-- Loading state -->
-  @if (isLocating()) {
+  <!-- Idle: waiting for location -->
+  @if (isIdle()) {
+    <div class="weather-card__location-prompt">
+      <span class="weather-card__location-prompt-icon" aria-hidden="true">📍</span>
+      <span>Share your location to see weather conditions</span>
+    </div>
+  }
+
+  <!-- Loading state (requesting) -->
+  @if (!isIdle() && isLocating()) {
     <div class="weather-card__loading" aria-busy="true">
       <div class="weather-card__skeleton weather-card__skeleton--line"></div>
       <div class="weather-card__skeleton weather-card__skeleton--line weather-card__skeleton--short"></div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of } from 'rxjs';
@@ -16,6 +16,8 @@ import { FishingScore, FishingScoreService } from './fishing-score.service';
 export class FishingScoreDisplayComponent {
   private readonly geoService = inject(GeolocationService);
   private readonly fishingScoreService = inject(FishingScoreService);
+
+  protected readonly geoStatus = computed(() => this.geoService.state().status);
 
   /** Reactive score signal — undefined while loading, null on error, FishingScore on success. */
   readonly score = toSignal(

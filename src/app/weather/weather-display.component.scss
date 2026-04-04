@@ -27,7 +27,7 @@
   }
 
   &__title {
-    color: $color-text-on-dark;
+    color: $color-accent;
     font-size: $font-size-lg;
     font-weight: $font-weight-bold;
     letter-spacing: $letter-spacing-caps;
@@ -72,8 +72,12 @@
   }
 
   @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 
   // ── Error state ───────────────────────────────────────────────────────────
@@ -240,4 +244,18 @@
       background-color: $color-score-fill;
     }
   }
+}
+
+.weather-card__location-prompt {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-lg 0;
+  color: $color-text-on-dark-secondary;
+  font-size: $font-size-sm;
+}
+
+.weather-card__location-prompt-icon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
 }

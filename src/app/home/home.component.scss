@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: $space-md;
   width: 100%;
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto;
   padding: $space-md;
   box-sizing: border-box;
@@ -27,7 +27,7 @@
   width: 100%;
 }
 
-// ── Data grid (moon + solunar) ───────────────────────────────────────────────
+// ── Data grid (moon + solunar + weather) ────────────────────────────────────
 .home__data-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -36,6 +36,10 @@
   @include respond-above($bp-md) {
     grid-template-columns: 1fr 1fr;
     gap: $space-lg;
+  }
+
+  @include respond-above($bp-lg) {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
@@ -49,7 +53,3 @@
   }
 }
 
-// ── Weather (full-width) ─────────────────────────────────────────────────────
-.home__weather {
-  width: 100%;
-}

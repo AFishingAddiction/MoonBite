@@ -111,3 +111,17 @@
     font-style: italic;
   }
 }
+
+.score-card__location-prompt {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-lg 0;
+  color: $color-text-on-dark-secondary;
+  font-size: $font-size-sm;
+}
+
+.score-card__location-prompt-icon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
