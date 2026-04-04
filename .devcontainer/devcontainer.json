@@ -4,7 +4,7 @@
   "service": "moonbite",
   "workspaceFolder": "/app",
   "remoteUser": "node",
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "sudo chown -R node:node /app && npm install",
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/app/node_modules/.bin:/home/node/.local/bin"
   },
