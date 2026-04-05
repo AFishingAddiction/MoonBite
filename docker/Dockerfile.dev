@@ -16,6 +16,13 @@ RUN apt-get update && apt-get install -y \
 ENV CHROME_BIN=/usr/bin/chromium
 ENV FIREFOX_BIN=/usr/bin/firefox-esr
 
+RUN mkdir -p /commandhistory \
+    && touch /commandhistory/.bash_history \
+    && chown -R node.node /commandhistory \
+    && echo "export HISTFILE=/commandhistory/.bash_history" >> "/home/node/.bashrc" \
+    && echo "shopt -s histappend" >> "/home/node/.bashrc" \
+    && echo "PROMPT_COMMAND='history -a'" >> "/home/node/.bashrc"
+
 USER node
 
 RUN curl -fsSL https://claude.ai/install.sh | bash && \

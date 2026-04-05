@@ -1,11 +1,11 @@
 services:
   moonbite:
-    command: ["sleep", "infinity"]
+    command: ['sleep', 'infinity']
     volumes:
       - bashhistory:/commandhistory
       - claude-config:/home/node/.claude
-      - ~/.gitconfig:/home/node/.gitconfig:ro
-      - ~/.ssh:/home/node/.ssh:ro
+      - ~/.gitconfig:/home/node/.gitconfig:rw
+      - ~/.ssh:/home/node/.ssh:rw
 
 volumes:
   bashhistory:
