@@ -10,6 +10,18 @@ $score-badge-offset: -18px; // horizontal overhang of badge past the fill edge
 $score-badge-padding: 2px 6px;
 $score-badge-min-width: 28px;
 
+// Link wrapper that makes the entire card navigable
+.moon-phase-display__link {
+  display: block;
+  text-decoration: none;
+  border-radius: $radius-lg;
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-lg;
+  }
+}
+
 .moon-phase-card {
   background-color: $color-surface-dark;
   border-radius: $radius-lg;

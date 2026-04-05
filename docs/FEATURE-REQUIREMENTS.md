@@ -18,7 +18,7 @@
 
 | # | File | Feature | Status |
 |---|---|---|---|
-| 08 | `feature-requirements/feature-08-moon-details.md` | Moon Phase Details Screen | Backlog |
+| 08 | `feature-requirements/feature-08-moon-details.md` | Moon Phase Details Screen | Complete |
 | 09 | `feature-requirements/feature-09-solunar-details.md` | Solunar Peak Times Details Screen | Backlog |
 | 10 | `feature-requirements/feature-10-weather-details.md` | Weather Details Screen | Backlog |
 | 11 | `feature-requirements/feature-11-score-breakdown.md` | Score Breakdown Explanation | Backlog |
@@ -70,3 +70,9 @@ Pure TypeScript calculation service providing four daily solunar periods (major 
 **File:** `feature-requirements/feature-04-weather.md`
 
 Angular HTTP-based service that fetches current-day weather data from the free Open-Meteo API for any location. Returns structured weather data (temperature, wind, cloud cover, barometric pressure) with a calculated fishing score contribution (0–100) based on atmospheric conditions. Implements 5-minute cache with graceful error handling. Consumed by Feature 05 (Fishing Score Engine) for weather weighting and Feature 10 (Weather Details Screen) for rich weather breakdowns. Includes optional dev-only display component.
+
+### Feature 08 — Moon Phase Details Screen
+
+**File:** `feature-requirements/feature-08-moon-details.md`
+
+Full-page details screen at route `/moon` that expands the compact home screen moon card into a rich contextual view. Displays today's moon phase (emoji, name, illumination, age) prominently, includes a 7-day lunar forecast, calculates "days until next full/new moon," and provides phase-specific fishing advice. Reuses existing deterministic `MoonPhaseService.calculateForDate()` and `.calculateForDateString()` methods—no new backend APIs required. Navigation: home moon card becomes a `<a routerLink="/moon">` link; details page has `← Back` link. Responsive mobile-first layout with WCAG AA accessibility.

@@ -1,0 +1,89 @@
+<main class="moon-detail">
+  <!-- Back navigation -->
+  <nav aria-label="Page navigation">
+    <a routerLink="/" class="moon-detail__back-link" aria-label="Back to Home"> ← Back to Home </a>
+  </nav>
+
+  <!-- Hero section -->
+  <section class="moon-detail__hero" aria-labelledby="hero-heading">
+    <span class="moon-detail__emoji" aria-hidden="true">{{ moonData().phaseEmoji }}</span>
+    <h1 id="hero-heading" class="moon-detail__phase-name">{{ moonData().phaseName }}</h1>
+    <p class="moon-detail__illumination">{{ moonData().illuminationPercent }}% illuminated</p>
+
+    <!-- Score bar -->
+    <div class="score-bar" [class.score-bar--ready]="scoreReady()" [style.--score-target-width]="scorePercent()">
+      <div
+        class="score-bar__track"
+        role="meter"
+        aria-label="Moon phase fishing score"
+        [attr.aria-valuenow]="moonData().fishingScoreContribution"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div class="score-bar__fill" [class]="'score-bar__fill--' + scoreTierClass()">
+          <span class="score-bar__badge" aria-hidden="true">
+            {{ moonData().fishingScoreContribution }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats section -->
+  <section class="moon-detail__stats" aria-labelledby="stats-heading">
+    <h2 id="stats-heading" class="moon-detail__visually-hidden">Lunar statistics</h2>
+    <div class="moon-detail__stat-grid">
+      <div class="moon-detail__stat" [attr.aria-label]="'Moon age: Day ' + moonDay()">
+        <span class="moon-detail__stat-value" aria-hidden="true">Day {{ moonDay() }}</span>
+        <span class="moon-detail__stat-label" aria-hidden="true">Moon Age</span>
+      </div>
+
+      <div class="moon-detail__stat" [attr.aria-label]="'Illumination: ' + moonData().illuminationPercent + ' percent'">
+        <span class="moon-detail__stat-value" aria-hidden="true"> {{ moonData().illuminationPercent }}% </span>
+        <span class="moon-detail__stat-label" aria-hidden="true">Illuminated</span>
+      </div>
+
+      <div class="moon-detail__stat" [attr.aria-label]="'Days to full moon: ' + daysToFullMoon()">
+        <span class="moon-detail__stat-value" aria-hidden="true">{{ daysToFullMoon() }}</span>
+        <span class="moon-detail__stat-label" aria-hidden="true">To Full Moon</span>
+      </div>
+
+      <div class="moon-detail__stat" [attr.aria-label]="'Days to new moon: ' + daysToNewMoon()">
+        <span class="moon-detail__stat-value" aria-hidden="true">{{ daysToNewMoon() }}</span>
+        <span class="moon-detail__stat-label" aria-hidden="true">To New Moon</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Score & advice section -->
+  <section class="moon-detail__score-section" aria-labelledby="score-heading">
+    <h2 id="score-heading" class="moon-detail__section-title">Fishing Score</h2>
+    <p class="moon-detail__advice">{{ phaseAdvice() }}</p>
+  </section>
+
+  <!-- 7-day forecast section -->
+  <section class="moon-detail__forecast" aria-labelledby="forecast-heading">
+    <h2 id="forecast-heading" class="moon-detail__section-title">7-Day Lunar Forecast</h2>
+
+    <ol class="moon-detail__forecast-list" aria-label="7-day lunar forecast">
+      @for (day of forecastDays; track day.dateUtc; let i = $index) {
+        <li
+          class="moon-detail__forecast-card"
+          [class.moon-detail__forecast-card--today]="i === 0"
+          [attr.aria-current]="i === 0 ? 'date' : null"
+        >
+          <span class="moon-detail__forecast-emoji" aria-hidden="true">{{ day.phaseEmoji }}</span>
+          <span class="moon-detail__forecast-date">{{ day.dateUtc | slice: 5 }}</span>
+          <span class="moon-detail__forecast-phase">{{ day.phaseName | slice: 0 : 3 }}</span>
+          <span
+            class="moon-detail__forecast-score moon-detail__forecast-score--{{
+              day.fishingScoreContribution >= 75 ? 'good' : day.fishingScoreContribution >= 50 ? 'fair' : 'poor'
+            }}"
+          >
+            {{ day.fishingScoreContribution }}
+          </span>
+        </li>
+      }
+    </ol>
+  </section>
+</main>

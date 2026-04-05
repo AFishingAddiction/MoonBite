@@ -6,12 +6,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MoonPhaseService } from './moon-phase.service';
 
 @Component({
   selector: 'app-moon-phase-display',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   templateUrl: './moon-phase-display.component.html',
   styleUrl: './moon-phase-display.component.scss',
 })

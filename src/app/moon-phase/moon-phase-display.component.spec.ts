@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 import { MoonPhaseDisplayComponent } from './moon-phase-display.component';
 import { MoonPhaseService, MoonPhaseData } from './moon-phase.service';
 
@@ -54,7 +55,7 @@ describe('MoonPhaseDisplayComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [MoonPhaseDisplayComponent],
-      providers: [{ provide: MoonPhaseService, useValue: mockService }],
+      providers: [provideRouter([]), { provide: MoonPhaseService, useValue: mockService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoonPhaseDisplayComponent);

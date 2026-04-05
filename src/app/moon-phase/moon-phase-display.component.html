@@ -1,43 +1,45 @@
-<section class="moon-phase-card" role="region" aria-label="Moon phase information">
-  <!-- Hero: emoji + phase name -->
-  <div class="moon-phase-card__hero">
-    <span class="moon-phase-card__emoji" aria-hidden="true">{{ moonData().phaseEmoji }}</span>
-    <p class="moon-phase-card__phase-name">{{ moonData().phaseName }}</p>
-  </div>
-
-  <!-- Stats row: illumination + lunar cycle day -->
-  <div class="moon-phase-card__stats">
-    <div
-      class="moon-phase-card__stat"
-      [attr.aria-label]="'Illumination: ' + moonData().illuminationPercent + ' percent'"
-    >
-      <span class="moon-phase-card__stat-label" aria-hidden="true">Illuminated</span>
-      <span class="moon-phase-card__stat-value" aria-hidden="true">{{ moonData().illuminationPercent }}%</span>
+<a routerLink="/moon" class="moon-phase-display__link" aria-label="View moon phase details">
+  <section class="moon-phase-card" role="region" aria-label="Moon phase information">
+    <!-- Hero: emoji + phase name -->
+    <div class="moon-phase-card__hero">
+      <span class="moon-phase-card__emoji" aria-hidden="true">{{ moonData().phaseEmoji }}</span>
+      <p class="moon-phase-card__phase-name">{{ moonData().phaseName }}</p>
     </div>
-    <div class="moon-phase-card__stat" [attr.aria-label]="'Lunar cycle: Day ' + moonDay()">
-      <span class="moon-phase-card__stat-label" aria-hidden="true">Lunar Cycle</span>
-      <span class="moon-phase-card__stat-value" aria-hidden="true">Day {{ moonDay() }}</span>
-    </div>
-  </div>
 
-  <!-- Fishing score bar -->
-  <div class="moon-phase-card__score-section">
-    <span class="moon-phase-card__score-label" aria-hidden="true">Fishing Contribution</span>
-    <div
-      class="moon-phase-card__score-bar-track"
-      role="meter"
-      aria-label="Moon phase fishing score contribution"
-      [attr.aria-valuenow]="moonData().fishingScoreContribution"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
+    <!-- Stats row: illumination + lunar cycle day -->
+    <div class="moon-phase-card__stats">
       <div
-        class="moon-phase-card__score-bar-fill"
-        [class.moon-phase-card__score-bar-fill--ready]="scoreReady()"
-        [style.--score-target-width]="scorePercent()"
+        class="moon-phase-card__stat"
+        [attr.aria-label]="'Illumination: ' + moonData().illuminationPercent + ' percent'"
       >
-        <span class="moon-phase-card__score-badge" aria-hidden="true">{{ moonData().fishingScoreContribution }}</span>
+        <span class="moon-phase-card__stat-label" aria-hidden="true">Illuminated</span>
+        <span class="moon-phase-card__stat-value" aria-hidden="true">{{ moonData().illuminationPercent }}%</span>
+      </div>
+      <div class="moon-phase-card__stat" [attr.aria-label]="'Lunar cycle: Day ' + moonDay()">
+        <span class="moon-phase-card__stat-label" aria-hidden="true">Lunar Cycle</span>
+        <span class="moon-phase-card__stat-value" aria-hidden="true">Day {{ moonDay() }}</span>
       </div>
     </div>
-  </div>
-</section>
+
+    <!-- Fishing score bar -->
+    <div class="moon-phase-card__score-section">
+      <span class="moon-phase-card__score-label" aria-hidden="true">Fishing Contribution</span>
+      <div
+        class="moon-phase-card__score-bar-track"
+        role="meter"
+        aria-label="Moon phase fishing score contribution"
+        [attr.aria-valuenow]="moonData().fishingScoreContribution"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          class="moon-phase-card__score-bar-fill"
+          [class.moon-phase-card__score-bar-fill--ready]="scoreReady()"
+          [style.--score-target-width]="scorePercent()"
+        >
+          <span class="moon-phase-card__score-badge" aria-hidden="true">{{ moonData().fishingScoreContribution }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</a>
