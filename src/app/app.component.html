@@ -10,5 +10,9 @@
     <time class="app-shell__date" [attr.datetime]="todayLabel()">{{ todayLabel() }}</time>
   </header>
 
-  <router-outlet />
+  <main class="app-shell__content">
+    <router-outlet />
+  </main>
+
+  <app-bottom-nav />
 </div>

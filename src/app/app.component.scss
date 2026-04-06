@@ -9,6 +9,12 @@
   background-color: $color-surface-alt;
 }
 
+// ── Main content area — padded so bottom nav doesn't overlap content ─────────
+.app-shell__content {
+  flex: 1;
+  padding-bottom: calc($nav-height + env(safe-area-inset-bottom));
+}
+
 // ── Header ───────────────────────────────────────────────────────────────────
 .app-shell__header {
   position: sticky;

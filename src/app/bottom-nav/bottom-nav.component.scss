@@ -1,0 +1,74 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ── Bottom navigation bar ────────────────────────────────────────────────────
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: $color-surface-dark;
+  border-top: 1px solid $color-border-dark;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// ── Tab list ─────────────────────────────────────────────────────────────────
+.bottom-nav__tabs {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: $nav-height;
+}
+
+// ── Individual tab ────────────────────────────────────────────────────────────
+.bottom-nav__tab {
+  flex: 1;
+  display: flex;
+}
+
+// ── Tab link ─────────────────────────────────────────────────────────────────
+.bottom-nav__tab-link {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xs;
+  padding: $space-sm;
+  min-height: 44px;
+  color: $color-text-on-dark-secondary;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: -2px;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: $color-text-on-dark;
+    }
+  }
+
+  &.bottom-nav__tab--active {
+    color: $color-accent;
+  }
+}
+
+// ── Icon ─────────────────────────────────────────────────────────────────────
+.bottom-nav__tab-icon {
+  font-size: $font-size-xl;
+  line-height: 1;
+}
+
+// ── Label ────────────────────────────────────────────────────────────────────
+.bottom-nav__tab-label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  letter-spacing: $letter-spacing-caps;
+  text-transform: uppercase;
+}

@@ -1,0 +1,17 @@
+<nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+  <ol class="bottom-nav__tabs">
+    @for (tab of tabs; track tab.route) {
+      <li class="bottom-nav__tab">
+        <a
+          class="bottom-nav__tab-link"
+          [class.bottom-nav__tab--active]="isTabActive(tab.route)"
+          [routerLink]="tab.route"
+          [attr.aria-current]="isTabActive(tab.route) ? 'page' : null"
+        >
+          <span class="bottom-nav__tab-icon" aria-hidden="true">{{ tab.icon }}</span>
+          <span class="bottom-nav__tab-label">{{ tab.label }}</span>
+        </a>
+      </li>
+    }
+  </ol>
+</nav>
