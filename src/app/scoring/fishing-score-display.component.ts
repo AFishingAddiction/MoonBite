@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of } from 'rxjs';
 import { GeolocationService } from '../geolocation/geolocation.service';
@@ -8,7 +9,7 @@ import { FishingScore, FishingScoreService } from './fishing-score.service';
 @Component({
   selector: 'app-fishing-score-display',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './fishing-score-display.component.html',
   styleUrl: './fishing-score-display.component.scss',

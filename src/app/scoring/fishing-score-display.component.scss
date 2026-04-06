@@ -1,6 +1,24 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+.score-card__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: $radius-lg;
+  transition: box-shadow $transition-fast;
+
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: $shadow-dark-hover;
+    }
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
 .score-card {
   background: $color-surface-dark;
   border-radius: $radius-lg;

@@ -1,0 +1,193 @@
+<main class="score-detail">
+  <!-- Back navigation -->
+  <nav aria-label="Page navigation">
+    <a routerLink="/" class="score-detail__back-link" aria-label="Back to Home">← Back to Home</a>
+  </nav>
+
+  <!-- Idle: no location -->
+  @if (isIdle()) {
+    <div class="score-detail__location-prompt">
+      <span class="score-detail__location-prompt-icon" aria-hidden="true">📍</span>
+      <span>Share your location to see your score breakdown</span>
+    </div>
+  }
+
+  <!-- Loading -->
+  @else if (isLoading()) {
+    <div class="score-detail__loading" aria-live="polite">
+      <span class="score-detail__spinner" aria-hidden="true"></span>
+      Calculating score…
+    </div>
+  }
+
+  <!-- Error -->
+  @else if (hasError()) {
+    <div class="score-detail__error" role="alert">
+      Score unavailable — data could not be loaded.
+    </div>
+  }
+
+  <!-- Success -->
+  @else {
+    <!-- Hero: composite score -->
+    <section class="score-detail__hero" aria-labelledby="score-hero-heading">
+      <span class="score-detail__hero-icon" aria-hidden="true">🎣</span>
+      <div class="score-detail__hero-content">
+        <h1 id="score-hero-heading" class="score-detail__hero-title">Today's Fishing Score</h1>
+        <div class="score-detail__composite">
+          <span class="score-detail__number">{{ fishingScore()!.score }}</span>
+          <span class="score-detail__denom">/ 100</span>
+        </div>
+        <p class="score-detail__tier-label score-detail__tier-label--{{ scoreTierClass() }}">
+          {{ tierLabel() }}
+        </p>
+
+        <!-- Composite score bar -->
+        <div
+          class="score-detail__score-bar"
+          [class.score-detail__score-bar--ready]="scoreReady()"
+          [style.--score-target-width]="scorePercent()"
+        >
+          <div
+            class="score-detail__score-bar-track"
+            role="meter"
+            aria-label="Composite fishing score"
+            [attr.aria-valuenow]="fishingScore()!.score"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div [class]="'score-detail__score-bar-fill score-detail__score-bar-fill--' + scoreTierClass()">
+              <span class="score-detail__score-bar-badge" aria-hidden="true">
+                {{ fishingScore()!.score }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Factor breakdown -->
+    <section class="score-detail__factors" aria-labelledby="factors-heading">
+      <h2 id="factors-heading" class="score-detail__section-title">Score Breakdown</h2>
+
+      <div class="score-detail__factor-list">
+        <!-- Moon Phase -->
+        <div class="score-detail__factor">
+          <div class="score-detail__factor-header">
+            <span class="score-detail__factor-icon" aria-hidden="true">🌙</span>
+            <a routerLink="/moon" class="score-detail__factor-link" aria-label="View moon phase details">
+              Moon Phase
+            </a>
+            <span class="score-detail__factor-weight">× {{ fishingScore()!.weights.moonPhase * 100 | number: '1.0-0' }}%</span>
+          </div>
+          <div class="score-detail__factor-stats">
+            <span class="score-detail__factor-raw">{{ fishingScore()!.breakdown.moonPhaseScore }} / 100</span>
+            <span class="score-detail__factor-contribution">= {{ fishingScore()!.breakdown.moonPhaseWeighted }} pts</span>
+          </div>
+          <div
+            class="score-detail__factor-bar-track"
+            role="meter"
+            aria-label="Moon phase score"
+            [attr.aria-valuenow]="fishingScore()!.breakdown.moonPhaseScore"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              [class]="'score-detail__factor-bar-fill score-detail__factor-bar-fill--' + moonTierClass() + (scoreReady() ? ' score-detail__factor-bar-fill--ready' : '')"
+              [style.--score-target-width]="moonScorePercent()"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Solunar -->
+        <div class="score-detail__factor">
+          <div class="score-detail__factor-header">
+            <span class="score-detail__factor-icon" aria-hidden="true">☀️</span>
+            <a routerLink="/solunar" class="score-detail__factor-link" aria-label="View solunar details">
+              Solunar
+            </a>
+            <span class="score-detail__factor-weight">× {{ fishingScore()!.weights.solunar * 100 | number: '1.0-0' }}%</span>
+          </div>
+          <div class="score-detail__factor-stats">
+            <span class="score-detail__factor-raw">{{ fishingScore()!.breakdown.solunarScore }} / 100</span>
+            <span class="score-detail__factor-contribution">= {{ fishingScore()!.breakdown.solunarWeighted }} pts</span>
+          </div>
+          <div
+            class="score-detail__factor-bar-track"
+            role="meter"
+            aria-label="Solunar score"
+            [attr.aria-valuenow]="fishingScore()!.breakdown.solunarScore"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              [class]="'score-detail__factor-bar-fill score-detail__factor-bar-fill--' + solunarTierClass() + (scoreReady() ? ' score-detail__factor-bar-fill--ready' : '')"
+              [style.--score-target-width]="solunarScorePercent()"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Weather -->
+        <div class="score-detail__factor">
+          <div class="score-detail__factor-header">
+            <span class="score-detail__factor-icon" aria-hidden="true">🌤️</span>
+            <a routerLink="/weather" class="score-detail__factor-link" aria-label="View weather details">
+              Weather
+            </a>
+            <span class="score-detail__factor-weight">× {{ fishingScore()!.weights.weather * 100 | number: '1.0-0' }}%</span>
+          </div>
+          <div class="score-detail__factor-stats">
+            @if (fishingScore()!.breakdown.weatherAvailable) {
+              <span class="score-detail__factor-raw">{{ fishingScore()!.breakdown.weatherScore }} / 100</span>
+              <span class="score-detail__factor-contribution">= {{ fishingScore()!.breakdown.weatherWeighted }} pts</span>
+            } @else {
+              <span class="score-detail__factor-raw score-detail__factor-raw--unavailable">— / 100</span>
+              <span class="score-detail__factor-contribution">= 0 pts</span>
+            }
+          </div>
+          <div
+            class="score-detail__factor-bar-track"
+            role="meter"
+            aria-label="Weather score"
+            [attr.aria-valuenow]="fishingScore()!.breakdown.weatherScore"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              [class]="'score-detail__factor-bar-fill score-detail__factor-bar-fill--' + weatherTierClass() + (scoreReady() ? ' score-detail__factor-bar-fill--ready' : '')"
+              [style.--score-target-width]="weatherScorePercent()"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      @if (!fishingScore()!.breakdown.weatherAvailable) {
+        <p class="score-detail__weather-warning" role="status">
+          Weather data unavailable — its weight was redistributed to moon phase and solunar.
+        </p>
+      }
+    </section>
+
+    <!-- Algorithm explanation -->
+    <section class="score-detail__algorithm" aria-labelledby="algorithm-heading">
+      <h2 id="algorithm-heading" class="score-detail__section-title">How It's Calculated</h2>
+      <p class="score-detail__algorithm-text">
+        Each factor is scored 0–100 based on how favorable it is for fishing activity. Moon phase
+        captures lunar cycle position and illumination. Solunar captures peak activity windows based
+        on moon transit times. Weather captures atmospheric conditions including pressure trend, wind,
+        and cloud cover.
+      </p>
+      <p class="score-detail__algorithm-text">
+        Each factor's score is multiplied by its weight and the results are summed to produce the
+        composite score. If weather data is unavailable, its 35% weight is redistributed
+        proportionally to moon phase and solunar.
+      </p>
+    </section>
+
+    <!-- Advice -->
+    <section class="score-detail__advice-section" aria-labelledby="advice-heading">
+      <h2 id="advice-heading" class="score-detail__section-title">Fishing Conditions</h2>
+      <p class="score-detail__advice">{{ advice() }}</p>
+    </section>
+  }
+</main>

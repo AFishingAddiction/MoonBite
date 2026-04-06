@@ -22,6 +22,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-08-moon-details.md` | Moon Phase Details Screen | Complete |
 | `feature-09-solunar-details.md` | Solunar Peak Times Details Screen | Complete |
 | `feature-10-weather-details.md` | Weather Details Screen | Complete |
+| `feature-11-score-breakdown.md` | Score Breakdown Explanation | Complete |
 
 ## Project overview
 

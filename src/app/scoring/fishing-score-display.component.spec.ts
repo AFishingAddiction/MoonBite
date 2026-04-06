@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, NEVER } from 'rxjs';
 import { signal } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { FishingScore, FishingScoreService } from './fishing-score.service';
 import { FishingScoreDisplayComponent } from './fishing-score-display.component';
 import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
@@ -57,6 +58,7 @@ describe('FishingScoreDisplayComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FishingScoreDisplayComponent],
       providers: [
+        provideRouter([]),
         { provide: FishingScoreService, useValue: fishingScoreService },
         { provide: GeolocationService, useValue: geolocationService },
       ],
