@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
 import { WeatherDisplayComponent } from './weather-display.component';
@@ -83,6 +84,7 @@ describe('WeatherDisplayComponent', () => {
     await TestBed.configureTestingModule({
       imports: [WeatherDisplayComponent],
       providers: [
+        provideRouter([]),
         { provide: GeolocationService, useValue: mockGeoService },
         { provide: WeatherService, useValue: mockWeatherService },
       ],
@@ -227,6 +229,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
@@ -246,6 +249,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
@@ -268,6 +272,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
@@ -286,6 +291,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
@@ -351,6 +357,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
@@ -391,6 +398,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
@@ -428,6 +436,7 @@ describe('WeatherDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [WeatherDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],

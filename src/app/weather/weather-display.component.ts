@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
+import { RouterLink } from '@angular/router';
 import { GeolocationService } from '../geolocation/geolocation.service';
 import { WeatherData, WeatherService, getWeatherDescription, getWeatherEmoji } from './weather.service';
 
@@ -15,6 +16,7 @@ import { WeatherData, WeatherService, getWeatherDescription, getWeatherEmoji } f
   selector: 'app-weather-display',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   templateUrl: './weather-display.component.html',
   styleUrl: './weather-display.component.scss',
 })

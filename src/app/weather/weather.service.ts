@@ -181,6 +181,20 @@ export class WeatherService {
     this.cache.clear();
   }
 
+  getScoreBreakdown(
+    data: Pick<
+      WeatherData,
+      'barometricPressureHpa' | 'pressureTrend' | 'windSpeedKmh' | 'cloudCoverPercent' | 'precipitationMm'
+    >,
+  ): { pressure: number; wind: number; cloud: number; precipitation: number } {
+    return {
+      pressure: this.calcPressureScore(data.barometricPressureHpa, data.pressureTrend),
+      wind: this.calcWindScore(data.windSpeedKmh),
+      cloud: this.calcCloudScore(data.cloudCoverPercent),
+      precipitation: this.calcPrecipScore(data.precipitationMm),
+    };
+  }
+
   calculatePressureTrend(
     currentPressure: number,
     previousPressure: number | null,

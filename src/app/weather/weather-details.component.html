@@ -1,0 +1,235 @@
+<main class="weather-detail">
+  <!-- Back navigation -->
+  <nav aria-label="Page navigation">
+    <a routerLink="/" class="weather-detail__back-link" aria-label="Back to Home">← Back to Home</a>
+  </nav>
+
+  <!-- Idle state: waiting for location -->
+  @if (isIdle()) {
+    <section class="weather-detail__state-card" aria-label="Weather data, waiting for location">
+      <span class="weather-detail__state-icon" aria-hidden="true">📍</span>
+      <p class="weather-detail__state-text">Share your location to see weather details</p>
+    </section>
+  }
+
+  <!-- Requesting: skeleton loading -->
+  @if (!isIdle() && isLocating()) {
+    <section class="weather-detail__state-card" aria-label="Loading weather data" aria-busy="true">
+      <div class="weather-detail__skeleton-line weather-detail__skeleton-line--title"></div>
+      <div class="weather-detail__skeleton-line"></div>
+      <div class="weather-detail__skeleton-line weather-detail__skeleton-line--short"></div>
+    </section>
+  }
+
+  <!-- Error / Denied / Unavailable / HTTP failure -->
+  @if (!isIdle() && hasError()) {
+    <section
+      class="weather-detail__state-card weather-detail__state-card--error"
+      aria-label="Weather data unavailable"
+    >
+      <span class="weather-detail__state-icon" aria-hidden="true">⚠️</span>
+      <p class="weather-detail__state-text">Location unavailable — weather data requires your location.</p>
+    </section>
+  }
+
+  <!-- Data state -->
+  @if (weather(); as w) {
+    <!-- Hero section -->
+    <section class="weather-detail__hero" aria-labelledby="weather-hero-heading">
+      <div class="weather-detail__hero-summary">
+        <span class="weather-detail__hero-emoji" aria-hidden="true">{{ weatherEmoji() }}</span>
+        <div class="weather-detail__hero-info">
+          <h1 id="weather-hero-heading" class="weather-detail__hero-title">{{ weatherDescription() }}</h1>
+          <p class="weather-detail__hero-date">{{ w.dateUtc }}</p>
+        </div>
+      </div>
+
+      <div class="weather-detail__hero-temp">
+        <span class="weather-detail__temp">{{ w.temperatureCelsius }}°C</span>
+        <span class="weather-detail__feels-like">feels {{ w.apparentTemperatureCelsius }}°C</span>
+      </div>
+
+      <!-- Score bar -->
+      <div
+        class="score-bar"
+        [class.score-bar--ready]="scoreReady()"
+        [style.--score-target-width]="scorePercent()"
+      >
+        <div
+          class="score-bar__track"
+          role="meter"
+          aria-label="Weather fishing score"
+          [attr.aria-valuenow]="w.fishingScoreContribution"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="score-bar__fill" [class]="'score-bar__fill--' + scoreTierClass()">
+            <span class="score-bar__badge" aria-hidden="true">{{ w.fishingScoreContribution }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats grid -->
+    <section class="weather-detail__stats" aria-labelledby="weather-stats-heading">
+      <h2 id="weather-stats-heading" class="weather-detail__visually-hidden">Weather statistics</h2>
+      <div class="weather-detail__stat-grid">
+        <div
+          class="weather-detail__stat"
+          [attr.aria-label]="'Temperature: ' + w.temperatureCelsius + ' degrees Celsius'"
+        >
+          <span class="weather-detail__stat-value" aria-hidden="true">{{ w.temperatureCelsius }}°C</span>
+          <span class="weather-detail__stat-label" aria-hidden="true">Temperature</span>
+        </div>
+
+        <div
+          class="weather-detail__stat"
+          [attr.aria-label]="'Wind speed: ' + w.windSpeedKmh + ' kilometres per hour'"
+        >
+          <span class="weather-detail__stat-value" aria-hidden="true">{{ w.windSpeedKmh }} km/h</span>
+          <span class="weather-detail__stat-label" aria-hidden="true">Wind</span>
+        </div>
+
+        <div
+          class="weather-detail__stat"
+          [attr.aria-label]="'Pressure: ' + w.barometricPressureHpa.toFixed(0) + ' hPa, ' + pressureTrendLabel()"
+        >
+          <span class="weather-detail__stat-value weather-detail__stat-value--pressure" aria-hidden="true">
+            {{ w.barometricPressureHpa.toFixed(0) }}<span class="weather-detail__trend-icon">{{ pressureTrendIcon() }}</span>
+          </span>
+          <span class="weather-detail__stat-label" aria-hidden="true">Pressure (hPa)</span>
+        </div>
+
+        <div
+          class="weather-detail__stat"
+          [attr.aria-label]="'Cloud cover: ' + w.cloudCoverPercent + ' percent'"
+        >
+          <span class="weather-detail__stat-value" aria-hidden="true">{{ w.cloudCoverPercent }}%</span>
+          <span class="weather-detail__stat-label" aria-hidden="true">Cloud Cover</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conditions detail card -->
+    <section class="weather-detail__conditions-section" aria-labelledby="weather-conditions-heading">
+      <h2 id="weather-conditions-heading" class="weather-detail__section-title">Conditions</h2>
+      <dl class="weather-detail__conditions">
+        <div class="weather-detail__condition-row">
+          <dt class="weather-detail__condition-label">Feels Like</dt>
+          <dd class="weather-detail__condition-value">{{ w.apparentTemperatureCelsius }}°C</dd>
+        </div>
+        <div class="weather-detail__condition-row">
+          <dt class="weather-detail__condition-label">Precipitation</dt>
+          <dd class="weather-detail__condition-value">
+            {{ w.precipitationMm }} mm
+            @if (w.precipitationMm > 0) {
+              <span aria-hidden="true">&nbsp;☔</span>
+            }
+          </dd>
+        </div>
+        <div class="weather-detail__condition-row">
+          <dt class="weather-detail__condition-label">Wind Gusts</dt>
+          <dd class="weather-detail__condition-value">
+            {{ w.windGustKmh }} km/h
+            @if (w.windGustKmh > 30) {
+              <span class="weather-detail__gust-warning" role="img" aria-label="High gust warning">&nbsp;⚠</span>
+            }
+          </dd>
+        </div>
+        <div class="weather-detail__condition-row">
+          <dt class="weather-detail__condition-label">Pressure Trend</dt>
+          <dd class="weather-detail__condition-value">
+            <span class="weather-detail__trend-icon" aria-hidden="true">{{ pressureTrendIcon() }}</span>
+            {{ pressureTrendLabel() }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Fishing score breakdown -->
+    @if (scoreBreakdown(); as breakdown) {
+      <section class="weather-detail__impact-section" aria-labelledby="weather-impact-heading">
+        <h2 id="weather-impact-heading" class="weather-detail__section-title">Fishing Score Breakdown</h2>
+        <div class="weather-detail__impact-list" role="list" aria-label="Fishing score factors">
+          <!-- Pressure: max 40 -->
+          <div
+            class="weather-detail__impact-row"
+            role="listitem"
+            [attr.aria-label]="'Pressure factor: ' + breakdown.pressure + ' out of 40'"
+          >
+            <div class="weather-detail__impact-info" aria-hidden="true">
+              <span class="weather-detail__impact-label">Pressure</span>
+              <span class="weather-detail__impact-value">{{ breakdown.pressure }}/40</span>
+            </div>
+            <div class="weather-detail__impact-bar-track" aria-hidden="true">
+              <div
+                class="weather-detail__impact-bar-fill"
+                [style.width.%]="breakdown.pressure / 40 * 100"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Wind: max 30 -->
+          <div
+            class="weather-detail__impact-row"
+            role="listitem"
+            [attr.aria-label]="'Wind factor: ' + breakdown.wind + ' out of 30'"
+          >
+            <div class="weather-detail__impact-info" aria-hidden="true">
+              <span class="weather-detail__impact-label">Wind</span>
+              <span class="weather-detail__impact-value">{{ breakdown.wind }}/30</span>
+            </div>
+            <div class="weather-detail__impact-bar-track" aria-hidden="true">
+              <div
+                class="weather-detail__impact-bar-fill"
+                [style.width.%]="breakdown.wind / 30 * 100"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Cloud Cover: max 20 -->
+          <div
+            class="weather-detail__impact-row"
+            role="listitem"
+            [attr.aria-label]="'Cloud cover factor: ' + breakdown.cloud + ' out of 20'"
+          >
+            <div class="weather-detail__impact-info" aria-hidden="true">
+              <span class="weather-detail__impact-label">Cloud Cover</span>
+              <span class="weather-detail__impact-value">{{ breakdown.cloud }}/20</span>
+            </div>
+            <div class="weather-detail__impact-bar-track" aria-hidden="true">
+              <div
+                class="weather-detail__impact-bar-fill"
+                [style.width.%]="breakdown.cloud / 20 * 100"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Precipitation: max 10 -->
+          <div
+            class="weather-detail__impact-row"
+            role="listitem"
+            [attr.aria-label]="'Precipitation factor: ' + breakdown.precipitation + ' out of 10'"
+          >
+            <div class="weather-detail__impact-info" aria-hidden="true">
+              <span class="weather-detail__impact-label">Precipitation</span>
+              <span class="weather-detail__impact-value">{{ breakdown.precipitation }}/10</span>
+            </div>
+            <div class="weather-detail__impact-bar-track" aria-hidden="true">
+              <div
+                class="weather-detail__impact-bar-fill"
+                [style.width.%]="breakdown.precipitation / 10 * 100"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Fishing advice -->
+    <section class="weather-detail__advice-section" aria-labelledby="weather-advice-heading">
+      <h2 id="weather-advice-heading" class="weather-detail__section-title">Fishing Conditions</h2>
+      <p class="weather-detail__advice">{{ advice() }}</p>
+    </section>
+  }
+</main>

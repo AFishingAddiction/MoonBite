@@ -1,6 +1,19 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+// ── Link wrapper (makes entire card a navigation target) ──────────────────────
+
+.weather-display__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: $radius-lg;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Weather Card — dark theme matching MoonPhaseDisplayComponent
 // ─────────────────────────────────────────────────────────────────────────────

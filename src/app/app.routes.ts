@@ -13,4 +13,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./solunar/solunar-details.component').then(m => m.SolunarDetailsComponent),
   },
+  {
+    path: 'weather',
+    loadComponent: () =>
+      import('./weather/weather-details.component').then(m => m.WeatherDetailsComponent),
+  },
 ];
