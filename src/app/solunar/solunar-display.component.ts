@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { GeolocationService } from '../geolocation/geolocation.service';
 import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
 
@@ -13,6 +14,7 @@ import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
   selector: 'app-solunar-display',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   templateUrl: './solunar-display.component.html',
   styleUrl: './solunar-display.component.scss',
 })

@@ -1,0 +1,171 @@
+<main class="solunar-detail">
+  <!-- Back navigation -->
+  <nav aria-label="Page navigation">
+    <a routerLink="/" class="solunar-detail__back-link" aria-label="Back to Home">← Back to Home</a>
+  </nav>
+
+  <!-- Idle state: waiting for location -->
+  @if (isIdle()) {
+    <section class="solunar-detail__state-card" aria-label="Solunar data, waiting for location">
+      <span class="solunar-detail__state-icon" aria-hidden="true">📍</span>
+      <p class="solunar-detail__state-text">Share your location to see solunar details</p>
+    </section>
+  }
+
+  <!-- Requesting: skeleton loading -->
+  @if (!isIdle() && isLocating()) {
+    <section class="solunar-detail__state-card" aria-label="Loading solunar data" aria-busy="true">
+      <div class="solunar-detail__skeleton-line solunar-detail__skeleton-line--title"></div>
+      <div class="solunar-detail__skeleton-line"></div>
+      <div class="solunar-detail__skeleton-line solunar-detail__skeleton-line--short"></div>
+    </section>
+  }
+
+  <!-- Error / Denied / Unavailable -->
+  @if (!isIdle() && hasError()) {
+    <section class="solunar-detail__state-card solunar-detail__state-card--error" aria-label="Solunar data unavailable">
+      <span class="solunar-detail__state-icon" aria-hidden="true">⚠️</span>
+      <p class="solunar-detail__state-text">Location unavailable — solunar data requires your location.</p>
+    </section>
+  }
+
+  <!-- Data state -->
+  @if (solunarData(); as data) {
+    <!-- Hero section -->
+    <section class="solunar-detail__hero" aria-labelledby="solunar-hero-heading">
+      <h1 id="solunar-hero-heading" class="solunar-detail__hero-title">Solunar Table</h1>
+      <p class="solunar-detail__hero-date">{{ data.dateUtc }}</p>
+      <div
+        class="solunar-detail__hero-rating"
+        [attr.aria-label]="'Solunar rating: ' + data.rating + ' out of 4'"
+      >
+        <span class="solunar-detail__rating-stars" aria-hidden="true">{{ ratingStars() }}</span>
+      </div>
+
+      <!-- Score bar -->
+      <div
+        class="score-bar"
+        [class.score-bar--ready]="scoreReady()"
+        [style.--score-target-width]="scorePercent()"
+      >
+        <div
+          class="score-bar__track"
+          role="meter"
+          aria-label="Solunar fishing score"
+          [attr.aria-valuenow]="data.fishingScoreContribution"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="score-bar__fill" [class]="'score-bar__fill--' + scoreTierClass()">
+            <span class="score-bar__badge" aria-hidden="true">{{ data.fishingScoreContribution }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats grid -->
+    <section class="solunar-detail__stats" aria-labelledby="solunar-stats-heading">
+      <h2 id="solunar-stats-heading" class="solunar-detail__visually-hidden">Solunar statistics</h2>
+      <div class="solunar-detail__stat-grid">
+        <div
+          class="solunar-detail__stat"
+          [attr.aria-label]="'Solunar rating: ' + data.rating + ' out of 4'"
+        >
+          <span class="solunar-detail__stat-value solunar-detail__stat-value--stars" aria-hidden="true">
+            {{ ratingStars() }}
+          </span>
+          <span class="solunar-detail__stat-label" aria-hidden="true">Rating</span>
+        </div>
+
+        <div
+          class="solunar-detail__stat"
+          [attr.aria-label]="'Fishing score: ' + data.fishingScoreContribution"
+        >
+          <span class="solunar-detail__stat-value" aria-hidden="true">{{ data.fishingScoreContribution }}</span>
+          <span class="solunar-detail__stat-label" aria-hidden="true">Score</span>
+        </div>
+
+        <div
+          class="solunar-detail__stat"
+          [attr.aria-label]="'Moon overhead at ' + formatTime(data.moonUpperTransitUtc)"
+        >
+          <span class="solunar-detail__stat-value solunar-detail__stat-value--time" aria-hidden="true">
+            {{ formatTime(data.moonUpperTransitUtc) }}
+          </span>
+          <span class="solunar-detail__stat-label" aria-hidden="true">Moon Overhead</span>
+        </div>
+
+        <div
+          class="solunar-detail__stat"
+          [attr.aria-label]="'Moon underfoot at ' + formatTime(data.moonLowerTransitUtc)"
+        >
+          <span class="solunar-detail__stat-value solunar-detail__stat-value--time" aria-hidden="true">
+            {{ formatTime(data.moonLowerTransitUtc) }}
+          </span>
+          <span class="solunar-detail__stat-label" aria-hidden="true">Moon Underfoot</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Today's peak periods -->
+    <section class="solunar-detail__periods-section" aria-labelledby="solunar-periods-heading">
+      <h2 id="solunar-periods-heading" class="solunar-detail__section-title">Today's Peak Periods</h2>
+      <div class="solunar-detail__periods" role="list" aria-label="Solunar periods">
+        @for (period of data.periods; track period.index) {
+          <div
+            class="solunar-detail__period"
+            [class.solunar-detail__period--major]="period.type === 'major'"
+            role="listitem"
+            [attr.aria-label]="periodAriaLabel(period)"
+          >
+            <div class="solunar-detail__period-info" aria-hidden="true">
+              <span class="solunar-detail__period-type">
+                {{ period.type === 'major' ? 'MAJOR' : 'MINOR' }}
+              </span>
+              <span class="solunar-detail__period-desc">{{ period.description }}</span>
+              <span class="solunar-detail__period-duration">{{ period.durationMinutes }} min</span>
+            </div>
+            <span class="solunar-detail__period-time" aria-hidden="true">
+              {{ formatTime(period.startUtc) }}&thinsp;–&thinsp;{{ formatTime(period.endUtc) }}
+            </span>
+          </div>
+        }
+        @if (isPolar()) {
+          <p class="solunar-detail__polar-note">Minor periods unavailable at this latitude</p>
+        }
+      </div>
+    </section>
+
+    <!-- Fishing conditions advice -->
+    <section class="solunar-detail__advice-section" aria-labelledby="solunar-advice-heading">
+      <h2 id="solunar-advice-heading" class="solunar-detail__section-title">Fishing Conditions</h2>
+      <p class="solunar-detail__advice">{{ advice() }}</p>
+    </section>
+
+    <!-- 7-day solunar forecast -->
+    <section class="solunar-detail__forecast" aria-labelledby="solunar-forecast-heading">
+      <h2 id="solunar-forecast-heading" class="solunar-detail__section-title">7-Day Solunar Forecast</h2>
+      <ol class="solunar-detail__forecast-list" aria-label="7-day solunar forecast">
+        @for (day of forecastDays(); track day.dateUtc; let i = $index) {
+          <li
+            class="solunar-detail__forecast-card"
+            [class.solunar-detail__forecast-card--today]="i === 0"
+            [attr.aria-current]="i === 0 ? 'date' : null"
+          >
+            <span class="solunar-detail__forecast-date">{{ day.dateUtc | slice: 5 }}</span>
+            <span
+              class="solunar-detail__forecast-rating"
+              [attr.aria-label]="'Rating: ' + day.rating + ' out of 4'"
+              aria-hidden="true"
+            >{{ forecastRatingStars(day.rating) }}</span>
+            <span
+              class="solunar-detail__forecast-score solunar-detail__forecast-score--{{
+                day.fishingScoreContribution >= 75 ? 'good' : day.fishingScoreContribution >= 50 ? 'fair' : 'poor'
+              }}"
+            >{{ day.fishingScoreContribution }}</span>
+          </li>
+        }
+      </ol>
+    </section>
+  }
+</main>

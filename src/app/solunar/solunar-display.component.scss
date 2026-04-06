@@ -1,6 +1,19 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+// ── Link wrapper (makes entire card a navigation target) ──────────────────────
+
+.solunar-display__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: $radius-lg;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
 // Component-scoped constants (not global tokens)
 $solunar-card-max-width: 400px;
 $score-bar-height: 12px;

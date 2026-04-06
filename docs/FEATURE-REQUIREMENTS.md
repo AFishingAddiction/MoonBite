@@ -19,7 +19,7 @@
 | # | File | Feature | Status |
 |---|---|---|---|
 | 08 | `feature-requirements/feature-08-moon-details.md` | Moon Phase Details Screen | Complete |
-| 09 | `feature-requirements/feature-09-solunar-details.md` | Solunar Peak Times Details Screen | Backlog |
+| 09 | `feature-requirements/feature-09-solunar-details.md` | Solunar Peak Times Details Screen | Complete |
 | 10 | `feature-requirements/feature-10-weather-details.md` | Weather Details Screen | Backlog |
 | 11 | `feature-requirements/feature-11-score-breakdown.md` | Score Breakdown Explanation | Backlog |
 | 12 | `feature-requirements/feature-12-navigation.md` | Bottom Navigation / Routing | Backlog |

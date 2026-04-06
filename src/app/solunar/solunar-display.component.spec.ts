@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
 import { SolunarDisplayComponent } from './solunar-display.component';
 import { SolunarData, SolunarService } from './solunar.service';
@@ -122,6 +123,7 @@ describe('SolunarDisplayComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SolunarDisplayComponent],
       providers: [
+        provideRouter([]),
         { provide: GeolocationService, useValue: mockGeoService },
         { provide: SolunarService, useValue: mockSolunarService },
       ],
@@ -304,6 +306,7 @@ describe('SolunarDisplayComponent', () => {
       await TestBed.configureTestingModule({
         imports: [SolunarDisplayComponent],
         providers: [
+          provideRouter([]),
           { provide: GeolocationService, useValue: mockGeoService },
           { provide: SolunarService, useValue: mockSolunarService },
         ],

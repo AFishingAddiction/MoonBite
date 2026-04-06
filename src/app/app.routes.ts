@@ -8,4 +8,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./moon-phase/moon-details.component').then(m => m.MoonDetailsComponent),
   },
+  {
+    path: 'solunar',
+    loadComponent: () =>
+      import('./solunar/solunar-details.component').then(m => m.SolunarDetailsComponent),
+  },
 ];

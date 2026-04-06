@@ -20,6 +20,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-06-home-screen.md` | App Shell & Home Screen | Complete |
 | `feature-07-responsive-design.md` | Responsive Design & Mobile-First CSS | Complete |
 | `feature-08-moon-details.md` | Moon Phase Details Screen | Complete |
+| `feature-09-solunar-details.md` | Solunar Peak Times Details Screen | Complete |
 
 ## Project overview
 
