@@ -9,7 +9,7 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
 import { RouterLink } from '@angular/router';
-import { GeolocationService } from '../geolocation/geolocation.service';
+import { ActiveLocationService } from '../locations/active-location.service';
 import { WeatherData, WeatherService, getWeatherDescription, getWeatherEmoji } from './weather.service';
 
 // ── Advice copy keyed by score tier ───────────────────────────────────────────
@@ -29,24 +29,18 @@ const SCORE_ADVICE: Record<'good' | 'fair' | 'poor', string> = {
   styleUrl: './weather-details.component.scss',
 })
 export class WeatherDetailsComponent {
-  private readonly geoService = inject(GeolocationService);
+  private readonly activeLocationService = inject(ActiveLocationService);
   private readonly weatherService = inject(WeatherService);
 
-  readonly geoState = this.geoService.state;
+  readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
 
-  readonly isIdle = computed(() => this.geoState().status === 'idle');
-
-  readonly isLocating = computed(() => {
-    const s = this.geoState().status;
-    return s === 'idle' || s === 'requesting';
-  });
+  readonly isLocating = this.activeLocationService.isLocating;
 
   readonly weather = toSignal(
-    toObservable(this.geoService.state).pipe(
-      switchMap((state) => {
-        if (state.status !== 'granted' || !state.position) return of(undefined);
-        const { latitude, longitude } = state.position.coords;
-        return this.weatherService.getWeatherForLocation(latitude, longitude);
+    toObservable(this.activeLocationService.coords).pipe(
+      switchMap(coords => {
+        if (!coords) return of(undefined);
+        return this.weatherService.getWeatherForLocation(coords.latitude, coords.longitude);
       }),
     ),
   );
@@ -57,8 +51,7 @@ export class WeatherDetailsComponent {
   });
 
   readonly hasError = computed(() => {
-    const s = this.geoState().status;
-    return s === 'denied' || s === 'unavailable' || s === 'error' || this.weather() === null;
+    return this.activeLocationService.hasError() || this.weather() === null;
   });
 
   readonly scoreReady = signal(false);

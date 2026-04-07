@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { GeolocationService } from '../geolocation/geolocation.service';
+import { ActiveLocationService } from '../locations/active-location.service';
 import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
 
 @Component({
@@ -19,28 +19,19 @@ import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
   styleUrl: './solunar-display.component.scss',
 })
 export class SolunarDisplayComponent {
-  private readonly geoService = inject(GeolocationService);
+  private readonly activeLocationService = inject(ActiveLocationService);
   private readonly solunarService = inject(SolunarService);
 
-  protected readonly geoState = this.geoService.state;
+  protected readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
 
-  protected readonly isIdle = computed(() => this.geoState().status === 'idle');
+  protected readonly isLocating = this.activeLocationService.isLocating;
 
-  protected readonly isLocating = computed(() => {
-    const s = this.geoState().status;
-    return s === 'idle' || s === 'requesting';
-  });
-
-  protected readonly hasError = computed(() => {
-    const s = this.geoState().status;
-    return s === 'denied' || s === 'unavailable' || s === 'error';
-  });
+  protected readonly hasError = this.activeLocationService.hasError;
 
   protected readonly solunarData = computed<SolunarData | null>(() => {
-    const state = this.geoState();
-    if (state.status !== 'granted' || !state.position) return null;
-    const { latitude, longitude } = state.position.coords;
-    return this.solunarService.calculateForToday(latitude, longitude);
+    const coords = this.activeLocationService.coords();
+    if (!coords) return null;
+    return this.solunarService.calculateForToday(coords.latitude, coords.longitude);
   });
 
   protected readonly isPolar = computed(() => this.solunarData()?.moonriseUtc === null);

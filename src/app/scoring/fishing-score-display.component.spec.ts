@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, NEVER } from 'rxjs';
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { FishingScore, FishingScoreService } from './fishing-score.service';
 import { FishingScoreDisplayComponent } from './fishing-score-display.component';
-import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
+import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -27,40 +27,39 @@ function makeScore(score: number, weatherAvailable = true): FishingScore {
   };
 }
 
-function makeGrantedState(): GeolocationState {
-  return {
-    status: 'granted',
-    position: {
-      coords: { latitude: 40.7128, longitude: -74.006 } as GeolocationCoordinates,
-      timestamp: 0,
-    } as GeolocationPosition,
-    error: null,
-  };
-}
-
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('FishingScoreDisplayComponent', () => {
   let component: FishingScoreDisplayComponent;
   let fixture: ComponentFixture<FishingScoreDisplayComponent>;
   let fishingScoreService: jasmine.SpyObj<FishingScoreService>;
-  let geolocationService: Pick<GeolocationService, 'state'>;
+  let coordsSignal: ReturnType<typeof signal<ActiveCoords | null>>;
+
+  function makeActiveLocationService(
+    coords: ActiveCoords | null = { latitude: 40.7128, longitude: -74.006, name: null },
+  ) {
+    coordsSignal = signal<ActiveCoords | null>(coords);
+    return {
+      coords: coordsSignal.asReadonly(),
+      status: computed(() => (coordsSignal() ? ('granted' as const) : ('idle' as const))),
+      isLocating: computed(() => false),
+      hasError: computed(() => false),
+    };
+  }
 
   beforeEach(async () => {
+    localStorage.clear();
     fishingScoreService = jasmine.createSpyObj<FishingScoreService>('FishingScoreService', [
       'getScore',
     ]);
     fishingScoreService.getScore.and.returnValue(of(makeScore(78)));
-
-    const geoState = signal<GeolocationState>(makeGrantedState());
-    geolocationService = { state: geoState.asReadonly() };
 
     await TestBed.configureTestingModule({
       imports: [FishingScoreDisplayComponent],
       providers: [
         provideRouter([]),
         { provide: FishingScoreService, useValue: fishingScoreService },
-        { provide: GeolocationService, useValue: geolocationService },
+        { provide: ActiveLocationService, useValue: makeActiveLocationService() },
       ],
     }).compileComponents();
 

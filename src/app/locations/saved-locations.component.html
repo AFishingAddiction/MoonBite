@@ -1,0 +1,170 @@
+<main class="locations-page" aria-label="Saved Locations">
+  <header class="locations-page__header">
+    <a routerLink="/" class="locations-page__back" aria-label="Back to home">
+      <span aria-hidden="true">←</span> Back
+    </a>
+    <h1 class="locations-page__title">
+      <span aria-hidden="true">📍</span> Saved Locations
+    </h1>
+  </header>
+
+  <!-- GPS add section -->
+  @if (geoStatus() === 'granted') {
+    @if (!isAddingLocation()) {
+      <div class="locations-page__add-section">
+        <button
+          class="locations-page__add-btn"
+          data-testid="save-gps-btn"
+          type="button"
+          [disabled]="atMaxLocations()"
+          (click)="startAdding()"
+          [attr.aria-disabled]="atMaxLocations()"
+        >
+          <span aria-hidden="true">+</span> Save GPS Location
+        </button>
+        @if (atMaxLocations()) {
+          <p class="locations-page__max-warning" role="status" data-testid="max-warning">
+            Maximum of {{ maxLocations }} locations saved. Delete one to add more.
+          </p>
+        }
+      </div>
+    } @else {
+      <!-- Inline add form -->
+      <div class="locations-page__add-form" data-testid="add-location-form" role="region" aria-label="Save new location">
+        <p class="locations-page__add-form-coords">
+          GPS:
+          {{ formatLat(geoPosition()!.coords.latitude) }},
+          {{ formatLng(geoPosition()!.coords.longitude) }}
+        </p>
+        <label for="new-location-name" class="locations-page__add-form-label">
+          Name this location
+        </label>
+        <input
+          id="new-location-name"
+          class="locations-page__add-form-input"
+          type="text"
+          [value]="newLocationName()"
+          (input)="updateName($event)"
+          placeholder="e.g. Lake Tahoe, Home Waters"
+          data-testid="new-location-name-input"
+          maxlength="50"
+          autocomplete="off"
+        />
+        @if (addError()) {
+          <p class="locations-page__add-form-error" role="alert" data-testid="add-error">
+            {{ addError() }}
+          </p>
+        }
+        <div class="locations-page__add-form-actions">
+          <button
+            class="locations-page__btn locations-page__btn--primary"
+            data-testid="confirm-add-btn"
+            type="button"
+            (click)="confirmAdd()"
+          >
+            Save
+          </button>
+          <button
+            class="locations-page__btn locations-page__btn--secondary"
+            data-testid="cancel-add-btn"
+            type="button"
+            (click)="cancelAdd()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    }
+  } @else if (geoStatus() === 'idle' || geoStatus() === 'requesting') {
+    <p class="locations-page__gps-hint" data-testid="gps-hint">
+      Enable GPS on the home screen to save your current location.
+    </p>
+  }
+
+  <!-- Active location banner -->
+  @if (savedLocations.activeLocation(); as active) {
+    <div class="locations-page__active-banner" data-testid="active-location-banner" role="status">
+      <span class="locations-page__active-banner-icon" aria-hidden="true">✓</span>
+      <span class="locations-page__active-banner-text">
+        Using <strong>{{ active.name }}</strong> for all fishing calculations
+      </span>
+      <button
+        class="locations-page__btn locations-page__btn--ghost"
+        data-testid="switch-to-gps-btn"
+        type="button"
+        (click)="clearActive()"
+      >
+        Switch to GPS
+      </button>
+    </div>
+  }
+
+  <!-- Location list -->
+  @if (savedLocations.locations().length === 0) {
+    <div class="locations-page__empty" data-testid="empty-state">
+      <span class="locations-page__empty-icon" aria-hidden="true">🗺️</span>
+      <p class="locations-page__empty-title">No saved locations yet</p>
+      <p class="locations-page__empty-hint">
+        @if (geoStatus() === 'granted') {
+          Tap "Save GPS Location" above to bookmark your first fishing spot.
+        } @else {
+          Enable GPS on the home screen, then return here to save your location.
+        }
+      </p>
+    </div>
+  } @else {
+    <ul class="locations-page__list" data-testid="locations-list" aria-label="Your saved fishing spots">
+      @for (loc of savedLocations.locations(); track loc.id) {
+        <li
+          class="locations-page__item"
+          [class.locations-page__item--active]="isActive(loc.id)"
+          data-testid="location-item"
+        >
+          <div class="locations-page__item-info">
+            @if (isActive(loc.id)) {
+              <span class="locations-page__item-active-badge" aria-label="Currently active location">
+                Active
+              </span>
+            }
+            <span class="locations-page__item-name">{{ loc.name }}</span>
+            <span class="locations-page__item-coords">
+              {{ formatLat(loc.latitude) }}, {{ formatLng(loc.longitude) }}
+            </span>
+          </div>
+          <div class="locations-page__item-actions">
+            @if (isActive(loc.id)) {
+              <button
+                class="locations-page__btn locations-page__btn--ghost"
+                data-testid="use-gps-btn"
+                type="button"
+                (click)="clearActive()"
+                [attr.aria-label]="'Stop using ' + loc.name + ', switch to GPS'"
+              >
+                Use GPS
+              </button>
+            } @else {
+              <button
+                class="locations-page__btn locations-page__btn--activate"
+                data-testid="activate-btn"
+                type="button"
+                (click)="setActive(loc.id)"
+                [attr.aria-label]="'Use ' + loc.name + ' for fishing score calculations'"
+              >
+                Use
+              </button>
+            }
+            <button
+              class="locations-page__btn locations-page__btn--danger"
+              data-testid="delete-btn"
+              type="button"
+              (click)="remove(loc.id)"
+              [attr.aria-label]="'Delete ' + loc.name"
+            >
+              Delete
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</main>

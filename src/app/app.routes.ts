@@ -23,4 +23,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./scoring/score-breakdown.component').then(m => m.ScoreBreakdownComponent),
   },
+  {
+    path: 'locations',
+    loadComponent: () =>
+      import('./locations/saved-locations.component').then(m => m.SavedLocationsComponent),
+  },
 ];

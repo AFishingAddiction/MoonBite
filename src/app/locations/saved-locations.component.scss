@@ -1,0 +1,366 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.locations-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $space-md $space-md calc($nav-height + $space-lg);
+
+  // ─── Header ────────────────────────────────────────────────────────────────
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    margin-bottom: $space-xl;
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs;
+    color: $color-primary;
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    min-height: 44px;
+    padding: $space-xs $space-sm;
+    border-radius: $radius-md;
+    transition: color $transition-fast;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  // ─── Add section ───────────────────────────────────────────────────────────
+
+  &__add-section {
+    margin-bottom: $space-lg;
+  }
+
+  &__add-btn {
+    @include button-reset;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs;
+    min-height: 44px;
+    padding: $space-sm $space-lg;
+    background-color: $color-accent;
+    color: $color-surface-dark;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    transition: background-color $transition-fast;
+
+    &:hover:not([disabled]) {
+      background-color: $color-accent-dark;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__max-warning {
+    margin: $space-sm 0 0;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__gps-hint {
+    padding: $space-md;
+    background-color: $color-surface-alt;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin-bottom: $space-lg;
+  }
+
+  // ─── Add form ──────────────────────────────────────────────────────────────
+
+  &__add-form {
+    background-color: $color-surface;
+    border: 2px solid $color-primary;
+    border-radius: $radius-lg;
+    padding: $space-lg;
+    margin-bottom: $space-lg;
+  }
+
+  &__add-form-coords {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin: 0 0 $space-md;
+  }
+
+  &__add-form-label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    margin-bottom: $space-xs;
+  }
+
+  &__add-form-input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: $space-sm $space-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    color: $color-text-primary;
+    background-color: $color-surface;
+    box-sizing: border-box;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    }
+
+    &::placeholder {
+      color: $color-text-disabled;
+    }
+  }
+
+  &__add-form-error {
+    font-size: $font-size-sm;
+    color: $color-error;
+    margin: $space-xs 0 0;
+  }
+
+  &__add-form-actions {
+    display: flex;
+    gap: $space-sm;
+    margin-top: $space-md;
+  }
+
+  // ─── Active banner ─────────────────────────────────────────────────────────
+
+  &__active-banner {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    padding: $space-sm $space-md;
+    background-color: rgba($color-primary, 0.08);
+    border: 1px solid rgba($color-primary, 0.3);
+    border-radius: $radius-md;
+    margin-bottom: $space-lg;
+    flex-wrap: wrap;
+  }
+
+  &__active-banner-icon {
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+    flex-shrink: 0;
+  }
+
+  &__active-banner-text {
+    flex: 1;
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+  }
+
+  // ─── Empty state ───────────────────────────────────────────────────────────
+
+  &__empty {
+    text-align: center;
+    padding: $space-2xl $space-md;
+    color: $color-text-secondary;
+  }
+
+  &__empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: $space-md;
+  }
+
+  &__empty-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0 0 $space-sm;
+  }
+
+  &__empty-hint {
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+
+  // ─── Location list ─────────────────────────────────────────────────────────
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
+    padding: $space-md;
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    transition: border-color $transition-fast;
+
+    &--active {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 1px $color-primary;
+    }
+  }
+
+  &__item-info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    min-width: 0;
+  }
+
+  &__item-active-badge {
+    display: inline-block;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: $letter-spacing-caps;
+    text-transform: uppercase;
+    color: $color-primary;
+    background-color: rgba($color-primary, 0.1);
+    border-radius: $radius-full;
+    padding: 2px $space-sm;
+    width: fit-content;
+  }
+
+  &__item-name {
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__item-coords {
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+  }
+
+  &__item-actions {
+    display: flex;
+    gap: $space-xs;
+    flex-shrink: 0;
+  }
+
+  // ─── Shared buttons ────────────────────────────────────────────────────────
+
+  &__btn {
+    @include button-reset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: $space-xs $space-md;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    transition:
+      background-color $transition-fast,
+      color $transition-fast;
+
+    &--primary {
+      background-color: $color-primary;
+      color: $color-surface;
+
+      &:hover {
+        background-color: $color-primary-dark;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+
+    &--secondary {
+      background-color: $color-surface-alt;
+      color: $color-primary;
+      border: 1px solid $color-border;
+
+      &:hover {
+        background-color: $color-border;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+
+    &--ghost {
+      color: $color-text-secondary;
+      border: 1px solid $color-border;
+
+      &:hover {
+        background-color: $color-surface-alt;
+        color: $color-text-primary;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+
+    &--activate {
+      background-color: $color-primary;
+      color: $color-surface;
+
+      &:hover {
+        background-color: $color-primary-dark;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
+
+    &--danger {
+      color: $color-error;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: $color-error-light;
+        border-color: $color-error;
+      }
+
+      &:focus-visible {
+        outline: 2px solid $color-error;
+        outline-offset: 2px;
+      }
+    }
+  }
+}

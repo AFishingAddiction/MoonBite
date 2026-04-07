@@ -9,11 +9,127 @@
   box-shadow: $shadow-sm;
   width: 100%;
 
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    margin-bottom: $space-md;
+  }
+
   &__title {
     font-size: $font-size-lg;
     font-weight: $font-weight-bold;
     color: $color-text-primary;
-    margin: 0 0 $space-md;
+    margin: 0;
+  }
+
+  &__manage-link {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: $space-xs $space-sm;
+    border-radius: $radius-md;
+    border: 1px solid $color-border;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $color-surface-alt;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__active-saved {
+    margin-bottom: $space-md;
+  }
+
+  &__active-label {
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+    margin: 0 0 $space-xs;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-caps;
+  }
+
+  &__active-name {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0 0 $space-xs;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+  }
+
+  &__save-form {
+    margin-top: $space-sm;
+    padding: $space-md;
+    background-color: $color-surface-alt;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+  }
+
+  &__save-label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    margin-bottom: $space-xs;
+  }
+
+  &__save-input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: $space-sm $space-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    color: $color-text-primary;
+    background-color: $color-surface;
+    box-sizing: border-box;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    }
+
+    &::placeholder {
+      color: $color-text-disabled;
+    }
+  }
+
+  &__save-actions {
+    display: flex;
+    gap: $space-sm;
+    margin-top: $space-sm;
+  }
+
+  &__btn {
+    &--accent {
+      background-color: $color-accent;
+      color: $color-surface-dark;
+      font-weight: $font-weight-bold;
+
+      &:hover {
+        background-color: $color-accent-dark;
+      }
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+    }
   }
 
   &__btn {

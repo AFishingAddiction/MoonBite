@@ -1,76 +1,162 @@
 <section class="location-display" aria-label="Your location">
-  <h2 class="location-display__title"><span aria-hidden="true">📍</span> Your Location</h2>
+  <div class="location-display__header">
+    <h2 class="location-display__title"><span aria-hidden="true">📍</span> Your Location</h2>
+    <a
+      routerLink="/locations"
+      class="location-display__manage-link"
+      aria-label="Manage saved locations"
+    >
+      Saved Locations
+    </a>
+  </div>
 
-  @switch (geo.state().status) {
-    @case ('idle') {
-      <button
-        class="location-display__btn location-display__btn--primary"
-        data-testid="request-location-btn"
-        type="button"
-        (click)="requestLocation()"
-      >
-        Use My Location
-      </button>
-    }
-
-    @case ('requesting') {
-      <div class="location-display__loading" data-testid="location-loading" role="status" aria-live="polite">
-        <span class="location-display__spinner" aria-hidden="true"></span>
-        <span>Getting your location…</span>
+  @if (savedLocations.activeLocation(); as activeLoc) {
+    <!-- Active saved location overrides GPS display -->
+    <div class="location-display__active-saved" data-testid="active-saved-location">
+      <p class="location-display__active-label">Using saved location:</p>
+      <p class="location-display__active-name">{{ activeLoc.name }}</p>
+      <div class="location-display__coords" data-testid="location-coords" aria-live="polite">
+        <span class="location-display__coord">
+          Lat: {{ formatCoord(activeLoc.latitude, 'N', 'S') }}
+        </span>
+        <span class="location-display__coord">
+          Lon: {{ formatCoord(activeLoc.longitude, 'E', 'W') }}
+        </span>
       </div>
-    }
-
-    @case ('granted') {
-      @if (geo.state().position; as pos) {
-        <div class="location-display__coords" data-testid="location-coords" aria-live="polite">
-          <span class="location-display__coord"> Lat: {{ formatCoord(pos.coords.latitude, 'N', 'S') }} </span>
-          <span class="location-display__coord"> Lon: {{ formatCoord(pos.coords.longitude, 'E', 'W') }} </span>
-        </div>
+    </div>
+    <button
+      class="location-display__btn location-display__btn--secondary"
+      data-testid="use-gps-btn"
+      type="button"
+      (click)="clearActiveLocation()"
+    >
+      Switch to GPS
+    </button>
+  } @else {
+    <!-- GPS-based location flow -->
+    @switch (geo.state().status) {
+      @case ('idle') {
         <button
-          class="location-display__btn location-display__btn--secondary"
-          data-testid="change-location-btn"
+          class="location-display__btn location-display__btn--primary"
+          data-testid="request-location-btn"
           type="button"
           (click)="requestLocation()"
         >
-          Change Location
+          Use My Location
         </button>
       }
-    }
 
-    @case ('denied') {
-      <div class="location-display__error" data-testid="location-error" role="alert">
-        <p class="location-display__error-message">
-          Location access was denied. Please enable location services in your browser settings.
-        </p>
-        <button
-          class="location-display__btn location-display__btn--secondary"
-          data-testid="retry-btn"
-          type="button"
-          (click)="retry()"
-        >
-          Retry
-        </button>
-      </div>
-    }
+      @case ('requesting') {
+        <div class="location-display__loading" data-testid="location-loading" role="status" aria-live="polite">
+          <span class="location-display__spinner" aria-hidden="true"></span>
+          <span>Getting your location…</span>
+        </div>
+      }
 
-    @case ('error') {
-      <div class="location-display__error" data-testid="location-error" role="alert">
-        <p class="location-display__error-message">Unable to retrieve your location. Please try again.</p>
-        <button
-          class="location-display__btn location-display__btn--secondary"
-          data-testid="retry-btn"
-          type="button"
-          (click)="retry()"
-        >
-          Try Again
-        </button>
-      </div>
-    }
+      @case ('granted') {
+        @if (geo.state().position; as pos) {
+          <div class="location-display__coords" data-testid="location-coords" aria-live="polite">
+            <span class="location-display__coord">
+              Lat: {{ formatCoord(pos.coords.latitude, 'N', 'S') }}
+            </span>
+            <span class="location-display__coord">
+              Lon: {{ formatCoord(pos.coords.longitude, 'E', 'W') }}
+            </span>
+          </div>
 
-    @case ('unavailable') {
-      <div class="location-display__unavailable" data-testid="location-unavailable" role="status">
-        <p>Location services are not available in this browser.</p>
-      </div>
+          @if (isSavingLocation()) {
+            <div class="location-display__save-form" data-testid="save-location-form">
+              <label for="loc-name" class="location-display__save-label">
+                Name this location
+              </label>
+              <input
+                id="loc-name"
+                class="location-display__save-input"
+                type="text"
+                [value]="pendingLocationName()"
+                (input)="updatePendingName($event)"
+                placeholder="e.g. Lake Tahoe"
+                data-testid="location-name-input"
+                maxlength="50"
+                autocomplete="off"
+              />
+              <div class="location-display__save-actions">
+                <button
+                  class="location-display__btn location-display__btn--primary"
+                  data-testid="confirm-save-btn"
+                  type="button"
+                  (click)="confirmSave()"
+                >
+                  Save
+                </button>
+                <button
+                  class="location-display__btn location-display__btn--secondary"
+                  data-testid="cancel-save-btn"
+                  type="button"
+                  (click)="cancelSave()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="location-display__actions">
+              <button
+                class="location-display__btn location-display__btn--secondary"
+                data-testid="change-location-btn"
+                type="button"
+                (click)="requestLocation()"
+              >
+                Change Location
+              </button>
+              <button
+                class="location-display__btn location-display__btn--accent"
+                data-testid="save-location-btn"
+                type="button"
+                (click)="startSaving()"
+              >
+                Save Location
+              </button>
+            </div>
+          }
+        }
+      }
+
+      @case ('denied') {
+        <div class="location-display__error" data-testid="location-error" role="alert">
+          <p class="location-display__error-message">
+            Location access was denied. Please enable location services in your browser settings.
+          </p>
+          <button
+            class="location-display__btn location-display__btn--secondary"
+            data-testid="retry-btn"
+            type="button"
+            (click)="retry()"
+          >
+            Retry
+          </button>
+        </div>
+      }
+
+      @case ('error') {
+        <div class="location-display__error" data-testid="location-error" role="alert">
+          <p class="location-display__error-message">Unable to retrieve your location. Please try again.</p>
+          <button
+            class="location-display__btn location-display__btn--secondary"
+            data-testid="retry-btn"
+            type="button"
+            (click)="retry()"
+          >
+            Try Again
+          </button>
+        </div>
+      }
+
+      @case ('unavailable') {
+        <div class="location-display__unavailable" data-testid="location-unavailable" role="status">
+          <p>Location services are not available in this browser.</p>
+        </div>
+      }
     }
   }
 </section>

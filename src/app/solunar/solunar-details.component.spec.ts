@@ -3,7 +3,8 @@ import { By } from '@angular/platform-browser';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { SolunarDetailsComponent } from './solunar-details.component';
-import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
+import { GeolocationState } from '../geolocation/geolocation.service';
+import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { SolunarService, SolunarData, SolunarPeriod } from './solunar.service';
 
 // ── Factories ─────────────────────────────────────────────────────────────────
@@ -69,13 +70,26 @@ function makeGrantedState(
 describe('SolunarDetailsComponent', () => {
   let fixture: ComponentFixture<SolunarDetailsComponent>;
   let component: SolunarDetailsComponent;
-  let stateSignal: ReturnType<typeof signal<GeolocationState>>;
+  let coordsSignal: ReturnType<typeof signal<ActiveCoords | null>>;
+  let statusSignal: ReturnType<typeof signal<GeolocationState['status']>>;
+  let isLocatingSignal: ReturnType<typeof signal<boolean>>;
+  let hasErrorSignal: ReturnType<typeof signal<boolean>>;
   let mockSolunarService: jasmine.SpyObj<SolunarService>;
 
   const defaultData = makeSolunarData();
 
   beforeEach(async () => {
-    stateSignal = signal<GeolocationState>({ status: 'idle', position: null, error: null });
+    coordsSignal = signal<ActiveCoords | null>(null);
+    statusSignal = signal<GeolocationState['status']>('idle');
+    isLocatingSignal = signal(true); // 'idle' counts as locating (awaiting permission)
+    hasErrorSignal = signal(false);
+
+    const mockActiveService = {
+      coords: coordsSignal.asReadonly(),
+      status: statusSignal.asReadonly(),
+      isLocating: isLocatingSignal.asReadonly(),
+      hasError: hasErrorSignal.asReadonly(),
+    };
 
     mockSolunarService = jasmine.createSpyObj<SolunarService>('SolunarService', [
       'calculateForToday',
@@ -93,7 +107,7 @@ describe('SolunarDetailsComponent', () => {
       imports: [SolunarDetailsComponent],
       providers: [
         provideRouter([]),
-        { provide: GeolocationService, useValue: { state: stateSignal.asReadonly() } },
+        { provide: ActiveLocationService, useValue: mockActiveService },
         { provide: SolunarService, useValue: mockSolunarService },
       ],
     }).compileComponents();
@@ -104,7 +118,15 @@ describe('SolunarDetailsComponent', () => {
   });
 
   function setGeoState(state: GeolocationState): void {
-    stateSignal.set(state);
+    const pos = state.status === 'granted' ? state.position : null;
+    coordsSignal.set(
+      pos ? { latitude: pos.coords.latitude, longitude: pos.coords.longitude, name: null } : null,
+    );
+    statusSignal.set(state.status);
+    isLocatingSignal.set(state.status === 'idle' || state.status === 'requesting');
+    hasErrorSignal.set(
+      state.status === 'denied' || state.status === 'unavailable' || state.status === 'error',
+    );
     fixture.detectChanges();
   }
 
@@ -244,21 +266,21 @@ describe('SolunarDetailsComponent', () => {
     it('returns 4 filled stars for rating 4', () => {
       setGeoState(makeGrantedState());
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 4 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.ratingStars()).toBe('★★★★');
     });
 
     it('returns 3 filled + 1 empty for rating 3', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 3 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.ratingStars()).toBe('★★★☆');
     });
 
     it('returns 1 filled + 3 empty for rating 1', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 1 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.ratingStars()).toBe('★☆☆☆');
     });
@@ -273,35 +295,35 @@ describe('SolunarDetailsComponent', () => {
 
     it('returns "good" for score >= 75', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ fishingScoreContribution: 90 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('good');
     });
 
     it('returns "good" for score exactly 75', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ fishingScoreContribution: 75 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('good');
     });
 
     it('returns "fair" for score 50-74', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ fishingScoreContribution: 70 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('fair');
     });
 
     it('returns "fair" for score exactly 50', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ fishingScoreContribution: 50 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('fair');
     });
 
     it('returns "poor" for score < 50', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ fishingScoreContribution: 40 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('poor');
     });
@@ -316,28 +338,28 @@ describe('SolunarDetailsComponent', () => {
 
     it('returns non-empty advice for rating 4', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 4 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.advice()).toContain('Peak solunar');
     });
 
     it('returns non-empty advice for rating 3', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 3 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.advice().length).toBeGreaterThan(0);
     });
 
     it('returns non-empty advice for rating 2', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 2 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.advice().length).toBeGreaterThan(0);
     });
 
     it('returns non-empty advice for rating 1', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ rating: 1 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.advice().length).toBeGreaterThan(0);
     });
@@ -410,7 +432,7 @@ describe('SolunarDetailsComponent', () => {
           makePeriod({ index: 2, description: 'Moon Underfoot' }),
         ]})
       );
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.isPolar()).toBeTrue();
     });
@@ -425,7 +447,7 @@ describe('SolunarDetailsComponent', () => {
 
     it('returns correct percentage string when data is available', () => {
       mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ fishingScoreContribution: 90 }));
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scorePercent()).toBe('90%');
     });
@@ -439,19 +461,19 @@ describe('SolunarDetailsComponent', () => {
     });
 
     it('returns 7 items when granted', () => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.forecastDays().length).toBe(7);
     });
 
     it('calls calculateForDateString for each of 7 days', () => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(mockSolunarService.calculateForDateString).toHaveBeenCalledTimes(7);
     });
 
     it('passes correct lat/lng to calculateForDateString', () => {
-      stateSignal.set(makeGrantedState(51.5, -0.12));
+      setGeoState(makeGrantedState(51.5, -0.12));
       fixture.detectChanges();
       const calls = mockSolunarService.calculateForDateString.calls.allArgs();
       calls.forEach(args => {
@@ -461,7 +483,7 @@ describe('SolunarDetailsComponent', () => {
     });
 
     it('each forecast day has a dateUtc string', () => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       component.forecastDays().forEach(day => {
         expect(day.dateUtc).toMatch(/^\d{4}-\d{2}-\d{2}$/);
@@ -564,7 +586,7 @@ describe('SolunarDetailsComponent', () => {
           makePeriod({ index: 2, description: 'Moon Underfoot' }),
         ]})
       );
-      stateSignal.set(makeGrantedState(70, 25));
+      setGeoState(makeGrantedState(70, 25));
       fixture.detectChanges();
       const note = fixture.debugElement.query(By.css('.solunar-detail__polar-note'));
       expect(note).toBeTruthy();

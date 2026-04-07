@@ -4,7 +4,8 @@ import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { WeatherDetailsComponent } from './weather-details.component';
-import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
+import { GeolocationState } from '../geolocation/geolocation.service';
+import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { WeatherService, WeatherData, WeatherCondition } from './weather.service';
 
 // ── Factories ─────────────────────────────────────────────────────────────────
@@ -54,13 +55,40 @@ function makeGrantedState(latitude = 40.7128, longitude = -74.006): GeolocationS
 describe('WeatherDetailsComponent', () => {
   let fixture: ComponentFixture<WeatherDetailsComponent>;
   let component: WeatherDetailsComponent;
-  let stateSignal: ReturnType<typeof signal<GeolocationState>>;
+  let coordsSignal: ReturnType<typeof signal<ActiveCoords | null>>;
+  let statusSignal: ReturnType<typeof signal<GeolocationState['status']>>;
+  let isLocatingSignal: ReturnType<typeof signal<boolean>>;
+  let hasErrorSignal: ReturnType<typeof signal<boolean>>;
   let mockWeatherService: jasmine.SpyObj<WeatherService>;
 
   const defaultData = makeWeatherData();
 
+  /** Helper: update the writable ActiveLocationService mock to reflect a geo state. */
+  function setGeoState(state: GeolocationState): void {
+    const pos = state.status === 'granted' ? state.position : null;
+    coordsSignal.set(
+      pos ? { latitude: pos.coords.latitude, longitude: pos.coords.longitude, name: null } : null,
+    );
+    statusSignal.set(state.status);
+    isLocatingSignal.set(state.status === 'idle' || state.status === 'requesting');
+    hasErrorSignal.set(
+      state.status === 'denied' || state.status === 'unavailable' || state.status === 'error',
+    );
+    fixture.detectChanges();
+  }
+
   beforeEach(async () => {
-    stateSignal = signal<GeolocationState>({ status: 'idle', position: null, error: null });
+    coordsSignal = signal<ActiveCoords | null>(null);
+    statusSignal = signal<GeolocationState['status']>('idle');
+    isLocatingSignal = signal(true); // 'idle' counts as locating (awaiting permission)
+    hasErrorSignal = signal(false);
+
+    const mockActiveService = {
+      coords: coordsSignal.asReadonly(),
+      status: statusSignal.asReadonly(),
+      isLocating: isLocatingSignal.asReadonly(),
+      hasError: hasErrorSignal.asReadonly(),
+    };
 
     mockWeatherService = jasmine.createSpyObj<WeatherService>('WeatherService', [
       'getWeatherForLocation',
@@ -78,10 +106,7 @@ describe('WeatherDetailsComponent', () => {
       imports: [WeatherDetailsComponent],
       providers: [
         provideRouter([]),
-        {
-          provide: GeolocationService,
-          useValue: { state: stateSignal },
-        },
+        { provide: ActiveLocationService, useValue: mockActiveService },
         { provide: WeatherService, useValue: mockWeatherService },
       ],
     }).compileComponents();
@@ -114,8 +139,7 @@ describe('WeatherDetailsComponent', () => {
 
   describe('requesting state', () => {
     beforeEach(() => {
-      stateSignal.set({ status: 'requesting', position: null, error: null });
-      fixture.detectChanges();
+      setGeoState({ status: 'requesting', position: null, error: null });
     });
 
     it('shows skeleton loading state', () => {
@@ -144,12 +168,7 @@ describe('WeatherDetailsComponent', () => {
 
   describe('denied state', () => {
     beforeEach(() => {
-      stateSignal.set({
-        status: 'denied',
-        position: null,
-        error: null,
-      });
-      fixture.detectChanges();
+      setGeoState({ status: 'denied', position: null, error: null });
     });
 
     it('shows error message', () => {
@@ -170,8 +189,7 @@ describe('WeatherDetailsComponent', () => {
 
   describe('unavailable state', () => {
     beforeEach(() => {
-      stateSignal.set({ status: 'unavailable', position: null, error: null });
-      fixture.detectChanges();
+      setGeoState({ status: 'unavailable', position: null, error: null });
     });
 
     it('shows error state card', () => {
@@ -183,8 +201,7 @@ describe('WeatherDetailsComponent', () => {
   describe('HTTP error (weather returns null)', () => {
     beforeEach(() => {
       mockWeatherService.getWeatherForLocation.and.returnValue(of(null));
-      stateSignal.set(makeGrantedState());
-      fixture.detectChanges();
+      setGeoState(makeGrantedState());
     });
 
     it('shows error state when weather fetch returns null', () => {
@@ -201,8 +218,7 @@ describe('WeatherDetailsComponent', () => {
 
   describe('granted state with data', () => {
     beforeEach(() => {
-      stateSignal.set(makeGrantedState());
-      fixture.detectChanges();
+      setGeoState(makeGrantedState());
     });
 
     // Hero section
@@ -340,9 +356,9 @@ describe('WeatherDetailsComponent', () => {
         mockWeatherService.getWeatherForLocation.and.returnValue(
           of(makeWeatherData({ windGustKmh: 45 }))
         );
-        stateSignal.set({ status: 'idle', position: null, error: null });
+        setGeoState({ status: 'idle', position: null, error: null });
         fixture.detectChanges();
-        stateSignal.set(makeGrantedState());
+        setGeoState(makeGrantedState());
         fixture.detectChanges();
       });
 
@@ -434,9 +450,9 @@ describe('WeatherDetailsComponent', () => {
         mockWeatherService.getWeatherForLocation.and.returnValue(
           of(makeWeatherData({ fishingScoreContribution: 30 }))
         );
-        stateSignal.set({ status: 'idle', position: null, error: null });
+        setGeoState({ status: 'idle', position: null, error: null });
         fixture.detectChanges();
-        stateSignal.set(makeGrantedState());
+        setGeoState(makeGrantedState());
         fixture.detectChanges();
       });
 
@@ -451,9 +467,9 @@ describe('WeatherDetailsComponent', () => {
         mockWeatherService.getWeatherForLocation.and.returnValue(
           of(makeWeatherData({ fishingScoreContribution: 60 }))
         );
-        stateSignal.set({ status: 'idle', position: null, error: null });
+        setGeoState({ status: 'idle', position: null, error: null });
         fixture.detectChanges();
-        stateSignal.set(makeGrantedState());
+        setGeoState(makeGrantedState());
         fixture.detectChanges();
       });
 
@@ -491,7 +507,7 @@ describe('WeatherDetailsComponent', () => {
 
   describe('computed signals', () => {
     beforeEach(() => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
     });
 
@@ -503,9 +519,9 @@ describe('WeatherDetailsComponent', () => {
       mockWeatherService.getWeatherForLocation.and.returnValue(
         of(makeWeatherData({ fishingScoreContribution: 60 }))
       );
-      stateSignal.set({ status: 'idle', position: null, error: null });
+      setGeoState({ status: 'idle', position: null, error: null });
       fixture.detectChanges();
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('fair');
     });
@@ -514,9 +530,9 @@ describe('WeatherDetailsComponent', () => {
       mockWeatherService.getWeatherForLocation.and.returnValue(
         of(makeWeatherData({ fishingScoreContribution: 30 }))
       );
-      stateSignal.set({ status: 'idle', position: null, error: null });
+      setGeoState({ status: 'idle', position: null, error: null });
       fixture.detectChanges();
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.scoreTierClass()).toBe('poor');
     });
@@ -529,9 +545,9 @@ describe('WeatherDetailsComponent', () => {
       mockWeatherService.getWeatherForLocation.and.returnValue(
         of(makeWeatherData({ pressureTrend: 'rising' }))
       );
-      stateSignal.set({ status: 'idle', position: null, error: null });
+      setGeoState({ status: 'idle', position: null, error: null });
       fixture.detectChanges();
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.pressureTrendIcon()).toBe('↑');
     });
@@ -540,9 +556,9 @@ describe('WeatherDetailsComponent', () => {
       mockWeatherService.getWeatherForLocation.and.returnValue(
         of(makeWeatherData({ pressureTrend: 'falling' }))
       );
-      stateSignal.set({ status: 'idle', position: null, error: null });
+      setGeoState({ status: 'idle', position: null, error: null });
       fixture.detectChanges();
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.pressureTrendIcon()).toBe('↓');
     });
@@ -555,9 +571,9 @@ describe('WeatherDetailsComponent', () => {
       mockWeatherService.getWeatherForLocation.and.returnValue(
         of(makeWeatherData({ pressureTrend: 'rising' }))
       );
-      stateSignal.set({ status: 'idle', position: null, error: null });
+      setGeoState({ status: 'idle', position: null, error: null });
       fixture.detectChanges();
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.pressureTrendLabel()).toBe('Rising');
     });
@@ -566,9 +582,9 @@ describe('WeatherDetailsComponent', () => {
       mockWeatherService.getWeatherForLocation.and.returnValue(
         of(makeWeatherData({ pressureTrend: 'falling' }))
       );
-      stateSignal.set({ status: 'idle', position: null, error: null });
+      setGeoState({ status: 'idle', position: null, error: null });
       fixture.detectChanges();
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(component.pressureTrendLabel()).toBe('Falling');
     });
@@ -594,13 +610,13 @@ describe('WeatherDetailsComponent', () => {
 
   describe('WeatherService interaction', () => {
     it('calls getWeatherForLocation when location granted', () => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(mockWeatherService.getWeatherForLocation).toHaveBeenCalledWith(40.7128, -74.006);
     });
 
     it('calls getScoreBreakdown with weather data', () => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
       expect(mockWeatherService.getScoreBreakdown).toHaveBeenCalledWith(defaultData);
     });
@@ -610,7 +626,7 @@ describe('WeatherDetailsComponent', () => {
 
   describe('accessibility', () => {
     beforeEach(() => {
-      stateSignal.set(makeGrantedState());
+      setGeoState(makeGrantedState());
       fixture.detectChanges();
     });
 

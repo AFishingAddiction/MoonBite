@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { GeolocationService } from '../geolocation/geolocation.service';
+import { ActiveLocationService } from '../locations/active-location.service';
 import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
 
 // ── Advice copy keyed by rating (1–4) ─────────────────────────────────────────
@@ -29,28 +29,19 @@ const RATING_ADVICE: Record<1 | 2 | 3 | 4, string> = {
   styleUrl: './solunar-details.component.scss',
 })
 export class SolunarDetailsComponent {
-  private readonly geoService = inject(GeolocationService);
+  private readonly activeLocationService = inject(ActiveLocationService);
   private readonly solunarService = inject(SolunarService);
 
-  readonly geoState = this.geoService.state;
+  readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
 
-  readonly isIdle = computed(() => this.geoState().status === 'idle');
+  readonly isLocating = this.activeLocationService.isLocating;
 
-  readonly isLocating = computed(() => {
-    const s = this.geoState().status;
-    return s === 'idle' || s === 'requesting';
-  });
-
-  readonly hasError = computed(() => {
-    const s = this.geoState().status;
-    return s === 'denied' || s === 'unavailable' || s === 'error';
-  });
+  readonly hasError = this.activeLocationService.hasError;
 
   readonly solunarData = computed<SolunarData | null>(() => {
-    const state = this.geoState();
-    if (state.status !== 'granted' || !state.position) return null;
-    const { latitude, longitude } = state.position.coords;
-    return this.solunarService.calculateForToday(latitude, longitude);
+    const coords = this.activeLocationService.coords();
+    if (!coords) return null;
+    return this.solunarService.calculateForToday(coords.latitude, coords.longitude);
   });
 
   readonly isPolar = computed(() => this.solunarData()?.moonriseUtc === null);
@@ -84,15 +75,14 @@ export class SolunarDetailsComponent {
   });
 
   readonly forecastDays = computed<SolunarData[]>(() => {
-    const state = this.geoState();
-    if (state.status !== 'granted' || !state.position) return [];
-    const { latitude, longitude } = state.position.coords;
+    const coords = this.activeLocationService.coords();
+    if (!coords) return [];
     const today = new Date();
     return Array.from({ length: 7 }, (_, i) => {
       const d = new Date(today);
       d.setUTCDate(d.getUTCDate() + i);
       const dateUtc = d.toISOString().slice(0, 10);
-      return this.solunarService.calculateForDateString(dateUtc, latitude, longitude);
+      return this.solunarService.calculateForDateString(dateUtc, coords.latitude, coords.longitude);
     });
   });
 

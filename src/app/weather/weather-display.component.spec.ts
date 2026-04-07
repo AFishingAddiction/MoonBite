@@ -1,11 +1,28 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
+import { GeolocationState } from '../geolocation/geolocation.service';
+import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { WeatherDisplayComponent } from './weather-display.component';
 import { WeatherData, WeatherService } from './weather.service';
+
+function makeActiveServiceFrom(geoState: GeolocationState) {
+  const pos = geoState.status === 'granted' ? geoState.position : null;
+  const coords: ActiveCoords | null = pos
+    ? { latitude: pos.coords.latitude, longitude: pos.coords.longitude, name: null }
+    : null;
+  const coordsSignal = signal(coords);
+  return {
+    coords: coordsSignal.asReadonly(),
+    status: computed(() => geoState.status as ReturnType<ActiveLocationService['status']>),
+    isLocating: computed(() => geoState.status === 'idle' || geoState.status === 'requesting'),
+    hasError: computed(
+      () => geoState.status === 'denied' || geoState.status === 'unavailable' || geoState.status === 'error',
+    ),
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mock data
@@ -45,29 +62,16 @@ const MOCK_RAINY_WEATHER_DATA: WeatherData = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Mock helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-function makeMockGeoService(initialState: GeolocationState) {
-  const _state = signal<GeolocationState>(initialState);
-  return {
-    state: _state.asReadonly(),
-    requestLocation: jasmine.createSpy('requestLocation'),
-    _setState: (s: GeolocationState) => _state.set(s),
-  };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Tests
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('WeatherDisplayComponent', () => {
   let fixture: ComponentFixture<WeatherDisplayComponent>;
-  let mockGeoService: ReturnType<typeof makeMockGeoService>;
+  let mockActiveLocationService: ReturnType<typeof makeActiveServiceFrom>;
   let mockWeatherService: jasmine.SpyObj<WeatherService>;
 
   function setup(geoState: GeolocationState) {
-    mockGeoService = makeMockGeoService(geoState);
+    mockActiveLocationService = makeActiveServiceFrom(geoState);
     mockWeatherService = jasmine.createSpyObj('WeatherService', [
       'getWeatherForLocation',
       'getCachedWeather',
@@ -75,6 +79,7 @@ describe('WeatherDisplayComponent', () => {
       'clearCache',
       'calculatePressureTrend',
       'calculateFishingScore',
+      'getScoreBreakdown',
     ]);
     mockWeatherService.getWeatherForLocation.and.returnValue(of(MOCK_WEATHER_DATA));
   }
@@ -85,7 +90,7 @@ describe('WeatherDisplayComponent', () => {
       imports: [WeatherDisplayComponent],
       providers: [
         provideRouter([]),
-        { provide: GeolocationService, useValue: mockGeoService },
+        { provide: ActiveLocationService, useValue: mockActiveLocationService },
         { provide: WeatherService, useValue: mockWeatherService },
       ],
     }).compileComponents();
@@ -230,7 +235,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();
@@ -250,7 +255,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();
@@ -273,7 +278,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();
@@ -292,7 +297,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();
@@ -358,7 +363,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();
@@ -399,7 +404,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();
@@ -437,7 +442,7 @@ describe('WeatherDisplayComponent', () => {
         imports: [WeatherDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: WeatherService, useValue: mockWeatherService },
         ],
       }).compileComponents();

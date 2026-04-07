@@ -1,10 +1,27 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
+import { GeolocationState } from '../geolocation/geolocation.service';
+import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { SolunarDisplayComponent } from './solunar-display.component';
 import { SolunarData, SolunarService } from './solunar.service';
+
+function makeActiveServiceFrom(geoState: GeolocationState) {
+  const pos = geoState.status === 'granted' ? geoState.position : null;
+  const coords: ActiveCoords | null = pos
+    ? { latitude: pos.coords.latitude, longitude: pos.coords.longitude, name: null }
+    : null;
+  const coordsSignal = signal(coords);
+  return {
+    coords: coordsSignal.asReadonly(),
+    status: computed(() => geoState.status as ReturnType<ActiveLocationService['status']>),
+    isLocating: computed(() => geoState.status === 'idle' || geoState.status === 'requesting'),
+    hasError: computed(
+      () => geoState.status === 'denied' || geoState.status === 'unavailable' || geoState.status === 'error',
+    ),
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mock data
@@ -85,29 +102,16 @@ const MOCK_POLAR_DATA: SolunarData = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helper: make a mock GeolocationService with a writable internal signal
-// ─────────────────────────────────────────────────────────────────────────────
-function makeMockGeoService(initialState: GeolocationState) {
-  const _state = signal<GeolocationState>(initialState);
-  return {
-    state: _state.asReadonly(),
-    _state,
-    requestLocation: jasmine.createSpy('requestLocation'),
-    reset: jasmine.createSpy('reset'),
-  };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Tests
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('SolunarDisplayComponent', () => {
   let fixture: ComponentFixture<SolunarDisplayComponent>;
-  let mockGeoService: ReturnType<typeof makeMockGeoService>;
+  let mockActiveLocationService: ReturnType<typeof makeActiveServiceFrom>;
   let mockSolunarService: jasmine.SpyObj<SolunarService>;
 
   function setup(geoState: GeolocationState) {
-    mockGeoService = makeMockGeoService(geoState);
+    mockActiveLocationService = makeActiveServiceFrom(geoState);
     mockSolunarService = jasmine.createSpyObj('SolunarService', [
       'calculateForToday',
       'calculateForDate',
@@ -124,7 +128,7 @@ describe('SolunarDisplayComponent', () => {
       imports: [SolunarDisplayComponent],
       providers: [
         provideRouter([]),
-        { provide: GeolocationService, useValue: mockGeoService },
+        { provide: ActiveLocationService, useValue: mockActiveLocationService },
         { provide: SolunarService, useValue: mockSolunarService },
       ],
     }).compileComponents();
@@ -307,7 +311,7 @@ describe('SolunarDisplayComponent', () => {
         imports: [SolunarDisplayComponent],
         providers: [
           provideRouter([]),
-          { provide: GeolocationService, useValue: mockGeoService },
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
           { provide: SolunarService, useValue: mockSolunarService },
         ],
       }).compileComponents();

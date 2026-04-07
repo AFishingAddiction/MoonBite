@@ -9,7 +9,7 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { of, switchMap } from 'rxjs';
 import { RouterLink } from '@angular/router';
-import { GeolocationService } from '../geolocation/geolocation.service';
+import { ActiveLocationService } from '../locations/active-location.service';
 import { WeatherData, WeatherService, getWeatherDescription, getWeatherEmoji } from './weather.service';
 
 @Component({
@@ -21,30 +21,21 @@ import { WeatherData, WeatherService, getWeatherDescription, getWeatherEmoji } f
   styleUrl: './weather-display.component.scss',
 })
 export class WeatherDisplayComponent {
-  private readonly geoService = inject(GeolocationService);
+  private readonly activeLocationService = inject(ActiveLocationService);
   private readonly weatherService = inject(WeatherService);
 
-  protected readonly geoState = this.geoService.state;
+  protected readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
 
-  protected readonly isIdle = computed(() => this.geoState().status === 'idle');
+  protected readonly isLocating = this.activeLocationService.isLocating;
 
-  protected readonly isLocating = computed(() => {
-    const s = this.geoState().status;
-    return s === 'idle' || s === 'requesting';
-  });
+  protected readonly isDenied = this.activeLocationService.hasError;
 
-  protected readonly isDenied = computed(() => {
-    const s = this.geoState().status;
-    return s === 'denied' || s === 'unavailable' || s === 'error';
-  });
-
-  // Drives the HTTP fetch reactively: re-fetches when location is granted
+  // Drives the HTTP fetch reactively: re-fetches when location changes
   protected readonly weather = toSignal(
-    toObservable(this.geoService.state).pipe(
-      switchMap((state) => {
-        if (state.status !== 'granted' || !state.position) return of(undefined);
-        const { latitude, longitude } = state.position.coords;
-        return this.weatherService.getWeatherForLocation(latitude, longitude);
+    toObservable(this.activeLocationService.coords).pipe(
+      switchMap(coords => {
+        if (!coords) return of(undefined);
+        return this.weatherService.getWeatherForLocation(coords.latitude, coords.longitude);
       }),
     ),
   );
