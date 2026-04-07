@@ -7,6 +7,7 @@ import { GeolocationState } from '../geolocation/geolocation.service';
 import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { WeatherDisplayComponent } from './weather-display.component';
 import { WeatherData, WeatherService } from './weather.service';
+import { PreferencesService } from '../preferences/preferences.service';
 
 function makeActiveServiceFrom(geoState: GeolocationState) {
   const pos = geoState.status === 'granted' ? geoState.position : null;
@@ -70,6 +71,9 @@ describe('WeatherDisplayComponent', () => {
   let mockActiveLocationService: ReturnType<typeof makeActiveServiceFrom>;
   let mockWeatherService: jasmine.SpyObj<WeatherService>;
 
+  beforeEach(() => localStorage.clear());
+  afterEach(() => localStorage.clear());
+
   function setup(geoState: GeolocationState) {
     mockActiveLocationService = makeActiveServiceFrom(geoState);
     mockWeatherService = jasmine.createSpyObj('WeatherService', [
@@ -96,6 +100,7 @@ describe('WeatherDisplayComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(WeatherDisplayComponent);
+    TestBed.inject(PreferencesService).setUnitSystem('metric');
     fixture.detectChanges();
   }
 
@@ -191,7 +196,8 @@ describe('WeatherDisplayComponent', () => {
 
     it('displays the temperature', () => {
       const text = fixture.debugElement.nativeElement.textContent as string;
-      expect(text).toContain('12.5');
+      // Temperature is rounded to nearest integer in display (12.5°C → 13°C)
+      expect(text).toContain('13');
     });
 
     it('displays the wind speed', () => {
@@ -428,6 +434,47 @@ describe('WeatherDisplayComponent', () => {
       await createWithTrend('steady');
       const text = fixture.debugElement.nativeElement.textContent as string;
       expect(text).toContain('→');
+    });
+  });
+
+  // ── Imperial unit system ──────────────────────────────────────────────────
+
+  describe('imperial unit system', () => {
+    afterEach(() => localStorage.clear());
+
+    async function createWithImperial() {
+      localStorage.clear();
+      setup({ status: 'granted', position: MOCK_POSITION, error: null });
+      await TestBed.configureTestingModule({
+        imports: [WeatherDisplayComponent],
+        providers: [
+          provideRouter([]),
+          { provide: ActiveLocationService, useValue: mockActiveLocationService },
+          { provide: WeatherService, useValue: mockWeatherService },
+        ],
+      }).compileComponents();
+      fixture = TestBed.createComponent(WeatherDisplayComponent);
+      TestBed.inject(PreferencesService).setUnitSystem('imperial');
+      fixture.detectChanges();
+    }
+
+    it('displays temperature in °F', async () => {
+      await createWithImperial();
+      // 12.5°C → 54.5°F → Math.round = 55
+      const text = fixture.debugElement.nativeElement.textContent as string;
+      expect(text).toContain('55');
+    });
+
+    it('displays wind speed in mph', async () => {
+      await createWithImperial();
+      const text = fixture.debugElement.nativeElement.textContent as string;
+      expect(text).toContain('mph');
+    });
+
+    it('displays pressure in inHg', async () => {
+      await createWithImperial();
+      const text = fixture.debugElement.nativeElement.textContent as string;
+      expect(text).toContain('inHg');
     });
   });
 

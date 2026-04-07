@@ -9,6 +9,7 @@ import {
 import { SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ActiveLocationService } from '../locations/active-location.service';
+import { PreferencesService } from '../preferences/preferences.service';
 import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
 
 // ── Advice copy keyed by rating (1–4) ─────────────────────────────────────────
@@ -30,6 +31,7 @@ const RATING_ADVICE: Record<1 | 2 | 3 | 4, string> = {
 })
 export class SolunarDetailsComponent {
   private readonly activeLocationService = inject(ActiveLocationService);
+  private readonly prefs = inject(PreferencesService);
   private readonly solunarService = inject(SolunarService);
 
   readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
@@ -93,10 +95,7 @@ export class SolunarDetailsComponent {
   }
 
   formatTime(isoString: string): string {
-    const d = new Date(isoString);
-    const h = d.getUTCHours().toString().padStart(2, '0');
-    const m = d.getUTCMinutes().toString().padStart(2, '0');
-    return `${h}:${m} UTC`;
+    return this.prefs.formatTime(isoString);
   }
 
   forecastRatingStars(rating: 1 | 2 | 3 | 4): string {

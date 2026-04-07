@@ -33,10 +33,11 @@ export class BottomNavComponent {
   );
 
   readonly tabs: readonly NavTab[] = [
-    { icon: '🏠', label: 'Home',    route: '/'        },
-    { icon: '🌙', label: 'Moon',    route: '/moon'    },
-    { icon: '☀️',  label: 'Solunar', route: '/solunar' },
-    { icon: '☁️',  label: 'Weather', route: '/weather' },
+    { icon: '🏠', label: 'Home',     route: '/'         },
+    { icon: '🌙', label: 'Moon',     route: '/moon'     },
+    { icon: '☀️',  label: 'Solunar',  route: '/solunar'  },
+    { icon: '☁️',  label: 'Weather',  route: '/weather'  },
+    { icon: '⚙️', label: 'Settings', route: '/settings' },
   ];
 
   protected readonly activeRoute = computed(() => {

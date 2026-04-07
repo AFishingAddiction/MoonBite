@@ -368,20 +368,21 @@ describe('SolunarDetailsComponent', () => {
   // ─── Group 7: formatTime ─────────────────────────────────────────────────────
 
   describe('formatTime', () => {
-    it('formats ISO time as HH:MM UTC', () => {
-      expect(component.formatTime('2026-04-05T14:32:00.000Z')).toBe('14:32 UTC');
+    // formatTime now delegates to PreferencesService; default is 12h format
+    it('formats 14:32 UTC as 2:32 PM in default 12h mode', () => {
+      expect(component.formatTime('2026-04-05T14:32:00.000Z')).toBe('2:32 PM');
     });
 
-    it('pads single-digit hours', () => {
-      expect(component.formatTime('2026-04-05T02:05:00.000Z')).toBe('02:05 UTC');
+    it('formats 02:05 UTC as 2:05 AM in default 12h mode', () => {
+      expect(component.formatTime('2026-04-05T02:05:00.000Z')).toBe('2:05 AM');
     });
 
-    it('pads single-digit minutes', () => {
-      expect(component.formatTime('2026-04-05T10:03:00.000Z')).toBe('10:03 UTC');
+    it('formats 10:03 UTC as 10:03 AM in default 12h mode', () => {
+      expect(component.formatTime('2026-04-05T10:03:00.000Z')).toBe('10:03 AM');
     });
 
-    it('handles midnight', () => {
-      expect(component.formatTime('2026-04-05T00:00:00.000Z')).toBe('00:00 UTC');
+    it('formats midnight as 12:00 AM in default 12h mode', () => {
+      expect(component.formatTime('2026-04-05T00:00:00.000Z')).toBe('12:00 AM');
     });
   });
 
@@ -412,8 +413,9 @@ describe('SolunarDetailsComponent', () => {
       });
       const label = component.periodAriaLabel(period);
       expect(label).toContain('Moon Overhead');
-      expect(label).toContain('13:32 UTC');
-      expect(label).toContain('15:32 UTC');
+      // formatTime uses PreferencesService; default is 12h — 13:32 UTC → 1:32 PM, 15:32 UTC → 3:32 PM
+      expect(label).toContain('1:32 PM');
+      expect(label).toContain('3:32 PM');
     });
   });
 

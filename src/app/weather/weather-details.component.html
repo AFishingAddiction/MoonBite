@@ -45,8 +45,8 @@
       </div>
 
       <div class="weather-detail__hero-temp">
-        <span class="weather-detail__temp">{{ w.temperatureCelsius }}°C</span>
-        <span class="weather-detail__feels-like">feels {{ w.apparentTemperatureCelsius }}°C</span>
+        <span class="weather-detail__temp">{{ tempDisplay() }}</span>
+        <span class="weather-detail__feels-like">feels {{ feelsLikeDisplay() }}</span>
       </div>
 
       <!-- Score bar -->
@@ -76,28 +76,28 @@
       <div class="weather-detail__stat-grid">
         <div
           class="weather-detail__stat"
-          [attr.aria-label]="'Temperature: ' + w.temperatureCelsius + ' degrees Celsius'"
+          [attr.aria-label]="'Temperature: ' + tempDisplay()"
         >
-          <span class="weather-detail__stat-value" aria-hidden="true">{{ w.temperatureCelsius }}°C</span>
+          <span class="weather-detail__stat-value" aria-hidden="true">{{ tempDisplay() }}</span>
           <span class="weather-detail__stat-label" aria-hidden="true">Temperature</span>
         </div>
 
         <div
           class="weather-detail__stat"
-          [attr.aria-label]="'Wind speed: ' + w.windSpeedKmh + ' kilometres per hour'"
+          [attr.aria-label]="'Wind speed: ' + windDisplay()"
         >
-          <span class="weather-detail__stat-value" aria-hidden="true">{{ w.windSpeedKmh }} km/h</span>
+          <span class="weather-detail__stat-value" aria-hidden="true">{{ windDisplay() }}</span>
           <span class="weather-detail__stat-label" aria-hidden="true">Wind</span>
         </div>
 
         <div
           class="weather-detail__stat"
-          [attr.aria-label]="'Pressure: ' + w.barometricPressureHpa.toFixed(0) + ' hPa, ' + pressureTrendLabel()"
+          [attr.aria-label]="'Pressure: ' + pressureDisplay() + ', ' + pressureTrendLabel()"
         >
           <span class="weather-detail__stat-value weather-detail__stat-value--pressure" aria-hidden="true">
-            {{ w.barometricPressureHpa.toFixed(0) }}<span class="weather-detail__trend-icon">{{ pressureTrendIcon() }}</span>
+            {{ pressureDisplay() }}<span class="weather-detail__trend-icon">{{ pressureTrendIcon() }}</span>
           </span>
-          <span class="weather-detail__stat-label" aria-hidden="true">Pressure (hPa)</span>
+          <span class="weather-detail__stat-label" aria-hidden="true">Pressure ({{ pressureUnit() }})</span>
         </div>
 
         <div
@@ -116,12 +116,12 @@
       <dl class="weather-detail__conditions">
         <div class="weather-detail__condition-row">
           <dt class="weather-detail__condition-label">Feels Like</dt>
-          <dd class="weather-detail__condition-value">{{ w.apparentTemperatureCelsius }}°C</dd>
+          <dd class="weather-detail__condition-value">{{ feelsLikeDisplay() }}</dd>
         </div>
         <div class="weather-detail__condition-row">
           <dt class="weather-detail__condition-label">Precipitation</dt>
           <dd class="weather-detail__condition-value">
-            {{ w.precipitationMm }} mm
+            {{ precipDisplay() }}
             @if (w.precipitationMm > 0) {
               <span aria-hidden="true">&nbsp;☔</span>
             }
@@ -130,7 +130,7 @@
         <div class="weather-detail__condition-row">
           <dt class="weather-detail__condition-label">Wind Gusts</dt>
           <dd class="weather-detail__condition-value">
-            {{ w.windGustKmh }} km/h
+            {{ windGustDisplay() }}
             @if (w.windGustKmh > 30) {
               <span class="weather-detail__gust-warning" role="img" aria-label="High gust warning">&nbsp;⚠</span>
             }

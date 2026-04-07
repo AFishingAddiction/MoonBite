@@ -7,6 +7,7 @@ import { WeatherDetailsComponent } from './weather-details.component';
 import { GeolocationState } from '../geolocation/geolocation.service';
 import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { WeatherService, WeatherData, WeatherCondition } from './weather.service';
+import { PreferencesService } from '../preferences/preferences.service';
 
 // ── Factories ─────────────────────────────────────────────────────────────────
 
@@ -113,6 +114,7 @@ describe('WeatherDetailsComponent', () => {
 
     fixture = TestBed.createComponent(WeatherDetailsComponent);
     component = fixture.componentInstance;
+    TestBed.inject(PreferencesService).setUnitSystem('metric');
     fixture.detectChanges();
   });
 
@@ -603,6 +605,76 @@ describe('WeatherDetailsComponent', () => {
 
     it('hasData() is true when weather is loaded', () => {
       expect(component.hasData()).toBeTrue();
+    });
+  });
+
+  // ── Display signals — null weather ────────────────────────────────────────────
+
+  describe('display signals — null weather (idle state)', () => {
+    // In the outer beforeEach, coordsSignal is null → weather() is undefined.
+    // These tests cover the `if (!w) return ''` null-guard branch.
+    it('tempDisplay() returns "" when no weather data', () => {
+      expect(component.tempDisplay()).toBe('');
+    });
+
+    it('feelsLikeDisplay() returns "" when no weather data', () => {
+      expect(component.feelsLikeDisplay()).toBe('');
+    });
+
+    it('windDisplay() returns "" when no weather data', () => {
+      expect(component.windDisplay()).toBe('');
+    });
+
+    it('windGustDisplay() returns "" when no weather data', () => {
+      expect(component.windGustDisplay()).toBe('');
+    });
+
+    it('pressureDisplay() returns "" when no weather data', () => {
+      expect(component.pressureDisplay()).toBe('');
+    });
+
+    it('precipDisplay() returns "" when no weather data', () => {
+      expect(component.precipDisplay()).toBe('');
+    });
+  });
+
+  // ── Display signals — imperial unit system ─────────────────────────────────
+
+  describe('display signals — imperial unit system', () => {
+    beforeEach(() => {
+      TestBed.inject(PreferencesService).setUnitSystem('imperial');
+      setGeoState(makeGrantedState());
+      fixture.detectChanges();
+    });
+
+    afterEach(() => {
+      localStorage.clear();
+    });
+
+    it('gustHighThreshold() returns 18.6 in imperial mode', () => {
+      expect(component.gustHighThreshold()).toBe(18.6);
+    });
+
+    it('pressureDisplay() contains "inHg" in imperial mode', () => {
+      // 1018 hPa / 33.8639 ≈ 30.06 inHg
+      expect(component.pressureDisplay()).toContain('inHg');
+    });
+
+    it('pressureDisplay() uses 2 decimal places for inHg', () => {
+      const display = component.pressureDisplay();
+      expect(display).toMatch(/\d+\.\d{2}\s+inHg/);
+    });
+
+    it('tempDisplay() contains "°F" in imperial mode', () => {
+      expect(component.tempDisplay()).toContain('°F');
+    });
+
+    it('windDisplay() contains "mph" in imperial mode', () => {
+      expect(component.windDisplay()).toContain('mph');
+    });
+
+    it('precipDisplay() contains "in" unit in imperial mode', () => {
+      expect(component.precipDisplay()).toContain(' in');
     });
   });
 

@@ -1,0 +1,122 @@
+<main class="settings">
+  <header class="settings__header">
+    <h1 class="settings__title">Settings</h1>
+  </header>
+
+  <!-- UNITS section -->
+  <section class="settings__section" aria-labelledby="units-heading">
+    <h2 id="units-heading" class="settings__section-label">UNITS</h2>
+    <div class="settings__card">
+      <div class="settings__row">
+        <span class="settings__row-label">Unit System</span>
+        <div class="settings__segment" role="group" aria-label="Unit system">
+          <button
+            class="settings__segment-btn"
+            [class.settings__segment-btn--active]="unitSystem() === 'metric'"
+            [attr.aria-pressed]="unitSystem() === 'metric'"
+            (click)="setUnitSystem('metric')"
+            data-testid="unit-metric-btn"
+          >Metric</button>
+          <button
+            class="settings__segment-btn"
+            [class.settings__segment-btn--active]="unitSystem() === 'imperial'"
+            [attr.aria-pressed]="unitSystem() === 'imperial'"
+            (click)="setUnitSystem('imperial')"
+            data-testid="unit-imperial-btn"
+          >Imperial</button>
+        </div>
+      </div>
+      <p class="settings__unit-description" aria-live="polite">
+        @if (unitSystem() === 'metric') {
+          Temperature in °C, wind in km/h, pressure in hPa, rain in mm
+        } @else {
+          Temperature in °F, wind in mph, pressure in inHg, rain in inches
+        }
+      </p>
+    </div>
+  </section>
+
+  <!-- DISPLAY section -->
+  <section class="settings__section" aria-labelledby="display-heading">
+    <h2 id="display-heading" class="settings__section-label">DISPLAY</h2>
+    <div class="settings__card">
+      <div class="settings__row">
+        <span class="settings__row-label">Time Format</span>
+        <div class="settings__segment" role="group" aria-label="Time format">
+          <button
+            class="settings__segment-btn"
+            [class.settings__segment-btn--active]="timeFormat() === '12h'"
+            [attr.aria-pressed]="timeFormat() === '12h'"
+            (click)="setTimeFormat('12h')"
+            data-testid="time-format-12h-btn"
+          >12-hour</button>
+          <button
+            class="settings__segment-btn"
+            [class.settings__segment-btn--active]="timeFormat() === '24h'"
+            [attr.aria-pressed]="timeFormat() === '24h'"
+            (click)="setTimeFormat('24h')"
+            data-testid="time-format-24h-btn"
+          >24-hour</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAVED LOCATIONS section -->
+  <section class="settings__section" aria-labelledby="locations-heading">
+    <h2 id="locations-heading" class="settings__section-label">SAVED LOCATIONS</h2>
+    <div class="settings__card">
+      @if (locations().length === 0) {
+        <p class="settings__empty">No saved locations yet.</p>
+      }
+      @for (loc of locations(); track loc.id) {
+        <div class="settings__location-row">
+          @if (editingId() === loc.id) {
+            <!-- Edit mode -->
+            <input
+              #renameInput
+              class="settings__rename-input"
+              [value]="editingName()"
+              (input)="editingName.set(renameInput.value)"
+              (keydown.enter)="confirmRename()"
+              (keydown.escape)="cancelRename()"
+              [attr.aria-label]="'Rename ' + loc.name"
+              aria-describedby="rename-hint"
+              placeholder="Enter new name"
+              maxlength="50"
+              data-testid="rename-input"
+            />
+            <span id="rename-hint" class="settings__visually-hidden">Press Enter to save, Escape to cancel</span>
+            <button
+              class="settings__rename-confirm"
+              (click)="confirmRename()"
+              aria-label="Save name"
+              data-testid="rename-confirm-btn"
+            >&#10003;</button>
+            <button
+              class="settings__rename-cancel"
+              (click)="cancelRename()"
+              aria-label="Cancel rename"
+              data-testid="rename-cancel-btn"
+            >&#10007;</button>
+          } @else {
+            <!-- Read mode -->
+            <span class="settings__location-icon" aria-hidden="true">&#128205;</span>
+            <span class="settings__location-name">{{ loc.name }}</span>
+            <button
+              class="settings__rename-btn"
+              (click)="startRename(loc)"
+              [attr.aria-label]="'Rename ' + loc.name"
+              data-testid="rename-btn"
+            >&#9999;&#65039;</button>
+          }
+        </div>
+        @if (!$last) {
+          <hr class="settings__divider" />
+        }
+      }
+    </div>
+  </section>
+
+  <p class="settings__autosave" aria-live="polite">&#10003; Settings saved automatically</p>
+</main>

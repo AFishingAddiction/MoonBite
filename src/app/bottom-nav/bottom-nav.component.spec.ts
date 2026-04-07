@@ -32,12 +32,12 @@ describe('BottomNavComponent', () => {
     expect(nav?.getAttribute('aria-label')).toBe('Main navigation');
   });
 
-  it('should render 4 tabs', () => {
+  it('should render 5 tabs', () => {
     const fixture = TestBed.createComponent(BottomNavComponent);
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     const tabs = el.querySelectorAll('.bottom-nav__tab');
-    expect(tabs.length).toBe(4);
+    expect(tabs.length).toBe(5);
   });
 
   it('should render all tab icons', () => {
@@ -98,13 +98,13 @@ describe('BottomNavComponent', () => {
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     const links = el.querySelectorAll('a.bottom-nav__tab-link');
-    expect(links.length).toBe(4);
+    expect(links.length).toBe(5);
   });
 
-  it('should protect tabs array as readonly and have length 4', () => {
+  it('should protect tabs array as readonly and have length 5', () => {
     const fixture = TestBed.createComponent(BottomNavComponent);
     const instance = fixture.componentInstance;
     expect(instance.tabs).toBeDefined();
-    expect(instance.tabs.length).toBe(4);
+    expect(instance.tabs.length).toBe(5);
   });
 });

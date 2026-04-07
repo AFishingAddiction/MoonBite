@@ -70,6 +70,44 @@ export class SavedLocationsService {
     }
   }
 
+  rename(id: string, newName: string): void {
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed.length > 50) return;
+
+    const current = this._locations();
+    const index = current.findIndex(l => l.id === id);
+    if (index === -1) return;
+
+    const updated = current.map(l => (l.id === id ? { ...l, name: trimmed } : l));
+    this._locations.set(updated);
+    this.persistLocations(updated);
+  }
+
+  reorder(ids: string[]): void {
+    const current = this._locations();
+    const byId = new Map<string, SavedLocation>(current.map(l => [l.id, l]));
+
+    const reordered: SavedLocation[] = [];
+    const seen = new Set<string>();
+
+    for (const id of ids) {
+      const loc = byId.get(id);
+      if (loc !== undefined && !seen.has(id)) {
+        reordered.push(loc);
+        seen.add(id);
+      }
+    }
+
+    for (const loc of current) {
+      if (!seen.has(loc.id)) {
+        reordered.push(loc);
+      }
+    }
+
+    this._locations.set(reordered);
+    this.persistLocations(reordered);
+  }
+
   private persistLocations(locations: SavedLocation[]): void {
     try {
       localStorage.setItem(SavedLocationsService.LOCATIONS_KEY, JSON.stringify(locations));

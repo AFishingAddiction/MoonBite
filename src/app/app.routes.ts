@@ -28,4 +28,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./locations/saved-locations.component').then(m => m.SavedLocationsComponent),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./settings/settings.component').then(m => m.SettingsComponent),
+  },
 ];

@@ -53,8 +53,8 @@
 
       <!-- Temperature -->
       <div class="weather-card__temp-row">
-        <span class="weather-card__temp">{{ w.temperatureCelsius }}°C</span>
-        <span class="weather-card__feels-like">feels {{ w.apparentTemperatureCelsius }}°C</span>
+        <span class="weather-card__temp">{{ tempDisplay() }}</span>
+        <span class="weather-card__feels-like">feels {{ feelsLikeDisplay() }}</span>
       </div>
 
       <!-- Stats grid -->
@@ -63,10 +63,10 @@
         <div class="weather-card__stat">
           <dt class="weather-card__stat-label">Wind</dt>
           <dd class="weather-card__stat-value">
-            {{ w.windSpeedKmh }} km/h
+            {{ windDisplay() }}
             @if (w.windGustKmh > 30) {
               <span class="weather-card__gust-warning" role="img" aria-label="High gust warning">
-                ↓{{ w.windGustKmh }} gust
+                ↓{{ windGustDisplay() }} gust
               </span>
             }
           </dd>
@@ -76,7 +76,7 @@
         <div class="weather-card__stat">
           <dt class="weather-card__stat-label">Pressure</dt>
           <dd class="weather-card__stat-value">
-            {{ w.barometricPressureHpa.toFixed(0) }} hPa
+            {{ pressureDisplay() }}
             <span class="weather-card__pressure-trend" [attr.aria-label]="w.pressureTrend">
               {{ pressureTrendIcon() }}
             </span>
@@ -93,7 +93,7 @@
         <div class="weather-card__stat">
           <dt class="weather-card__stat-label">Rain</dt>
           <dd class="weather-card__stat-value">
-            {{ w.precipitationMm }} mm
+            {{ precipDisplay() }}
             @if (w.precipitationMm > 0) {
               <span class="weather-card__precip-warning" role="img" aria-label="Precipitation warning">
                 ☔
