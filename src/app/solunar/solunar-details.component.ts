@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { ActiveLocationService } from '../locations/active-location.service';
 import { PreferencesService } from '../preferences/preferences.service';
 import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
+import { WeatherService } from '../weather/weather.service';
 
 // ── Advice copy keyed by rating (1–4) ─────────────────────────────────────────
 
@@ -33,6 +34,7 @@ export class SolunarDetailsComponent {
   private readonly activeLocationService = inject(ActiveLocationService);
   private readonly prefs = inject(PreferencesService);
   private readonly solunarService = inject(SolunarService);
+  private readonly weatherService = inject(WeatherService);
 
   readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
 
@@ -95,6 +97,12 @@ export class SolunarDetailsComponent {
   }
 
   formatTime(isoString: string): string {
+    const data = this.solunarData();
+    if (data) {
+      const tz = this.weatherService.getTimezone(data.latitude, data.longitude);
+      if (tz) return this.prefs.formatTimeInZone(isoString, tz);
+      return this.prefs.formatTimeForLongitude(isoString, data.longitude);
+    }
     return this.prefs.formatTime(isoString);
   }
 

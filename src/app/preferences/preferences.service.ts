@@ -88,6 +88,72 @@ export class PreferencesService {
     return `${hour12}:${mm} ${period}`;
   }
 
+  /**
+   * Format a UTC ISO string using an IANA timezone (e.g. "America/New_York").
+   * Uses the browser's Intl API to produce a real civil UTC offset.
+   * Time format (12h/24h) respects user preference.
+   * Returns e.g. "9:30 AM UTC-5" or "09:30 UTC-5" or "8:00 PM UTC+5:30".
+   */
+  formatTimeInZone(isoString: string, ianaTimezone: string): string {
+    const date = new Date(isoString);
+    const is24h = this._preferences().timeFormat === '24h';
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: ianaTimezone,
+      hour: is24h ? '2-digit' : 'numeric',
+      minute: '2-digit',
+      hour12: !is24h,
+      timeZoneName: 'shortOffset',
+    }).formatToParts(date);
+    return parts
+      .map((p) => (p.type === 'timeZoneName' ? p.value.replace('GMT', 'UTC') : p.value))
+      .join('')
+      .trim();
+  }
+
+  /**
+   * Format a UTC ISO string as local solar time for the given longitude.
+   *
+   * Offset = longitude / 15 hours (Local Mean Solar Time).
+   * Time format (12h/24h) respects user preference.
+   * Appends a UTC offset label: "UTC±0", "UTC+2", "UTC−5", "UTC+5:30", etc.
+   */
+  formatTimeForLongitude(isoString: string, longitude: number): string {
+    const date = new Date(isoString);
+    const offsetTotalMinutes = Math.round((longitude / 15) * 60);
+    const offsetHours = Math.trunc(offsetTotalMinutes / 60);
+    const offsetMins = Math.abs(offsetTotalMinutes % 60);
+
+    let totalMins = date.getUTCHours() * 60 + date.getUTCMinutes() + offsetTotalMinutes;
+    totalMins = ((totalMins % 1440) + 1440) % 1440;
+
+    const adjustedHours = Math.floor(totalMins / 60);
+    const adjustedMinutes = totalMins % 60;
+    const mm = String(adjustedMinutes).padStart(2, '0');
+
+    let timeStr: string;
+    if (this._preferences().timeFormat === '24h') {
+      timeStr = `${String(adjustedHours).padStart(2, '0')}:${mm}`;
+    } else {
+      const period = adjustedHours < 12 ? 'AM' : 'PM';
+      const hour12 = adjustedHours % 12 === 0 ? 12 : adjustedHours % 12;
+      timeStr = `${hour12}:${mm} ${period}`;
+    }
+
+    let offsetLabel: string;
+    if (offsetTotalMinutes === 0) {
+      offsetLabel = 'UTC\u00B10';
+    } else {
+      const sign = offsetHours >= 0 ? '+' : '\u2212';
+      const absHours = Math.abs(offsetHours);
+      offsetLabel =
+        offsetMins === 0
+          ? `UTC${sign}${absHours}`
+          : `UTC${sign}${absHours}:${String(offsetMins).padStart(2, '0')}`;
+    }
+
+    return `${timeStr} ${offsetLabel}`;
+  }
+
   private loadPreferences(): UserPreferences {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);

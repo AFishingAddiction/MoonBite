@@ -354,4 +354,109 @@ describe('PreferencesService', () => {
     spyOn(localStorage, 'setItem').and.throwError('QuotaExceededError');
     expect(() => service.setTimeFormat('24h')).not.toThrow();
   });
+
+  // ─── Feature 19: formatTimeForLongitude() ──────────────────────────────────
+
+  describe('formatTimeForLongitude', () => {
+    // longitude 0 → offset 0h → UTC±0
+    it('should format 14:30 UTC at longitude 0 as "2:30 PM UTC\u00B10" in 12h mode', () => {
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', 0)).toBe('2:30 PM UTC\u00B10');
+    });
+
+    it('should format 14:30 UTC at longitude 0 as "14:30 UTC\u00B10" in 24h mode', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', 0)).toBe('14:30 UTC\u00B10');
+    });
+
+    // longitude -75 → offset -5h (UTC−5)
+    it('should format 14:30 UTC at longitude -75 as "9:30 AM UTC\u22125" in 12h mode', () => {
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', -75)).toBe('9:30 AM UTC\u22125');
+    });
+
+    it('should format 14:30 UTC at longitude -75 as "09:30 UTC\u22125" in 24h mode', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', -75)).toBe('09:30 UTC\u22125');
+    });
+
+    // longitude +30 → offset +2h (UTC+2)
+    it('should format 14:30 UTC at longitude 30 as "4:30 PM UTC+2" in 12h mode', () => {
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', 30)).toBe('4:30 PM UTC+2');
+    });
+
+    it('should format 14:30 UTC at longitude 30 as "16:30 UTC+2" in 24h mode', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', 30)).toBe('16:30 UTC+2');
+    });
+
+    // longitude +82.5 → offset +5.5h (UTC+5:30)
+    it('should format 14:30 UTC at longitude 82.5 as "8:00 PM UTC+5:30" in 12h mode', () => {
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', 82.5)).toBe('8:00 PM UTC+5:30');
+    });
+
+    it('should format 14:30 UTC at longitude 82.5 as "20:00 UTC+5:30" in 24h mode', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', 82.5)).toBe('20:00 UTC+5:30');
+    });
+
+    // date boundary crossover: 23:00 UTC + 2h offset = 01:00 next day
+    it('should handle date crossover: 23:00 UTC at longitude 30 (+2h) yields "1:00 AM UTC+2" in 12h mode', () => {
+      expect(service.formatTimeForLongitude('2025-01-15T23:00:00Z', 30)).toBe('1:00 AM UTC+2');
+    });
+
+    it('should handle date crossover: 23:00 UTC at longitude 30 (+2h) yields "01:00 UTC+2" in 24h mode', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T23:00:00Z', 30)).toBe('01:00 UTC+2');
+    });
+
+    // negative crossover: 01:00 UTC at longitude -75 (-5h) = 20:00 previous day
+    it('should handle negative crossover: 01:00 UTC at longitude -75 yields "8:00 PM UTC\u22125" in 12h mode', () => {
+      expect(service.formatTimeForLongitude('2025-01-15T01:00:00Z', -75)).toBe('8:00 PM UTC\u22125');
+    });
+
+    it('should handle negative crossover: 01:00 UTC at longitude -75 yields "20:00 UTC\u22125" in 24h mode', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T01:00:00Z', -75)).toBe('20:00 UTC\u22125');
+    });
+
+    // negative half-hour offset: longitude -22.5 → offset -1.5h (UTC−1:30)
+    it('should format with negative half-hour offset at longitude -22.5 as UTC\u22121:30', () => {
+      service.setTimeFormat('24h');
+      expect(service.formatTimeForLongitude('2025-01-15T14:30:00Z', -22.5)).toBe('13:00 UTC\u22121:30');
+    });
+  });
+
+  // ─── Feature 23: formatTimeInZone() ─────────────────────────────────────────
+
+  describe('formatTimeInZone', () => {
+    it('should format time in 12h mode using IANA timezone (America/New_York)', () => {
+      service.setTimeFormat('12h');
+      // 2025-01-15T14:30:00Z in America/New_York is UTC-5 in January → 9:30 AM
+      const result = service.formatTimeInZone('2025-01-15T14:30:00Z', 'America/New_York');
+      expect(result).toContain('9:30 AM');
+      expect(result).toContain('UTC-5');
+    });
+
+    it('should format time in 24h mode using IANA timezone (America/New_York)', () => {
+      service.setTimeFormat('24h');
+      const result = service.formatTimeInZone('2025-01-15T14:30:00Z', 'America/New_York');
+      expect(result).toContain('09:30');
+      expect(result).toContain('UTC-5');
+    });
+
+    it('should format time using Asia/Kolkata (UTC+5:30)', () => {
+      service.setTimeFormat('24h');
+      // 14:30 UTC + 5:30 = 20:00
+      const result = service.formatTimeInZone('2025-01-15T14:30:00Z', 'Asia/Kolkata');
+      expect(result).toContain('20:00');
+      expect(result).toContain('UTC+5:30');
+    });
+
+    it('should format time using Asia/Tokyo (UTC+9)', () => {
+      service.setTimeFormat('12h');
+      // 14:30 UTC + 9h = 23:30
+      const result = service.formatTimeInZone('2025-01-15T14:30:00Z', 'Asia/Tokyo');
+      expect(result).toContain('11:30 PM');
+      expect(result).toContain('UTC+9');
+    });
+  });
 });

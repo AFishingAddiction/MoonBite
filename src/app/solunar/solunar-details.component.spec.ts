@@ -6,6 +6,7 @@ import { SolunarDetailsComponent } from './solunar-details.component';
 import { GeolocationState } from '../geolocation/geolocation.service';
 import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { SolunarService, SolunarData, SolunarPeriod } from './solunar.service';
+import { WeatherService } from '../weather/weather.service';
 
 // ── Factories ─────────────────────────────────────────────────────────────────
 
@@ -75,6 +76,7 @@ describe('SolunarDetailsComponent', () => {
   let isLocatingSignal: ReturnType<typeof signal<boolean>>;
   let hasErrorSignal: ReturnType<typeof signal<boolean>>;
   let mockSolunarService: jasmine.SpyObj<SolunarService>;
+  let mockWeatherService: jasmine.SpyObj<WeatherService>;
 
   const defaultData = makeSolunarData();
 
@@ -103,12 +105,16 @@ describe('SolunarDetailsComponent', () => {
       makeSolunarData({ dateUtc })
     );
 
+    mockWeatherService = jasmine.createSpyObj<WeatherService>('WeatherService', ['getTimezone']);
+    mockWeatherService.getTimezone.and.returnValue(null);
+
     await TestBed.configureTestingModule({
       imports: [SolunarDetailsComponent],
       providers: [
         provideRouter([]),
         { provide: ActiveLocationService, useValue: mockActiveService },
         { provide: SolunarService, useValue: mockSolunarService },
+        { provide: WeatherService, useValue: mockWeatherService },
       ],
     }).compileComponents();
 
@@ -681,6 +687,69 @@ describe('SolunarDetailsComponent', () => {
     it('back link contains back arrow text', () => {
       const link = fixture.debugElement.query(By.css('.solunar-detail__back-link'));
       expect(link.nativeElement.textContent).toContain('←');
+    });
+  });
+
+  // ─── Group 19: Feature 19 — formatTime delegates to formatTimeForLongitude ──
+
+  describe('Feature 19 — formatTime uses longitude offset', () => {
+    // defaultData has longitude: -74.006
+    // offset = -74.006 / 15 ≈ -5h
+    // The component must call formatTimeForLongitude(isoString, longitude)
+    // so results include a UTC offset label
+
+    beforeEach(() => {
+      setGeoState(makeGrantedState());
+    });
+
+    it('formatTime result includes a UTC offset label when longitude is available', () => {
+      const result = component.formatTime('2026-04-05T14:32:00.000Z');
+      expect(result).toMatch(/UTC[+\-\u2212]\d/);
+    });
+
+    it('formatTime result does NOT return bare time without offset label', () => {
+      const result = component.formatTime('2026-04-05T14:32:00.000Z');
+      expect(result).not.toBe('2:32 PM');
+    });
+
+    it('formatTime applies negative offset for western longitude (-74.006)', () => {
+      // longitude -74.006 → offset = -4h56m (LMT) → 14:32 UTC becomes 09:36 local
+      const result = component.formatTime('2026-04-05T14:32:00.000Z');
+      expect(result).toMatch(/UTC[\u2212\-]4:56/);
+    });
+
+    it('formatTime applies correct offset for eastern longitude (+30)', () => {
+      mockSolunarService.calculateForToday.and.returnValue(makeSolunarData({ longitude: 30 }));
+      setGeoState(makeGrantedState());
+      fixture.detectChanges();
+      // longitude 30 → offset +2h → 14:32 UTC = 16:32 local
+      const result = component.formatTime('2026-04-05T14:32:00.000Z');
+      expect(result).toContain('UTC+2');
+    });
+
+    it('formatTime does not throw when solunarData is null', () => {
+      setGeoState({ status: 'idle', position: null, error: null });
+      fixture.detectChanges();
+      expect(() => component.formatTime('2026-04-05T14:32:00.000Z')).not.toThrow();
+    });
+
+    it('periodAriaLabel includes UTC offset label after feature 19', () => {
+      const period = makePeriod({
+        description: 'Moon Overhead',
+        startUtc: '2026-04-05T14:32:00.000Z',
+        endUtc: '2026-04-05T16:32:00.000Z',
+      });
+      const label = component.periodAriaLabel(period);
+      expect(label).toMatch(/UTC[\u2212\-+]\d/);
+    });
+
+    it('formatTime uses IANA timezone from WeatherService when available', () => {
+      mockWeatherService.getTimezone.and.returnValue('America/New_York');
+      setGeoState(makeGrantedState());
+      // 14:32 UTC in America/New_York (UTC-4 during DST or UTC-5 in winter)
+      const result = component.formatTime('2026-04-05T14:32:00.000Z');
+      expect(result).toMatch(/UTC[-\u2212+]\d/);
+      expect(result).not.toMatch(/UTC[-\u2212]\d:\d{2}/); // no fractional LMT offset
     });
   });
 });

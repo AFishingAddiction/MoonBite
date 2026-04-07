@@ -6,6 +6,7 @@ import { GeolocationState } from '../geolocation/geolocation.service';
 import { ActiveLocationService, ActiveCoords } from '../locations/active-location.service';
 import { SolunarDisplayComponent } from './solunar-display.component';
 import { SolunarData, SolunarService } from './solunar.service';
+import { WeatherService } from '../weather/weather.service';
 
 function makeActiveServiceFrom(geoState: GeolocationState) {
   const pos = geoState.status === 'granted' ? geoState.position : null;
@@ -109,6 +110,7 @@ describe('SolunarDisplayComponent', () => {
   let fixture: ComponentFixture<SolunarDisplayComponent>;
   let mockActiveLocationService: ReturnType<typeof makeActiveServiceFrom>;
   let mockSolunarService: jasmine.SpyObj<SolunarService>;
+  let mockWeatherService: jasmine.SpyObj<WeatherService>;
 
   function setup(geoState: GeolocationState) {
     mockActiveLocationService = makeActiveServiceFrom(geoState);
@@ -120,6 +122,8 @@ describe('SolunarDisplayComponent', () => {
       'calculateFishingScore',
     ]);
     mockSolunarService.calculateForToday.and.returnValue(MOCK_SOLUNAR_DATA);
+    mockWeatherService = jasmine.createSpyObj<WeatherService>('WeatherService', ['getTimezone']);
+    mockWeatherService.getTimezone.and.returnValue(null);
   }
 
   async function createComponent(geoState: GeolocationState) {
@@ -130,6 +134,7 @@ describe('SolunarDisplayComponent', () => {
         provideRouter([]),
         { provide: ActiveLocationService, useValue: mockActiveLocationService },
         { provide: SolunarService, useValue: mockSolunarService },
+        { provide: WeatherService, useValue: mockWeatherService },
       ],
     }).compileComponents();
 
@@ -264,9 +269,10 @@ describe('SolunarDisplayComponent', () => {
       expect(el.textContent).toContain('MINOR');
     });
 
-    it('renders formatted UTC times', () => {
+    it('renders formatted local solar times with UTC offset label', () => {
       const el: HTMLElement = fixture.nativeElement;
-      expect(el.textContent).toContain('11:00 UTC');
+      // longitude -74.006 → offset -4h56m → 11:00 UTC becomes 06:04 UTC−4:56
+      expect(el.textContent).toMatch(/UTC[\u2212\-]\d/);
     });
 
     it('renders the fishing score badge', () => {
@@ -364,6 +370,40 @@ describe('SolunarDisplayComponent', () => {
     it('major periods have .solunar-card__period--major modifier', () => {
       const majorItems = fixture.debugElement.queryAll(By.css('.solunar-card__period--major'));
       expect(majorItems.length).toBe(2);
+    });
+  });
+
+  // ─── Feature 19: longitude-based local solar time display ──────────────────
+
+  describe('Feature 19 — local solar time offset display', () => {
+    // MOCK_SOLUNAR_DATA has longitude: -74.006 → offset ≈ -5h
+    // MOCK_PERIOD_OVERHEAD startUtc: '2024-01-15T11:00:00.000Z'
+    // Times must show UTC offset label, NOT bare "UTC"
+
+    beforeEach(async () => {
+      await createComponent({ status: 'granted', position: MOCK_POSITION, error: null });
+    });
+
+    it('does NOT render bare "UTC" suffix for period times when longitude is available', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).not.toMatch(/\d{1,2}:\d{2}\s+UTC(?![+\u2212\-\d])/);
+    });
+
+    it('renders a UTC offset label containing "UTC" followed by a sign for period times', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).toMatch(/UTC[+\-\u2212]\d/);
+    });
+
+    it('does not render the plain "11:00 UTC" string that the old implementation produced', () => {
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).not.toContain('11:00 UTC');
+    });
+
+    it('uses IANA timezone from WeatherService when available', async () => {
+      mockWeatherService.getTimezone.and.returnValue('America/New_York');
+      fixture.detectChanges();
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).toMatch(/UTC[-+\u2212]\d/);
     });
   });
 });

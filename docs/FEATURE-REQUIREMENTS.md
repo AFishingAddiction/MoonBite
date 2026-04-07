@@ -38,6 +38,7 @@
 | 20 | `feature-requirements/feature-20-catch-logging.md` | Catch Logging & Fishing Journal | Backlog |
 | 21 | `feature-requirements/feature-21-analytics.md` | Analytics Dashboard for Power Users | Backlog |
 | 22 | `feature-requirements/feature-22-premium.md` | Premium / Paid Features | Backlog |
+| 23 | `feature-requirements/feature-23-solunar-local-time.md` | Solunar Peak Times in Local Time | Complete |
 
 ---
 

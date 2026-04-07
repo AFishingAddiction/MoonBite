@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -147,6 +147,16 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 export class WeatherService {
   private readonly http = inject(HttpClient);
   private readonly cache = new Map<string, CacheEntry>();
+  private readonly _timezones = signal<ReadonlyMap<string, string>>(new Map());
+
+  /**
+   * Returns the IANA timezone string for the given coordinates if weather data
+   * has been fetched for that location, otherwise null. Readable as a signal
+   * so components can reactively update when weather loads.
+   */
+  getTimezone(latitude: number, longitude: number): string | null {
+    return this._timezones().get(this.cacheKey(latitude, longitude)) ?? null;
+  }
 
   getWeatherForLocation(latitude: number, longitude: number): Observable<WeatherData | null> {
     this.validateCoordinates(latitude, longitude);
@@ -271,10 +281,9 @@ export class WeatherService {
 
     data.fishingScoreContribution = this.calculateFishingScore(data);
 
-    this.cache.set(this.cacheKey(latitude, longitude), {
-      data,
-      timestamp: Date.now(),
-    });
+    const key = this.cacheKey(latitude, longitude);
+    this.cache.set(key, { data, timestamp: Date.now() });
+    this._timezones.update((m) => new Map(m).set(key, response.timezone));
 
     return data;
   }

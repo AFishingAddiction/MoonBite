@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ActiveLocationService } from '../locations/active-location.service';
+import { PreferencesService } from '../preferences/preferences.service';
 import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
+import { WeatherService } from '../weather/weather.service';
 
 @Component({
   selector: 'app-solunar-display',
@@ -21,6 +23,8 @@ import { SolunarData, SolunarPeriod, SolunarService } from './solunar.service';
 export class SolunarDisplayComponent {
   private readonly activeLocationService = inject(ActiveLocationService);
   private readonly solunarService = inject(SolunarService);
+  private readonly prefs = inject(PreferencesService);
+  private readonly weatherService = inject(WeatherService);
 
   protected readonly isIdle = computed(() => this.activeLocationService.status() === 'idle');
 
@@ -56,6 +60,12 @@ export class SolunarDisplayComponent {
   }
 
   protected formatTime(isoString: string): string {
+    const data = this.solunarData();
+    if (data) {
+      const tz = this.weatherService.getTimezone(data.latitude, data.longitude);
+      if (tz) return this.prefs.formatTimeInZone(isoString, tz);
+      return this.prefs.formatTimeForLongitude(isoString, data.longitude);
+    }
     const d = new Date(isoString);
     const h = d.getUTCHours().toString().padStart(2, '0');
     const m = d.getUTCMinutes().toString().padStart(2, '0');

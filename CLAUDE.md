@@ -27,6 +27,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-13-saved-locations.md` | Location Bookmarks / Saved Locations | Complete |
 | `feature-14-preferences.md` | User Settings & Preferences | Complete |
 | `feature-18-location-library.md` | Location Search & Library | Complete |
+| `feature-23-solunar-local-time.md` | Solunar Peak Times in Local Time | Complete |
 
 ## Project overview
 
