@@ -2,10 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { SavedLocationsComponent } from './saved-locations.component';
 import { SavedLocationsService } from './saved-locations.service';
 import { GeolocationService, GeolocationState } from '../geolocation/geolocation.service';
 import { SavedLocation } from './saved-location.model';
+import { LocationSearchService } from './location-search.service';
+import { GeocodingResult } from './geocoding-result.model';
 
 function makeLocation(overrides: Partial<SavedLocation> = {}): SavedLocation {
   return {
@@ -29,19 +33,39 @@ function makeGrantedState(): GeolocationState {
   };
 }
 
+function makeGeocodingResult(overrides: Partial<GeocodingResult> = {}): GeocodingResult {
+  return {
+    placeId: 1,
+    latitude: 39.0968,
+    longitude: -120.0324,
+    displayName: 'Lake Tahoe, California, United States',
+    address: { name: 'Lake Tahoe', state: 'California', country: 'United States', countryCode: 'us' },
+    ...overrides,
+  };
+}
+
 describe('SavedLocationsComponent', () => {
   let fixture: ComponentFixture<SavedLocationsComponent>;
   let component: SavedLocationsComponent;
   let savedLocationsService: jasmine.SpyObj<SavedLocationsService>;
+  let locationSearchService: jasmine.SpyObj<LocationSearchService>;
   let geoState: ReturnType<typeof signal<GeolocationState>>;
   let locationsSignal: ReturnType<typeof signal<SavedLocation[]>>;
   let activeLocationSignal: ReturnType<typeof signal<SavedLocation | null>>;
+  let searchResultsSignal: ReturnType<typeof signal<GeocodingResult[] | null>>;
+  let searchIsLoadingSignal: ReturnType<typeof signal<boolean>>;
+  let searchErrorSignal: ReturnType<typeof signal<string | null>>;
+  let searchLastQuerySignal: ReturnType<typeof signal<string>>;
 
   beforeEach(async () => {
     localStorage.clear();
     locationsSignal = signal<SavedLocation[]>([]);
     activeLocationSignal = signal<SavedLocation | null>(null);
     geoState = signal<GeolocationState>({ status: 'idle', position: null, error: null });
+    searchResultsSignal = signal<GeocodingResult[] | null>(null);
+    searchIsLoadingSignal = signal(false);
+    searchErrorSignal = signal<string | null>(null);
+    searchLastQuerySignal = signal('');
 
     savedLocationsService = jasmine.createSpyObj<SavedLocationsService>(
       'SavedLocationsService',
@@ -68,12 +92,26 @@ describe('SavedLocationsComponent', () => {
       }
     });
 
+    locationSearchService = jasmine.createSpyObj<LocationSearchService>(
+      'LocationSearchService',
+      ['search', 'clear', 'retry'],
+      {
+        results: searchResultsSignal.asReadonly(),
+        isLoading: searchIsLoadingSignal.asReadonly(),
+        error: searchErrorSignal.asReadonly(),
+        lastQuery: searchLastQuerySignal.asReadonly(),
+      },
+    );
+
     await TestBed.configureTestingModule({
       imports: [SavedLocationsComponent],
       providers: [
         provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: SavedLocationsService, useValue: savedLocationsService },
         { provide: GeolocationService, useValue: { state: geoState.asReadonly() } },
+        { provide: LocationSearchService, useValue: locationSearchService },
       ],
     }).compileComponents();
 
@@ -354,5 +392,163 @@ describe('SavedLocationsComponent', () => {
     fixture.detectChanges();
     const badge = fixture.debugElement.query(By.css('.locations-page__item-active-badge'));
     expect(badge).toBeTruthy();
+  });
+
+  // ─── Location Search ───────────────────────────────────────────────────────
+
+  it('should render the search input', () => {
+    const input = fixture.debugElement.query(By.css('[data-testid="location-search-input"]'));
+    expect(input).toBeTruthy();
+  });
+
+  it('should not show clear button when search query is empty', () => {
+    const btn = fixture.debugElement.query(By.css('[data-testid="search-clear-btn"]'));
+    expect(btn).toBeNull();
+  });
+
+  it('should show clear button when search query is non-empty', () => {
+    const input: HTMLInputElement = fixture.debugElement.query(
+      By.css('[data-testid="location-search-input"]'),
+    ).nativeElement;
+    input.value = 'Lake Tahoe';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    const btn = fixture.debugElement.query(By.css('[data-testid="search-clear-btn"]'));
+    expect(btn).toBeTruthy();
+    expect(locationSearchService.search).toHaveBeenCalledWith('Lake Tahoe');
+  });
+
+  it('should call locationSearch.clear() when clear button clicked', () => {
+    const input: HTMLInputElement = fixture.debugElement.query(
+      By.css('[data-testid="location-search-input"]'),
+    ).nativeElement;
+    input.value = 'Lake Tahoe';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('[data-testid="search-clear-btn"]')).nativeElement.click();
+    expect(locationSearchService.clear).toHaveBeenCalled();
+  });
+
+  it('should show loading indicator when isLoading is true', () => {
+    searchIsLoadingSignal.set(true);
+    fixture.detectChanges();
+    const loading = fixture.debugElement.query(By.css('[data-testid="search-loading"]'));
+    expect(loading).toBeTruthy();
+  });
+
+  it('should show error state when search has an error', () => {
+    searchErrorSignal.set('Search failed. Check your connection and try again.');
+    fixture.detectChanges();
+    const error = fixture.debugElement.query(By.css('[data-testid="search-error"]'));
+    expect(error).toBeTruthy();
+    expect(error.nativeElement.textContent).toContain('Search failed');
+  });
+
+  it('should call retry() when retry button is clicked', () => {
+    searchErrorSignal.set('Search failed. Check your connection and try again.');
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="search-retry-btn"]')).nativeElement.click();
+    expect(locationSearchService.retry).toHaveBeenCalled();
+  });
+
+  it('should show no-results state when results is empty array', () => {
+    searchResultsSignal.set([]);
+    searchLastQuerySignal.set('Atlantis');
+    fixture.detectChanges();
+    const empty = fixture.debugElement.query(By.css('[data-testid="search-no-results"]'));
+    expect(empty).toBeTruthy();
+    expect(empty.nativeElement.textContent).toContain('Atlantis');
+  });
+
+  it('should show results list when results has items', () => {
+    searchResultsSignal.set([makeGeocodingResult(), makeGeocodingResult({ placeId: 2, displayName: 'Lake Tahoe, Nevada, United States' })]);
+    fixture.detectChanges();
+    const list = fixture.debugElement.query(By.css('[data-testid="search-results-list"]'));
+    expect(list).toBeTruthy();
+    const items = fixture.debugElement.queryAll(By.css('[data-testid="search-result-item"]'));
+    expect(items.length).toBe(2);
+  });
+
+  it('should show result coordinates', () => {
+    searchResultsSignal.set([makeGeocodingResult()]);
+    fixture.detectChanges();
+    const item = fixture.debugElement.query(By.css('[data-testid="search-result-item"]'));
+    expect(item.nativeElement.textContent).toContain('39.0968');
+  });
+
+  it('should open confirmation panel when Add is clicked', () => {
+    searchResultsSignal.set([makeGeocodingResult()]);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+    const panel = fixture.debugElement.query(By.css('[data-testid="search-confirm-panel"]'));
+    expect(panel).toBeTruthy();
+    const nameInput: HTMLInputElement = fixture.debugElement.query(
+      By.css('[data-testid="confirm-name-input"]'),
+    ).nativeElement;
+    expect(nameInput.value).toBe('Lake Tahoe, California, United States');
+  });
+
+  it('should close confirmation panel when Cancel is clicked', () => {
+    searchResultsSignal.set([makeGeocodingResult()]);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="cancel-search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+    const panel = fixture.debugElement.query(By.css('[data-testid="search-confirm-panel"]'));
+    expect(panel).toBeNull();
+  });
+
+  it('should save location and close panel when Save is clicked with valid name', () => {
+    searchResultsSignal.set([makeGeocodingResult()]);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="confirm-search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+    expect(savedLocationsService.add).toHaveBeenCalledWith(
+      'Lake Tahoe, California, United States',
+      39.0968,
+      -120.0324,
+    );
+    const panel = fixture.debugElement.query(By.css('[data-testid="search-confirm-panel"]'));
+    expect(panel).toBeNull();
+  });
+
+  it('should show error when Save is clicked with empty name', () => {
+    searchResultsSignal.set([makeGeocodingResult()]);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+
+    const nameInput: HTMLInputElement = fixture.debugElement.query(
+      By.css('[data-testid="confirm-name-input"]'),
+    ).nativeElement;
+    nameInput.value = '';
+    nameInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('[data-testid="confirm-search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+
+    const error = fixture.debugElement.query(By.css('[data-testid="search-add-error"]'));
+    expect(error).toBeTruthy();
+    expect(savedLocationsService.add).not.toHaveBeenCalled();
+  });
+
+  it('should show error when add() returns null (max locations reached)', () => {
+    savedLocationsService.add.and.returnValue(null);
+    searchResultsSignal.set([makeGeocodingResult()]);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="confirm-search-add-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+
+    const error = fixture.debugElement.query(By.css('[data-testid="search-add-error"]'));
+    expect(error).toBeTruthy();
+    expect(error.nativeElement.textContent).toContain('Maximum');
   });
 });

@@ -26,6 +26,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-12-navigation.md` | Bottom Navigation / Routing | Complete |
 | `feature-13-saved-locations.md` | Location Bookmarks / Saved Locations | Complete |
 | `feature-14-preferences.md` | User Settings & Preferences | Complete |
+| `feature-18-location-library.md` | Location Search & Library | Complete |
 
 ## Project overview
 

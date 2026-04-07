@@ -8,6 +8,155 @@
     </h1>
   </header>
 
+  <!-- Search section -->
+  <div class="locations-page__search-section" role="search" aria-label="Search for a location">
+    <div class="locations-page__search-input-wrap">
+      <label for="location-search" class="locations-page__search-label">Search for a location</label>
+      <div class="locations-page__search-row">
+        <input
+          id="location-search"
+          class="locations-page__search-input"
+          type="search"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          placeholder="e.g. Lake Tahoe, Bristol UK..."
+          data-testid="location-search-input"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          [attr.aria-label]="'Search for a location'"
+        />
+        @if (searchQuery()) {
+          <button
+            class="locations-page__search-clear"
+            type="button"
+            data-testid="search-clear-btn"
+            aria-label="Clear search"
+            (click)="onClearSearch()"
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    @if (locationSearch.isLoading()) {
+      <div class="locations-page__search-loading" role="status" aria-live="polite" data-testid="search-loading">
+        <span class="locations-page__search-spinner" aria-hidden="true"></span>
+        <span>Searching...</span>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (locationSearch.error()) {
+      <div class="locations-page__search-error" role="alert" data-testid="search-error">
+        <span class="locations-page__search-error-icon" aria-hidden="true">⚠️</span>
+        <span>{{ locationSearch.error() }}</span>
+        <button
+          class="locations-page__btn locations-page__btn--ghost"
+          type="button"
+          data-testid="search-retry-btn"
+          (click)="onRetrySearch()"
+        >
+          Retry
+        </button>
+      </div>
+    }
+
+    <!-- Search results -->
+    @if (!locationSearch.isLoading() && !locationSearch.error() && locationSearch.results() !== null) {
+      @if (locationSearch.results()!.length === 0) {
+        <div class="locations-page__search-empty" role="status" aria-live="polite" data-testid="search-no-results">
+          <span class="locations-page__search-empty-icon" aria-hidden="true">🔍</span>
+          <p class="locations-page__search-empty-text">
+            No results found for "{{ locationSearch.lastQuery() }}"
+          </p>
+          <p class="locations-page__search-empty-hint">Try another name or address.</p>
+        </div>
+      } @else {
+        <div aria-live="polite" aria-label="Search results">
+          <p class="locations-page__search-results-header">
+            {{ locationSearch.results()!.length }} result{{ locationSearch.results()!.length === 1 ? '' : 's' }}
+          </p>
+          <ul class="locations-page__search-results" data-testid="search-results-list" aria-label="Location search results">
+            @for (result of locationSearch.results()!; track result.placeId) {
+              <li class="locations-page__search-result" data-testid="search-result-item">
+                <div class="locations-page__search-result-info">
+                  <span class="locations-page__search-result-name">{{ result.displayName }}</span>
+                  <span class="locations-page__search-result-coords">
+                    {{ formatLat(result.latitude) }}, {{ formatLng(result.longitude) }}
+                  </span>
+                </div>
+                <button
+                  class="locations-page__btn locations-page__btn--activate"
+                  type="button"
+                  data-testid="search-add-btn"
+                  [attr.aria-label]="'Add ' + result.displayName + ' to saved locations'"
+                  [disabled]="atMaxLocations()"
+                  (click)="onSelectResult(result)"
+                >
+                  Add
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Add-from-search confirmation panel -->
+  @if (selectedResult()) {
+    <div
+      class="locations-page__confirm-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Add location to saved locations"
+      data-testid="search-confirm-panel"
+    >
+      <h2 class="locations-page__confirm-title">Add to Saved Locations</h2>
+      <p class="locations-page__confirm-coords">
+        {{ formatLat(selectedResult()!.latitude) }}, {{ formatLng(selectedResult()!.longitude) }}
+      </p>
+      <label for="confirm-location-name" class="locations-page__add-form-label">Location name</label>
+      <input
+        id="confirm-location-name"
+        class="locations-page__add-form-input"
+        type="text"
+        [value]="confirmName()"
+        (input)="updateConfirmName($event)"
+        placeholder="Name this location"
+        data-testid="confirm-name-input"
+        maxlength="50"
+        autocomplete="off"
+      />
+      @if (searchAddError()) {
+        <p class="locations-page__add-form-error" role="alert" data-testid="search-add-error">
+          {{ searchAddError() }}
+        </p>
+      }
+      <div class="locations-page__add-form-actions">
+        <button
+          class="locations-page__btn locations-page__btn--primary"
+          type="button"
+          data-testid="confirm-search-add-btn"
+          (click)="onConfirmAdd()"
+        >
+          Save
+        </button>
+        <button
+          class="locations-page__btn locations-page__btn--secondary"
+          type="button"
+          data-testid="cancel-search-add-btn"
+          (click)="onCancelConfirm()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- GPS add section -->
   @if (geoStatus() === 'granted') {
     @if (!isAddingLocation()) {

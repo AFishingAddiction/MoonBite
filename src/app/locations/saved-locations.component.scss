@@ -45,6 +45,225 @@
     margin: 0;
   }
 
+  // ─── Search section ────────────────────────────────────────────────────────
+
+  &__search-section {
+    margin-bottom: $space-lg;
+  }
+
+  &__search-label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    margin-bottom: $space-xs;
+  }
+
+  &__search-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: $space-sm $space-2xl $space-sm $space-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    color: $color-text-primary;
+    background-color: $color-surface;
+    box-sizing: border-box;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    }
+
+    &::placeholder {
+      color: $color-text-disabled;
+    }
+
+    // Remove native clear button (we supply our own)
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+
+  &__search-clear {
+    @include button-reset;
+    position: absolute;
+    right: $space-xs;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 36px;
+    color: $color-text-secondary;
+    border-radius: $radius-full;
+    transition: color $transition-fast, background-color $transition-fast;
+
+    &:hover {
+      color: $color-text-primary;
+      background-color: $color-surface-alt;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__search-loading {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    padding: $space-md;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__search-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid $color-border;
+    border-top-color: $color-primary;
+    border-radius: $radius-full;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  &__search-error {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    padding: $space-md;
+    background-color: $color-error-light;
+    border: 1px solid $color-error;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+    margin-top: $space-sm;
+    flex-wrap: wrap;
+  }
+
+  &__search-error-icon {
+    flex-shrink: 0;
+  }
+
+  &__search-empty {
+    text-align: center;
+    padding: $space-xl $space-md;
+    color: $color-text-secondary;
+  }
+
+  &__search-empty-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: $space-sm;
+  }
+
+  &__search-empty-text {
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    margin: 0 0 $space-xs;
+  }
+
+  &__search-empty-hint {
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+
+  &__search-results-header {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin: $space-sm 0 $space-xs;
+  }
+
+  &__search-results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    overflow: hidden;
+    background-color: $color-surface;
+    box-shadow: $shadow-md;
+  }
+
+  &__search-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    padding: $space-sm $space-md;
+    border-bottom: 1px solid $color-border;
+    transition: background-color $transition-fast;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: $color-surface-alt;
+    }
+  }
+
+  &__search-result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__search-result-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__search-result-coords {
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+  }
+
+  // ─── Confirmation panel ────────────────────────────────────────────────────
+
+  &__confirm-panel {
+    background-color: $color-surface;
+    border: 2px solid $color-primary;
+    border-radius: $radius-lg;
+    padding: $space-lg;
+    margin-bottom: $space-lg;
+    box-shadow: $shadow-md;
+  }
+
+  &__confirm-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0 0 $space-xs;
+  }
+
+  &__confirm-coords {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin: 0 0 $space-md;
+  }
+
   // ─── Add section ───────────────────────────────────────────────────────────
 
   &__add-section {
@@ -362,5 +581,11 @@
         outline-offset: 2px;
       }
     }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
