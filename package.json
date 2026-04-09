@@ -17,7 +17,8 @@
     "e2e:ui": "playwright test -c e2e/playwright.config.ts --ui",
     "e2e:report": "playwright show-report playwright-report",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\""
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
+    "claude": "claude --remote-control moonbite"
   },
   "dependencies": {
     "@angular/animations": "^21.0.0",

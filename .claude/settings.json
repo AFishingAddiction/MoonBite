@@ -16,6 +16,7 @@
       "Bash(grep *)",
       "Bash(head *)",
       "Bash(ls *)",
+      "Bash(mkdir *)",
       "Bash(ng *)",
       "Bash(npm *)",
       "Bash(npx *)",
