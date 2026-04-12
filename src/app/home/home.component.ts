@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FishingScoreDisplayComponent } from '../scoring/fishing-score-display.component';
 import { LocationDisplayComponent } from '../location-display/location-display.component';
 import { MoonPhaseDisplayComponent } from '../moon-phase/moon-phase-display.component';
@@ -10,6 +11,7 @@ import { WeatherDisplayComponent } from '../weather/weather-display.component';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RouterLink,
     FishingScoreDisplayComponent,
     LocationDisplayComponent,
     MoonPhaseDisplayComponent,

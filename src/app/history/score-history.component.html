@@ -1,0 +1,107 @@
+<div class="history">
+  <header class="history__header">
+    <h1 class="history__title">Fishing History</h1>
+  </header>
+
+  <div class="history__range-toggle" role="group" aria-label="Time range">
+    <button
+      type="button"
+      class="history__range-btn"
+      [class.history__range-btn--active]="selectedRange() === 7"
+      (click)="setRange(7)"
+    >7</button>
+    <button
+      type="button"
+      class="history__range-btn"
+      [class.history__range-btn--active]="selectedRange() === 14"
+      (click)="setRange(14)"
+    >14</button>
+    <button
+      type="button"
+      class="history__range-btn"
+      [class.history__range-btn--active]="selectedRange() === 30"
+      (click)="setRange(30)"
+    >30</button>
+  </div>
+
+  @if (activeSlice(); as s) {
+    <div class="history__chart">
+      <svg
+        viewBox="0 0 300 80"
+        role="img"
+        [attr.aria-label]="'Fishing score trend, last ' + selectedRange() + ' days'"
+        preserveAspectRatio="none"
+      >
+        @for (bar of chartBars(); track $index) {
+          <rect
+            class="history__bar"
+            [attr.x]="bar.x"
+            [attr.y]="bar.y"
+            [attr.width]="bar.width"
+            [attr.height]="bar.height"
+            rx="2"
+          />
+        }
+      </svg>
+    </div>
+
+    <ul class="history__day-list" aria-label="Score history">
+      @for (record of s.records; track record.date) {
+        <li
+          class="history__day-row"
+          (click)="openDetail(record)"
+          (keydown.enter)="openDetail(record)"
+          (keydown.space)="$event.preventDefault(); openDetail(record)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'View score breakdown for ' + formatDate(record.date)"
+        >
+          <span class="history__day-moon" aria-hidden="true">{{ record.moonEmoji }}</span>
+          <span class="history__day-date">{{ formatDate(record.date) }}</span>
+          <span class="history__day-score">{{ record.score }}</span>
+          @if (record.date === s.highDate) {
+            <span class="history__best-badge" aria-label="Best score">BEST</span>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="history__empty">
+      <p class="history__empty-message">
+        Not enough history yet. Check back after a few days.
+      </p>
+    </div>
+  }
+</div>
+
+<dialog #detailDialog class="history__detail-dialog" (close)="onDialogClose()">
+  @if (selectedRecord(); as record) {
+    <div class="history__detail">
+      <div class="history__detail-header">
+        <h2 class="history__detail-heading">Score Breakdown</h2>
+        <button
+          type="button"
+          class="history__detail-close"
+          (click)="closeDetail()"
+          aria-label="Close"
+        >Close</button>
+      </div>
+      <p class="history__detail-date">{{ formatDate(record.date) }}</p>
+      <div class="history__detail-score">{{ record.score }}</div>
+      <ul class="history__detail-factors">
+        <li class="history__detail-factor">
+          <span class="history__detail-factor-label">Moon</span>
+          <span class="history__detail-factor-value">{{ record.factors.moon }}</span>
+        </li>
+        <li class="history__detail-factor">
+          <span class="history__detail-factor-label">Solunar</span>
+          <span class="history__detail-factor-value">{{ record.factors.solunar }}</span>
+        </li>
+        <li class="history__detail-factor">
+          <span class="history__detail-factor-label">Weather</span>
+          <span class="history__detail-factor-value">{{ record.factors.weather }}</span>
+        </li>
+      </ul>
+    </div>
+  }
+</dialog>

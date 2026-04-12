@@ -37,6 +37,7 @@ export class BottomNavComponent {
     { icon: '🌙', label: 'Moon',     route: '/moon'     },
     { icon: '☀️',  label: 'Solunar',  route: '/solunar'  },
     { icon: '☁️',  label: 'Weather',  route: '/weather'  },
+    { icon: '📊', label: 'History',  route: '/history'  },
     { icon: '⚙️', label: 'Settings', route: '/settings' },
   ];
 

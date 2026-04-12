@@ -53,3 +53,27 @@
   }
 }
 
+// ── History trend link ───────────────────────────────────────────────────────
+.home__history-link-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.home__history-link {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: $color-primary-dark;
+      text-decoration: underline;
+    }
+  }
+}
+

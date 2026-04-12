@@ -33,4 +33,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./settings/settings.component').then(m => m.SettingsComponent),
   },
+  {
+    path: 'history',
+    loadComponent: () =>
+      import('./history/score-history.component').then(m => m.ScoreHistoryComponent),
+  },
 ];

@@ -25,7 +25,7 @@
 | 12 | `feature-requirements/feature-12-navigation.md` | Bottom Navigation / Routing | Complete |
 | 13 | `feature-requirements/feature-13-saved-locations.md` | Location Bookmarks / Saved Locations | Complete |
 | 14 | `feature-requirements/feature-14-preferences.md` | User Settings & Preferences | Complete |
-| 15 | `feature-requirements/feature-15-history.md` | Daily Score History & Trends | Backlog |
+| 15 | `feature-requirements/feature-15-daily-history.md` | Daily Score History & Trends | In Progress |
 | 16 | `feature-requirements/feature-16-branding.md` | Splash Screen & App Branding | Backlog |
 
 ### Milestone 3: Engagement & Persistence

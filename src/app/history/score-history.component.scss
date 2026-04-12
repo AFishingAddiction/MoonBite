@@ -1,0 +1,261 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ── Page shell ───────────────────────────────────────────────────────────────
+.history {
+  padding: $space-md $space-md calc(#{$nav-height} + #{$space-lg}) $space-md;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.history__header {
+  margin-bottom: $space-md;
+}
+
+.history__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin: 0;
+}
+
+// ── Range toggle ─────────────────────────────────────────────────────────────
+.history__range-toggle {
+  display: flex;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+}
+
+.history__range-btn {
+  flex: 1;
+  padding: $space-sm $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-surface;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &.history__range-btn--active {
+    background: $color-primary;
+    color: $color-surface;
+    border-color: $color-primary;
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.history__range-btn--active) {
+      background: $color-surface-alt;
+      color: $color-text-primary;
+    }
+  }
+}
+
+// ── SVG chart ────────────────────────────────────────────────────────────────
+.history__chart {
+  margin-bottom: $space-md;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $color-surface-alt;
+  padding: $space-sm;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 80px;
+  }
+}
+
+.history__bar {
+  fill: $color-primary;
+  opacity: 0.8;
+}
+
+// ── Day list ─────────────────────────────────────────────────────────────────
+.history__day-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+// ── Day row ──────────────────────────────────────────────────────────────────
+.history__day-row {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm $space-md;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  min-height: 44px;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: $color-surface-alt;
+    }
+  }
+}
+
+.history__day-moon {
+  font-size: $font-size-xl;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.history__day-date {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.history__day-score {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+// ── Best badge ───────────────────────────────────────────────────────────────
+.history__best-badge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $letter-spacing-caps;
+  color: $color-surface;
+  background: $color-score-good;
+  border-radius: $radius-full;
+  padding: 2px $space-sm;
+  flex-shrink: 0;
+}
+
+// ── Empty state ──────────────────────────────────────────────────────────────
+.history__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2xl $space-md;
+  text-align: center;
+}
+
+.history__empty-message {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+// ── Detail dialog ─────────────────────────────────────────────────────────────
+.history__detail-dialog {
+  border: none;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  padding: 0;
+  max-width: min(480px, calc(100vw - 2 * #{$space-md}));
+  width: 100%;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+  }
+}
+
+.history__detail {
+  padding: $space-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.history__detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+}
+
+.history__detail-heading {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin: 0;
+}
+
+.history__detail-close {
+  padding: $space-xs $space-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-surface;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  flex-shrink: 0;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: $color-surface-alt;
+    }
+  }
+}
+
+.history__detail-date {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.history__detail-score {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+  text-align: center;
+}
+
+.history__detail-factors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.history__detail-factor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-sm $space-md;
+  background: $color-surface-alt;
+  border-radius: $radius-md;
+}
+
+.history__detail-factor-label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-transform: capitalize;
+}
+
+.history__detail-factor-value {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
