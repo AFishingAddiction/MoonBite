@@ -1,0 +1,20 @@
+@if (!isGone()) {
+  <div
+    class="splash"
+    [class.splash--hiding]="isHiding()"
+    role="status"
+    aria-live="polite"
+    aria-label="Loading MoonBite"
+  >
+    <div class="splash__content">
+      <span class="splash__logo-icon" aria-hidden="true">🎣</span>
+      <h1 class="splash__brand">MoonBite</h1>
+      <p class="splash__tagline">Your daily fishing intelligence</p>
+      <div class="splash__loader" aria-hidden="true">
+        <span class="splash__dot"></span>
+        <span class="splash__dot"></span>
+        <span class="splash__dot"></span>
+      </div>
+    </div>
+  </div>
+}
