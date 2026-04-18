@@ -5,6 +5,7 @@ import { LocationDisplayComponent } from '../location-display/location-display.c
 import { MoonPhaseDisplayComponent } from '../moon-phase/moon-phase-display.component';
 import { SolunarDisplayComponent } from '../solunar/solunar-display.component';
 import { WeatherDisplayComponent } from '../weather/weather-display.component';
+import { ShareButtonComponent } from '../share/share-button.component';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +18,7 @@ import { WeatherDisplayComponent } from '../weather/weather-display.component';
     MoonPhaseDisplayComponent,
     SolunarDisplayComponent,
     WeatherDisplayComponent,
+    ShareButtonComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

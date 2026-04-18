@@ -1,0 +1,172 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.share-button {
+  position: relative;
+  display: inline-block;
+
+  // ─── Trigger button ───────────────────────────────────────────────────────
+
+  &__trigger {
+    @include button-reset;
+
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs;
+    padding: $space-sm $space-md;
+    min-height: 44px;
+    min-width: 44px;
+    background-color: $color-primary;
+    color: $color-surface;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    border-radius: $radius-full;
+    cursor: pointer;
+    transition:
+      background-color $transition-fast,
+      opacity $transition-fast;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-dark;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  &__icon {
+    font-size: $font-size-base;
+    line-height: 1;
+  }
+
+  // ─── Fallback modal ───────────────────────────────────────────────────────
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: $space-md;
+  }
+
+  &__modal {
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    padding: $space-lg;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: $shadow-md;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__modal-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  &__modal-preview {
+    font-family: $font-family-base;
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+    background-color: $color-surface-alt;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: $space-md;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  &__modal-url {
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
+    word-break: break-all;
+    margin: 0;
+  }
+
+  &__modal-actions {
+    display: flex;
+    gap: $space-sm;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  &__copy-btn {
+    @include button-reset;
+
+    padding: $space-sm $space-md;
+    min-height: 44px;
+    background-color: $color-primary;
+    color: $color-surface;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $color-primary-dark;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__close-btn {
+    @include button-reset;
+
+    padding: $space-sm $space-md;
+    min-height: 44px;
+    background-color: $color-surface;
+    color: $color-text-primary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    border-radius: $radius-md;
+    border: 1px solid $color-border;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $color-surface-alt;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  // ─── Toast ────────────────────────────────────────────────────────────────
+
+  &__toast {
+    position: fixed;
+    bottom: calc(#{$nav-height} + #{$space-md});
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: $color-primary;
+    color: $color-surface;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    padding: $space-sm $space-lg;
+    border-radius: $radius-full;
+    box-shadow: $shadow-md;
+    z-index: 300;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}

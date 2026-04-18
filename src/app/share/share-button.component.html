@@ -1,0 +1,46 @@
+<div class="share-button">
+  <button
+    class="share-button__trigger"
+    [disabled]="isDisabled()"
+    [attr.aria-busy]="isPending() || null"
+    [attr.aria-label]="
+      payload() ? 'Share today\'s fishing score' : 'Enable location to share'
+    "
+    [attr.title]="payload() ? null : 'Enable location to share'"
+    (click)="onShare()"
+  >
+    <span class="share-button__icon" aria-hidden="true">↗</span>
+    Share
+  </button>
+
+  @if (showFallbackModal()) {
+    <div
+      class="share-button__overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="share-modal-title"
+      (click)="closeFallbackModal()"
+    >
+      <div class="share-button__modal" (click)="$event.stopPropagation()">
+        <h2 id="share-modal-title" class="share-button__modal-title">Share Today's Score</h2>
+
+        <pre class="share-button__modal-preview">{{ getSharePreviewText() }}</pre>
+
+        <p class="share-button__modal-url">{{ getShareUrl() }}</p>
+
+        <div class="share-button__modal-actions">
+          <button class="share-button__copy-btn" (click)="onCopyToClipboard()">
+            Copy to Clipboard
+          </button>
+          <button class="share-button__close-btn" (click)="closeFallbackModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (toastVisible()) {
+    <div class="share-button__toast" role="status" aria-live="polite">Copied! ✓</div>
+  }
+</div>
