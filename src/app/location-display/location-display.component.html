@@ -46,6 +46,13 @@
         </button>
       }
 
+      @case ('checking-permission') {
+        <div class="location-display__loading" data-testid="location-loading" role="status" aria-live="polite">
+          <span class="location-display__spinner" aria-hidden="true"></span>
+          <span>Checking location permission…</span>
+        </div>
+      }
+
       @case ('requesting') {
         <div class="location-display__loading" data-testid="location-loading" role="status" aria-live="polite">
           <span class="location-display__spinner" aria-hidden="true"></span>
@@ -122,19 +129,61 @@
         }
       }
 
+      @case ('denied-previously') {
+        <div class="location-display__error" data-testid="location-error" role="alert">
+          <p class="location-display__error-message">
+            Location permission was previously denied.
+          </p>
+          @if (recoveryInstructions(); as instructions) {
+            <p class="location-display__recovery-title">{{ instructions.title }}</p>
+            <ol class="location-display__recovery-steps">
+              @for (step of instructions.steps; track step) {
+                <li>{{ step }}</li>
+              }
+            </ol>
+          }
+          <div class="location-display__error-actions">
+            <button
+              class="location-display__btn location-display__btn--primary"
+              data-testid="retry-btn"
+              type="button"
+              (click)="retryLocation()"
+            >
+              Try Again
+            </button>
+            <a
+              routerLink="/locations"
+              class="location-display__btn location-display__btn--secondary"
+              data-testid="use-different-location-link"
+            >
+              Use Different Location
+            </a>
+          </div>
+        </div>
+      }
+
       @case ('denied') {
         <div class="location-display__error" data-testid="location-error" role="alert">
           <p class="location-display__error-message">
-            Location access was denied. Please enable location services in your browser settings.
+            Location access was denied. You can try again or choose a different location.
           </p>
-          <button
-            class="location-display__btn location-display__btn--secondary"
-            data-testid="retry-btn"
-            type="button"
-            (click)="retry()"
-          >
-            Retry
-          </button>
+          <div class="location-display__error-actions">
+            <button
+              class="location-display__btn location-display__btn--primary"
+              data-testid="retry-btn"
+              type="button"
+              (click)="retry()"
+            >
+              Try Again
+            </button>
+            <a
+              routerLink="/locations"
+              class="location-display__btn location-display__btn--secondary"
+              data-testid="use-different-location-link"
+            >
+              Use Different Location
+            </a>
+          </div>
         </div>
       }
 

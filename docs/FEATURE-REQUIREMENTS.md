@@ -39,6 +39,7 @@
 | 21 | `feature-requirements/feature-21-analytics.md` | Analytics Dashboard for Power Users | Backlog |
 | 22 | `feature-requirements/feature-22-premium.md` | Premium / Paid Features | Backlog |
 | 23 | `feature-requirements/feature-23-solunar-local-time.md` | Solunar Peak Times in Local Time | Complete |
+| 24 | `feature-requirements/feature-24-geolocation-permission-recovery.md` | Geolocation Permission Recovery | Complete |
 
 ---
 

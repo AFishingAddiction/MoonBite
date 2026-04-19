@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GeolocationService } from '../geolocation/geolocation.service';
+import { getRecoveryInstructions, RecoveryInstructions } from '../geolocation/recovery-instructions';
 import { SavedLocationsService } from '../locations/saved-locations.service';
 
 @Component({
@@ -18,12 +19,22 @@ export class LocationDisplayComponent {
   protected readonly isSavingLocation = signal(false);
   protected readonly pendingLocationName = signal('');
 
+  protected readonly recoveryInstructions = computed<RecoveryInstructions | null>(() => {
+    const state = this.geo.state();
+    if (state.status !== 'denied-previously') return null;
+    return getRecoveryInstructions(state.platform ?? 'desktop');
+  });
+
   requestLocation(): void {
     this.geo.requestLocation();
   }
 
   retry(): void {
     this.geo.requestLocation();
+  }
+
+  retryLocation(): void {
+    this.geo.retryLocation();
   }
 
   startSaving(): void {

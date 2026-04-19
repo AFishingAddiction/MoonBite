@@ -48,13 +48,13 @@ export class ActiveLocationService {
   readonly isLocating = computed(() => {
     if (this.savedLocationsService.activeLocation()) return false;
     const s = this.geoService.state().status;
-    return s === 'idle' || s === 'requesting';
+    return s === 'idle' || s === 'checking-permission' || s === 'requesting';
   });
 
   /** True only when GPS failed and no saved location is active. */
   readonly hasError = computed(() => {
     if (this.savedLocationsService.activeLocation()) return false;
     const s = this.geoService.state().status;
-    return s === 'denied' || s === 'unavailable' || s === 'error';
+    return s === 'denied' || s === 'denied-previously' || s === 'unavailable' || s === 'error';
   });
 }

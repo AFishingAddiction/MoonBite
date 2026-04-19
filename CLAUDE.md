@@ -31,6 +31,7 @@ Individual feature requirement files live in [`docs/feature-requirements/`](docs
 | `feature-17-sharing.md` | Share Score / Daily Report | Complete |
 | `feature-18-location-library.md` | Location Search & Library | Complete |
 | `feature-23-solunar-local-time.md` | Solunar Peak Times in Local Time | Complete |
+| `feature-24-geolocation-permission-recovery.md` | Geolocation Permission Recovery | Complete |
 
 ## Project overview
 

@@ -23,7 +23,7 @@ describe('LocationDisplayComponent', () => {
     stateSignal = signal<GeolocationState>(createState({}));
     activeLocationSignal = signal<SavedLocation | null>(null);
 
-    mockService = jasmine.createSpyObj('GeolocationService', ['requestLocation', 'reset'], {
+    mockService = jasmine.createSpyObj('GeolocationService', ['requestLocation', 'reset', 'retryLocation'], {
       state: stateSignal,
     });
 
@@ -216,5 +216,81 @@ describe('LocationDisplayComponent', () => {
     fixture.detectChanges();
     fixture.debugElement.query(By.css('[data-testid="use-gps-btn"]')).nativeElement.click();
     expect(savedLocationsService.setActive).toHaveBeenCalledWith(null);
+  });
+
+  // Feature 24: denied-previously state
+  it('should show denied-previously error with recovery instructions', () => {
+    stateSignal.set(createState({ status: 'denied-previously', platform: 'android' }));
+    fixture.detectChanges();
+    const error = fixture.debugElement.query(By.css('[data-testid="location-error"]'));
+    expect(error).toBeTruthy();
+    expect(error.nativeElement.textContent).toContain('previously denied');
+  });
+
+  it('should show "Try Again" and "Use Different Location" in denied-previously state', () => {
+    stateSignal.set(createState({ status: 'denied-previously', platform: 'desktop' }));
+    fixture.detectChanges();
+    const retry = fixture.debugElement.query(By.css('[data-testid="retry-btn"]'));
+    const altLink = fixture.debugElement.query(By.css('[data-testid="use-different-location-link"]'));
+    expect(retry).toBeTruthy();
+    expect(altLink).toBeTruthy();
+  });
+
+  it('should call retryLocation when "Try Again" is clicked in denied-previously state', () => {
+    stateSignal.set(createState({ status: 'denied-previously', platform: 'ios' }));
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="retry-btn"]')).nativeElement.click();
+    expect(mockService.retryLocation).toHaveBeenCalled();
+  });
+
+  it('recoveryInstructions should be null when status is not denied-previously', () => {
+    stateSignal.set(createState({ status: 'idle' }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance['recoveryInstructions']()).toBeNull();
+  });
+
+  it('recoveryInstructions should default to desktop when platform is undefined', () => {
+    stateSignal.set(createState({ status: 'denied-previously', platform: undefined }));
+    fixture.detectChanges();
+    const instructions = fixture.componentInstance['recoveryInstructions']();
+    expect(instructions).toBeTruthy();
+    expect(instructions!.steps.length).toBeGreaterThan(0);
+  });
+
+  it('confirmSave should do nothing when name is empty', () => {
+    const mockPosition = {
+      coords: { latitude: 40.7128, longitude: -74.006, accuracy: 10 },
+      timestamp: Date.now(),
+    } as GeolocationPosition;
+    stateSignal.set(createState({ status: 'granted', position: mockPosition }));
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('[data-testid="save-location-btn"]')).nativeElement.click();
+    fixture.detectChanges();
+
+    // Clear the pre-filled name then confirm — should not call add
+    const input: HTMLInputElement = fixture.debugElement.query(
+      By.css('[data-testid="location-name-input"]'),
+    ).nativeElement;
+    input.value = '   ';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('[data-testid="confirm-save-btn"]')).nativeElement.click();
+    expect(savedLocationsService.add).not.toHaveBeenCalled();
+  });
+
+  it('confirmSave should do nothing when position is null', () => {
+    stateSignal.set(createState({ status: 'granted', position: null }));
+    fixture.detectChanges();
+    // Manually trigger startSaving and confirmSave via the component instance
+    const comp = fixture.componentInstance as unknown as {
+      startSaving(): void;
+      confirmSave(): void;
+      pendingLocationName: ReturnType<typeof import('@angular/core').signal<string>>;
+    };
+    comp.startSaving();
+    comp.pendingLocationName.set('Some Name');
+    comp.confirmSave();
+    expect(savedLocationsService.add).not.toHaveBeenCalled();
   });
 });
