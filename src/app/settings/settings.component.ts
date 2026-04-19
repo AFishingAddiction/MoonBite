@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { SavedLocation } from '../locations/saved-location.model';
 import { SavedLocationsService } from '../locations/saved-locations.service';
 import { TimeFormat, UnitSystem } from '../preferences/preferences.model';
@@ -9,7 +8,7 @@ import { PreferencesService } from '../preferences/preferences.service';
   selector: 'app-settings',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
 })
