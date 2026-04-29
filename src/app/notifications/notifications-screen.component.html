@@ -1,0 +1,73 @@
+<main class="notif-screen">
+  <header class="notif-screen__header">
+    <h1 class="notif-screen__title">Notifications</h1>
+    @if (history().length > 0) {
+      <div class="notif-screen__header-actions">
+        @if (unreadCount() > 0) {
+          <button
+            class="notif-screen__action-btn"
+            (click)="markAllRead()"
+            aria-label="Mark all notifications as read"
+            data-testid="mark-all-read-btn"
+          >Mark all read</button>
+        }
+        <button
+          class="notif-screen__action-btn notif-screen__action-btn--danger"
+          (click)="clearHistory()"
+          aria-label="Clear all notifications"
+          data-testid="clear-all-btn"
+        >Clear all</button>
+      </div>
+    }
+  </header>
+
+  @if (history().length === 0) {
+    <div class="notif-screen__empty" data-testid="empty-state">
+      <span class="notif-screen__empty-icon" aria-hidden="true">🔔</span>
+      <p class="notif-screen__empty-text">No notifications yet</p>
+      <p class="notif-screen__empty-hint">Enable notifications in Settings to receive alerts about fishing conditions.</p>
+    </div>
+  } @else {
+    <div class="notif-screen__list" role="list">
+      @for (group of groups(); track group.label) {
+        <section class="notif-screen__group" [attr.aria-labelledby]="'group-' + group.label.slice(0, 8)">
+          <h2
+            class="notif-screen__group-label"
+            [id]="'group-' + group.label.slice(0, 8)"
+          >{{ group.label }}</h2>
+          <div class="notif-screen__card">
+            @for (notification of group.notifications; track notification.id; let last = $last) {
+              <div
+                class="notif-screen__item"
+                [class.notif-screen__item--unread]="!notification.read"
+                [attr.data-testid]="'notification-item'"
+                role="listitem"
+              >
+                <button
+                  class="notif-screen__item-btn"
+                  (click)="navigate(notification)"
+                  [attr.aria-label]="notification.title + ': ' + notification.message"
+                >
+                  <span class="notif-screen__item-icon" aria-hidden="true">{{ notification.icon }}</span>
+                  <div class="notif-screen__item-body">
+                    <p class="notif-screen__item-title">{{ notification.title }}</p>
+                    <p class="notif-screen__item-message">{{ notification.message }}</p>
+                    <time class="notif-screen__item-time" [attr.datetime]="notification.timestamp">
+                      {{ formatTime(notification.timestamp) }}
+                    </time>
+                  </div>
+                  @if (!notification.read) {
+                    <span class="notif-screen__unread-dot" aria-label="Unread"></span>
+                  }
+                </button>
+                @if (!last) {
+                  <hr class="notif-screen__divider" />
+                }
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+</main>

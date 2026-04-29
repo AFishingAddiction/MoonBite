@@ -34,7 +34,7 @@
 |---|---|---|---|
 | 17 | `feature-requirements/feature-17-sharing.md` | Share Score / Daily Report | Complete |
 | 18 | `feature-requirements/feature-18-location-library.md` | Location Search & Library | Complete |
-| 19 | `feature-requirements/feature-19-notifications.md` | Smart Notifications & Alerts | Backlog |
+| 19 | `feature-requirements/feature-19-notifications.md` | Smart Notifications & Alerts | Complete |
 | 20 | `feature-requirements/feature-20-catch-logging.md` | Catch Logging & Fishing Journal | Backlog |
 | 21 | `feature-requirements/feature-21-analytics.md` | Analytics Dashboard for Power Users | Backlog |
 | 22 | `feature-requirements/feature-22-premium.md` | Premium / Paid Features | Backlog |

@@ -1,9 +1,16 @@
-export type UnitSystem = 'metric' | 'imperial';
-export type TimeFormat = '12h' | '24h';
+export type NotificationType = 'scoreJump' | 'moonMilestone' | 'pressureAlert' | 'locationUpdate';
 
-export interface UserPreferences {
-  readonly unitSystem: UnitSystem;
-  readonly timeFormat: TimeFormat;
+export interface AppNotification {
+  readonly id: string;
+  readonly type: NotificationType;
+  readonly title: string;
+  readonly message: string;
+  readonly icon: string;
+  readonly locationId?: string;
+  readonly locationName?: string;
+  readonly actionUrl?: string;
+  readonly timestamp: string;
+  readonly read: boolean;
 }
 
 export interface NotificationPreferences {

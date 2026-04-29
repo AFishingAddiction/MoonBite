@@ -38,4 +38,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./history/score-history.component').then(m => m.ScoreHistoryComponent),
   },
+  {
+    path: 'notifications',
+    loadComponent: () =>
+      import('./notifications/notifications-screen.component').then(
+        m => m.NotificationsScreenComponent,
+      ),
+  },
 ];

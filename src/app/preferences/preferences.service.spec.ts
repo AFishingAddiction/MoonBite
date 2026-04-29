@@ -459,4 +459,182 @@ describe('PreferencesService', () => {
       expect(result).toContain('UTC+9');
     });
   });
+
+  // ── Notification preferences ────────────────────────────────────────────────
+
+  describe('setNotificationsEnabled()', () => {
+    it('should enable notifications', () => {
+      service.setNotificationsEnabled(true);
+      expect(service.notificationPrefs().notificationsEnabled).toBe(true);
+    });
+
+    it('should disable notifications', () => {
+      service.setNotificationsEnabled(true);
+      service.setNotificationsEnabled(false);
+      expect(service.notificationPrefs().notificationsEnabled).toBe(false);
+    });
+
+    it('should persist to localStorage', () => {
+      service.setNotificationsEnabled(true);
+      const raw = localStorage.getItem('moonbite_notification_prefs');
+      expect(raw).not.toBeNull();
+      const parsed = JSON.parse(raw!);
+      expect(parsed.notificationsEnabled).toBe(true);
+    });
+  });
+
+  describe('setNotificationType()', () => {
+    it('should disable scoreJump type', () => {
+      service.setNotificationType('scoreJump', false);
+      expect(service.notificationPrefs().scoreJump).toBe(false);
+    });
+
+    it('should re-enable moonMilestone type', () => {
+      service.setNotificationType('moonMilestone', false);
+      service.setNotificationType('moonMilestone', true);
+      expect(service.notificationPrefs().moonMilestone).toBe(true);
+    });
+
+    it('should disable pressureAlert type', () => {
+      service.setNotificationType('pressureAlert', false);
+      expect(service.notificationPrefs().pressureAlert).toBe(false);
+    });
+
+    it('should disable locationUpdate type', () => {
+      service.setNotificationType('locationUpdate', false);
+      expect(service.notificationPrefs().locationUpdate).toBe(false);
+    });
+  });
+
+  describe('muteLocation()', () => {
+    it('should add locationId to mutedLocationIds', () => {
+      service.muteLocation('loc1');
+      expect(service.notificationPrefs().mutedLocationIds).toContain('loc1');
+    });
+
+    it('should not duplicate if already muted', () => {
+      service.muteLocation('loc1');
+      service.muteLocation('loc1');
+      expect(service.notificationPrefs().mutedLocationIds.length).toBe(1);
+    });
+
+    it('should mute multiple locations', () => {
+      service.muteLocation('loc1');
+      service.muteLocation('loc2');
+      expect(service.notificationPrefs().mutedLocationIds.length).toBe(2);
+    });
+  });
+
+  describe('unmuteLocation()', () => {
+    it('should remove locationId from mutedLocationIds', () => {
+      service.muteLocation('loc1');
+      service.unmuteLocation('loc1');
+      expect(service.notificationPrefs().mutedLocationIds).not.toContain('loc1');
+    });
+
+    it('should not throw when unmuting a location that is not muted', () => {
+      expect(() => service.unmuteLocation('not-muted')).not.toThrow();
+    });
+  });
+
+  describe('isTypeEnabled()', () => {
+    it('should return false when notificationsEnabled is false', () => {
+      service.setNotificationsEnabled(false);
+      expect(service.isTypeEnabled('scoreJump')).toBe(false);
+    });
+
+    it('should return true when enabled and type is on', () => {
+      service.setNotificationsEnabled(true);
+      expect(service.isTypeEnabled('scoreJump')).toBe(true);
+    });
+
+    it('should return false when enabled but type is off', () => {
+      service.setNotificationsEnabled(true);
+      service.setNotificationType('pressureAlert', false);
+      expect(service.isTypeEnabled('pressureAlert')).toBe(false);
+    });
+  });
+
+  describe('isLocationMuted()', () => {
+    it('should return false for un-muted location', () => {
+      expect(service.isLocationMuted('loc1')).toBe(false);
+    });
+
+    it('should return true after muting location', () => {
+      service.muteLocation('loc1');
+      expect(service.isLocationMuted('loc1')).toBe(true);
+    });
+  });
+
+  describe('loadNotificationPrefs() — partial/invalid stored data', () => {
+    function freshService(): PreferencesService {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      return TestBed.inject(PreferencesService);
+    }
+
+    it('should use defaults when stored fields have wrong types', () => {
+      localStorage.setItem(
+        'moonbite_notification_prefs',
+        JSON.stringify({
+          notificationsEnabled: 'yes', // wrong type
+          scoreJump: 1,                 // wrong type
+          moonMilestone: null,          // wrong type
+          pressureAlert: 'true',        // wrong type
+          locationUpdate: 42,           // wrong type
+          mutedLocationIds: 'none',     // wrong type (not array)
+        }),
+      );
+      const fresh = freshService();
+      const prefs = fresh.notificationPrefs();
+      expect(prefs.notificationsEnabled).toBe(false);
+      expect(prefs.scoreJump).toBe(true);
+      expect(prefs.moonMilestone).toBe(true);
+      expect(prefs.pressureAlert).toBe(true);
+      expect(prefs.locationUpdate).toBe(true);
+      expect(prefs.mutedLocationIds).toEqual([]);
+    });
+
+    it('should load valid boolean fields correctly', () => {
+      localStorage.setItem(
+        'moonbite_notification_prefs',
+        JSON.stringify({
+          notificationsEnabled: true,
+          scoreJump: false,
+          moonMilestone: false,
+          pressureAlert: false,
+          locationUpdate: false,
+          mutedLocationIds: ['loc1'],
+        }),
+      );
+      const fresh = freshService();
+      const prefs = fresh.notificationPrefs();
+      expect(prefs.notificationsEnabled).toBe(true);
+      expect(prefs.scoreJump).toBe(false);
+      expect(prefs.moonMilestone).toBe(false);
+      expect(prefs.pressureAlert).toBe(false);
+      expect(prefs.locationUpdate).toBe(false);
+      expect(prefs.mutedLocationIds).toEqual(['loc1']);
+    });
+
+    it('should filter non-string values from mutedLocationIds', () => {
+      localStorage.setItem(
+        'moonbite_notification_prefs',
+        JSON.stringify({ mutedLocationIds: ['loc1', 42, null, 'loc2'] }),
+      );
+      const fresh = freshService();
+      expect(fresh.notificationPrefs().mutedLocationIds).toEqual(['loc1', 'loc2']);
+    });
+
+    it('should recover gracefully from invalid JSON', () => {
+      localStorage.setItem('moonbite_notification_prefs', 'not-json{{{');
+      expect(() => freshService()).not.toThrow();
+    });
+
+    it('should use defaults when stored value is non-object', () => {
+      localStorage.setItem('moonbite_notification_prefs', '"just-a-string"');
+      const fresh = freshService();
+      expect(fresh.notificationPrefs().notificationsEnabled).toBe(false);
+    });
+  });
 });

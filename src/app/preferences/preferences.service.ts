@@ -1,7 +1,14 @@
 import { Injectable, Signal, computed, signal } from '@angular/core';
-import { TimeFormat, UnitSystem, UserPreferences } from './preferences.model';
+import {
+  DEFAULT_NOTIFICATION_PREFS,
+  NotificationPreferences,
+  TimeFormat,
+  UnitSystem,
+  UserPreferences,
+} from './preferences.model';
 
 const STORAGE_KEY = 'moonbite_preferences';
+const NOTIFICATION_PREFS_KEY = 'moonbite_notification_prefs';
 const DEFAULT_PREFERENCES: UserPreferences = { unitSystem: 'imperial', timeFormat: '12h' };
 const VALID_UNIT_SYSTEMS: readonly UnitSystem[] = ['metric', 'imperial'];
 const VALID_TIME_FORMATS: readonly TimeFormat[] = ['12h', '24h'];
@@ -9,12 +16,19 @@ const VALID_TIME_FORMATS: readonly TimeFormat[] = ['12h', '24h'];
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
   private readonly _preferences = signal<UserPreferences>(this.loadPreferences());
+  private readonly _notificationPrefs = signal<NotificationPreferences>(
+    this.loadNotificationPrefs(),
+  );
 
   readonly preferences: Signal<UserPreferences> = this._preferences.asReadonly();
+  readonly notificationPrefs: Signal<NotificationPreferences> =
+    this._notificationPrefs.asReadonly();
 
   readonly unitSystem: Signal<UnitSystem> = computed(() => this._preferences().unitSystem);
-
   readonly timeFormat: Signal<TimeFormat> = computed(() => this._preferences().timeFormat);
+  readonly notificationsEnabled = computed(
+    () => this._notificationPrefs().notificationsEnabled,
+  );
 
   setUnitSystem(system: UnitSystem): void {
     const updated: UserPreferences = { ...this._preferences(), unitSystem: system };
@@ -152,6 +166,96 @@ export class PreferencesService {
     }
 
     return `${timeStr} ${offsetLabel}`;
+  }
+
+  setNotificationsEnabled(enabled: boolean): void {
+    const updated: NotificationPreferences = {
+      ...this._notificationPrefs(),
+      notificationsEnabled: enabled,
+    };
+    this._notificationPrefs.set(updated);
+    this.persistNotificationPrefs(updated);
+  }
+
+  setNotificationType(
+    type: 'scoreJump' | 'moonMilestone' | 'pressureAlert' | 'locationUpdate',
+    enabled: boolean,
+  ): void {
+    const updated: NotificationPreferences = {
+      ...this._notificationPrefs(),
+      [type]: enabled,
+    };
+    this._notificationPrefs.set(updated);
+    this.persistNotificationPrefs(updated);
+  }
+
+  muteLocation(locationId: string): void {
+    const current = this._notificationPrefs();
+    if (current.mutedLocationIds.includes(locationId)) return;
+    const updated: NotificationPreferences = {
+      ...current,
+      mutedLocationIds: [...current.mutedLocationIds, locationId],
+    };
+    this._notificationPrefs.set(updated);
+    this.persistNotificationPrefs(updated);
+  }
+
+  unmuteLocation(locationId: string): void {
+    const updated: NotificationPreferences = {
+      ...this._notificationPrefs(),
+      mutedLocationIds: this._notificationPrefs().mutedLocationIds.filter(id => id !== locationId),
+    };
+    this._notificationPrefs.set(updated);
+    this.persistNotificationPrefs(updated);
+  }
+
+  isTypeEnabled(type: 'scoreJump' | 'moonMilestone' | 'pressureAlert' | 'locationUpdate'): boolean {
+    const prefs = this._notificationPrefs();
+    return prefs.notificationsEnabled && prefs[type];
+  }
+
+  isLocationMuted(locationId: string): boolean {
+    return this._notificationPrefs().mutedLocationIds.includes(locationId);
+  }
+
+  private loadNotificationPrefs(): NotificationPreferences {
+    try {
+      const raw = localStorage.getItem(NOTIFICATION_PREFS_KEY);
+      if (!raw) return DEFAULT_NOTIFICATION_PREFS;
+      const parsed: unknown = JSON.parse(raw);
+      if (typeof parsed !== 'object' || parsed === null) return DEFAULT_NOTIFICATION_PREFS;
+      const obj = parsed as Record<string, unknown>;
+      return {
+        notificationsEnabled: typeof obj['notificationsEnabled'] === 'boolean'
+          ? obj['notificationsEnabled']
+          : DEFAULT_NOTIFICATION_PREFS.notificationsEnabled,
+        scoreJump: typeof obj['scoreJump'] === 'boolean'
+          ? obj['scoreJump']
+          : DEFAULT_NOTIFICATION_PREFS.scoreJump,
+        moonMilestone: typeof obj['moonMilestone'] === 'boolean'
+          ? obj['moonMilestone']
+          : DEFAULT_NOTIFICATION_PREFS.moonMilestone,
+        pressureAlert: typeof obj['pressureAlert'] === 'boolean'
+          ? obj['pressureAlert']
+          : DEFAULT_NOTIFICATION_PREFS.pressureAlert,
+        locationUpdate: typeof obj['locationUpdate'] === 'boolean'
+          ? obj['locationUpdate']
+          : DEFAULT_NOTIFICATION_PREFS.locationUpdate,
+        mutedLocationIds: Array.isArray(obj['mutedLocationIds'])
+          ? (obj['mutedLocationIds'] as string[]).filter(id => typeof id === 'string')
+          : [],
+      };
+    } catch {
+      return DEFAULT_NOTIFICATION_PREFS;
+    }
+  }
+
+  private persistNotificationPrefs(prefs: NotificationPreferences): void {
+    try {
+      localStorage.setItem(NOTIFICATION_PREFS_KEY, JSON.stringify(prefs));
+    } catch {
+      // Storage unavailable — silently ignore
+    }
   }
 
   private loadPreferences(): UserPreferences {

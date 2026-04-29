@@ -1,0 +1,39 @@
+@if (toast(); as t) {
+  <div
+    class="notif-toast"
+    [class]="'notif-toast notif-toast--' + t.type"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    data-testid="notification-toast"
+  >
+    <div class="notif-toast__body">
+      <span class="notif-toast__icon" aria-hidden="true">{{ t.icon }}</span>
+      <div class="notif-toast__content">
+        <p class="notif-toast__title">{{ t.title }}</p>
+        <p class="notif-toast__message">{{ t.message }}</p>
+      </div>
+    </div>
+    <div class="notif-toast__actions">
+      <button
+        class="notif-toast__btn notif-toast__btn--dismiss"
+        (click)="dismiss()"
+        aria-label="Dismiss notification"
+        data-testid="toast-dismiss-btn"
+      >Dismiss</button>
+      @if (t.actionUrl) {
+        <button
+          class="notif-toast__btn notif-toast__btn--details"
+          (click)="navigate()"
+          aria-label="View details"
+          data-testid="toast-details-btn"
+        >Details</button>
+      }
+    </div>
+    <div
+      class="notif-toast__progress"
+      [style.width.%]="progressPercent()"
+      aria-hidden="true"
+    ></div>
+  </div>
+}

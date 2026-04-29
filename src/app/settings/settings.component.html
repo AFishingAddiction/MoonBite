@@ -118,5 +118,119 @@
     </div>
   </section>
 
+  <!-- NOTIFICATIONS section -->
+  <section class="settings__section" aria-labelledby="notifications-heading">
+    <h2 id="notifications-heading" class="settings__section-label">NOTIFICATIONS</h2>
+    <div class="settings__card">
+
+      <!-- Master toggle -->
+      <div class="settings__row">
+        <label class="settings__row-label" for="notif-toggle">Notifications</label>
+        <button
+          id="notif-toggle"
+          class="settings__toggle"
+          [class.settings__toggle--on]="notificationPrefs().notificationsEnabled"
+          role="switch"
+          [attr.aria-checked]="notificationPrefs().notificationsEnabled"
+          (click)="toggleNotifications()"
+          data-testid="notifications-toggle"
+        >
+          <span class="settings__toggle-thumb"></span>
+        </button>
+      </div>
+
+      @if (notificationPrefs().notificationsEnabled) {
+        <hr class="settings__divider" />
+
+        <!-- Alert types -->
+        <div class="settings__notif-sub">
+          <p class="settings__notif-sublabel">Alert types</p>
+
+          <label class="settings__checkbox-row" data-testid="notif-score-jump">
+            <input
+              type="checkbox"
+              class="settings__checkbox"
+              [checked]="notificationPrefs().scoreJump"
+              (change)="toggleNotificationType('scoreJump')"
+            />
+            <span class="settings__checkbox-label">📈 Score jumps (15+ points)</span>
+          </label>
+
+          <label class="settings__checkbox-row" data-testid="notif-moon-milestone">
+            <input
+              type="checkbox"
+              class="settings__checkbox"
+              [checked]="notificationPrefs().moonMilestone"
+              (change)="toggleNotificationType('moonMilestone')"
+            />
+            <span class="settings__checkbox-label">🌕 Moon phase milestones</span>
+          </label>
+
+          <label class="settings__checkbox-row" data-testid="notif-pressure-alert">
+            <input
+              type="checkbox"
+              class="settings__checkbox"
+              [checked]="notificationPrefs().pressureAlert"
+              (change)="toggleNotificationType('pressureAlert')"
+            />
+            <span class="settings__checkbox-label">📉 Pressure drops</span>
+          </label>
+
+          <label class="settings__checkbox-row" data-testid="notif-location-update">
+            <input
+              type="checkbox"
+              class="settings__checkbox"
+              [checked]="notificationPrefs().locationUpdate"
+              (change)="toggleNotificationType('locationUpdate')"
+            />
+            <span class="settings__checkbox-label">🎣 Test &amp; other alerts</span>
+          </label>
+        </div>
+
+        @if (notificationPrefs().mutedLocationIds.length > 0) {
+          <hr class="settings__divider" />
+          <div class="settings__notif-sub">
+            <p class="settings__notif-sublabel">Muted locations</p>
+            <div class="settings__muted-chips">
+              @for (locationId of notificationPrefs().mutedLocationIds; track locationId) {
+                <span class="settings__muted-chip">
+                  <span>{{ locationId }}</span>
+                  <button
+                    class="settings__muted-chip-remove"
+                    (click)="unmuteLocation(locationId)"
+                    [attr.aria-label]="'Unmute ' + locationId"
+                  >&#10005;</button>
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+        <hr class="settings__divider" />
+
+        <!-- Test notification + history link -->
+        <div class="settings__notif-actions">
+          <button
+            class="settings__notif-test-btn"
+            (click)="sendTest()"
+            data-testid="send-test-notif-btn"
+          >Send test notification</button>
+          <a
+            class="settings__notif-history-link"
+            routerLink="/notifications"
+            data-testid="view-history-link"
+          >
+            View history
+            @if (unreadCount() > 0) {
+              <span class="settings__notif-badge" aria-label="{{ unreadCount() }} unread">{{ unreadCount() }}</span>
+            }
+          </a>
+        </div>
+      } @else {
+        <p class="settings__unit-description">Enable to receive in-app alerts about score changes, moon phases, and pressure drops.</p>
+      }
+    </div>
+  </section>
+
   <p class="settings__autosave" aria-live="polite">&#10003; Settings saved automatically</p>
 </main>

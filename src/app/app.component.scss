@@ -66,10 +66,56 @@
   line-height: 1.2;
 }
 
+// ── Header right side ────────────────────────────────────────────────────────
+.app-shell__header-end {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
 // ── Date display ─────────────────────────────────────────────────────────────
 .app-shell__date {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $color-text-on-dark-secondary;
   white-space: nowrap;
+}
+
+// ── Notification bell ─────────────────────────────────────────────────────────
+.app-shell__notif-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  text-decoration: none;
+  font-size: $font-size-lg;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: rgba($color-surface, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-surface;
+    outline-offset: 2px;
+  }
+}
+
+.app-shell__notif-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  background-color: $color-error;
+  color: $color-surface;
+  border-radius: $radius-full;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  line-height: 16px;
+  text-align: center;
 }

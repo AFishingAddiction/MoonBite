@@ -9,8 +9,25 @@
         <span class="app-shell__tagline">Your daily fishing intelligence</span>
       </div>
     </div>
-    <time class="app-shell__date" [attr.datetime]="todayLabel()">{{ todayLabel() }}</time>
+    <div class="app-shell__header-end">
+      <time class="app-shell__date" [attr.datetime]="todayLabel()">{{ todayLabel() }}</time>
+      <a
+        class="app-shell__notif-btn"
+        routerLink="/notifications"
+        aria-label="Notifications"
+        data-testid="notifications-bell"
+      >
+        <span aria-hidden="true">🔔</span>
+        @if (unreadCount() > 0) {
+          <span class="app-shell__notif-badge" aria-label="{{ unreadCount() }} unread notifications">
+            {{ unreadCount() }}
+          </span>
+        }
+      </a>
+    </div>
   </header>
+
+  <app-notification-toast />
 
   <main class="app-shell__content">
     <router-outlet />
